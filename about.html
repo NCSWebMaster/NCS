@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About NCS | Northridge Community School</title>
 <link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   .login-gate{ text-align:center; padding:36px 24px; }
   .login-gate p{ color:#6b5e58; font-size:0.95rem; margin-bottom:20px; }
@@ -179,6 +178,7 @@
 </footer>
 
 <script src="shared.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
@@ -324,6 +324,21 @@ sb.auth.onAuthStateChange(async (event, session) => {
 });
 
 init();
+
+// Fallback — if still loading after 8 seconds show error
+setTimeout(() => {
+  const weekly = document.getElementById('weeklyEventsWrap');
+  const yearly = document.getElementById('yearlyScheduleWrap');
+  if (weekly && weekly.innerHTML.includes('Loading')) {
+    weekly.innerHTML = '<div class="login-gate"><p>🔒 Events are visible to enrolled families only.</p><button class="google-btn" id="eventsSignIn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">Sign in with Google</button></div>';
+    document.getElementById('eventsSignIn').addEventListener('click', () => {
+      sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+    });
+  }
+  if (yearly && yearly.innerHTML.includes('Loading')) {
+    yearly.innerHTML = '<div class="accordion-list"><p class="accordion-empty" style="padding:24px;">No dates added yet.</p></div>';
+  }
+}, 8000);
 </script>
 </body>
 </html>
