@@ -23,7 +23,7 @@
     <img src="logo.png" alt="NCS Crest">
     <span>Northridge Community School</span>
   </a>
-  <ul class="nav-links" id="navLinks">
+    <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
     <li><a href="about.html" class="active">About</a></li>
     <li><a href="admissions.html">Admissions</a></li>
@@ -178,24 +178,39 @@
 </footer>
 
 <script src="shared.js"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+
+async function fetchTable(table, token) {
+  const headers = {
+    'apikey': SUPABASE_ANON,
+    'Content-Type': 'application/json'
+  };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*&order=id`, { headers });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function bindAccordions(container) {
+  container.querySelectorAll('.accordion-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', !isOpen);
+      trigger.nextElementSibling.classList.toggle('open', !isOpen);
+    });
+  });
+}
 
 // ── YEARLY SCHEDULE (public) ──────────────────────────────────
 async function loadYearly() {
   const wrap = document.getElementById('yearlyScheduleWrap');
   try {
-    const { data, error } = await sb.from('yearly_schedule').select('*').order('id');
-    if (error) {
-      wrap.innerHTML = `<p class="accordion-empty" style="padding:24px;">Error: ${error.message}</p>`;
-      return;
-    }
+    const data = await fetchTable('yearly_schedule');
     if (!data || data.length === 0) {
-      wrap.innerHTML = '<div class="accordion-list"><div class="accordion-item"><p class="accordion-empty" style="padding:24px;">No dates added yet.</p></div></div>';
+      wrap.innerHTML = '<div class="accordion-list"><p class="accordion-empty" style="padding:24px;">No dates added yet.</p></div>';
       return;
     }
     const byMonth = {};
@@ -221,46 +236,11 @@ async function loadYearly() {
         </div>`).join('') + '</div>';
     bindAccordions(wrap);
   } catch(err) {
-    wrap.innerHTML = `<p class="accordion-empty" style="padding:24px;">Connection error: ${err.message}</p>`;
+    wrap.innerHTML = `<p class="accordion-empty" style="padding:24px;">Could not load schedule. Try refreshing.</p>`;
   }
 }
 
-// ── WEEKLY EVENTS (login required) ───────────────────────────
-function buildWeeklyLoggedIn(session, data) {
-  const wrap = document.getElementById('weeklyEventsWrap');
-  const byDay = {};
-  DAYS.forEach(d => byDay[d] = []);
-  (data || []).forEach(e => { if (byDay[e.day]) byDay[e.day].push(e); });
-
-  wrap.innerHTML = `
-    <div class="events-user-bar">
-      <span>Signed in as ${session.user.email}</span>
-      <button class="signout-small" id="eventsSignOut">Sign Out</button>
-    </div>
-    <div class="accordion-list">
-      ${DAYS.map(day => {
-        const events = byDay[day];
-        const hasEvent = events.length > 0;
-        const meta = hasEvent ? `${events.length} Event${events.length > 1 ? 's' : ''}` : 'No Events';
-        const body = hasEvent
-          ? events.map(e => `<div class="event-item"><span class="event-time">${e.time}</span><div><strong>${e.title}</strong><p>${e.description || ''}</p></div></div>`).join('')
-          : `<p class="accordion-empty">Nothing scheduled.</p>`;
-        return `
-          <div class="accordion-item ${hasEvent ? 'has-event' : ''}">
-            <button class="accordion-trigger" aria-expanded="false">
-              <span class="accordion-day-label">${day}</span>
-              <span class="accordion-meta">${meta}</span>
-              <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="accordion-body">${body}</div>
-          </div>`;
-      }).join('')}
-    </div>`;
-
-  document.getElementById('eventsSignOut').addEventListener('click', () => sb.auth.signOut());
-  bindAccordions(wrap);
-}
-
+// ── WEEKLY EVENTS (login gate) ────────────────────────────────
 function buildWeeklyGate() {
   const wrap = document.getElementById('weeklyEventsWrap');
   wrap.innerHTML = `
@@ -272,73 +252,89 @@ function buildWeeklyGate() {
       </button>
     </div>`;
   document.getElementById('eventsSignIn').addEventListener('click', () => {
-    sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+    window.location.href = `${SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(window.location.href)}`;
   });
 }
 
-function bindAccordions(container) {
-  container.querySelectorAll('.accordion-trigger').forEach(trigger => {
-    trigger.addEventListener('click', () => {
-      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
-      trigger.setAttribute('aria-expanded', !isOpen);
-      trigger.nextElementSibling.classList.toggle('open', !isOpen);
-    });
-  });
-}
-
-// ── AUTH STATE ────────────────────────────────────────────────
-async function init() {
-  // Load yearly schedule immediately (always public)
-  loadYearly();
-
+async function buildWeeklyLoggedIn(token, email) {
+  const wrap = document.getElementById('weeklyEventsWrap');
   try {
-    // Check current session
-    const { data: { session }, error } = await sb.auth.getSession();
-    if (error) {
-      document.getElementById('weeklyEventsWrap').innerHTML = `<p class="accordion-empty" style="padding:24px;">Auth error: ${error.message}</p>`;
-      return;
-    }
-    if (session) {
-      const { data, error: fetchError } = await sb.from('weekly_events').select('*').order('id');
-      if (fetchError) {
-        document.getElementById('weeklyEventsWrap').innerHTML = `<p class="accordion-empty" style="padding:24px;">Error loading events: ${fetchError.message}</p>`;
-        return;
-      }
-      buildWeeklyLoggedIn(session, data);
-    } else {
-      buildWeeklyGate();
-    }
-  } catch(err) {
-    document.getElementById('weeklyEventsWrap').innerHTML = `<p class="accordion-empty" style="padding:24px;">Connection error: ${err.message}</p>`;
-  }
-}
+    const data = await fetchTable('weekly_events', token);
+    const byDay = {};
+    DAYS.forEach(d => byDay[d] = []);
+    (data || []).forEach(e => { if (byDay[e.day]) byDay[e.day].push(e); });
 
-// Also listen for auth changes (e.g. after Google redirect)
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN') {
-    const { data } = await sb.from('weekly_events').select('*').order('id');
-    buildWeeklyLoggedIn(session, data);
-  } else if (event === 'SIGNED_OUT') {
+    wrap.innerHTML = `
+      <div class="events-user-bar">
+        <span>Signed in as ${email}</span>
+        <button class="signout-small" id="eventsSignOut">Sign Out</button>
+      </div>
+      <div class="accordion-list">
+        ${DAYS.map(day => {
+          const events = byDay[day];
+          const hasEvent = events.length > 0;
+          const meta = hasEvent ? `${events.length} Event${events.length > 1 ? 's' : ''}` : 'No Events';
+          const body = hasEvent
+            ? events.map(e => `<div class="event-item"><span class="event-time">${e.time}</span><div><strong>${e.title}</strong><p>${e.description || ''}</p></div></div>`).join('')
+            : `<p class="accordion-empty">Nothing scheduled.</p>`;
+          return `
+            <div class="accordion-item ${hasEvent ? 'has-event' : ''}">
+              <button class="accordion-trigger" aria-expanded="false">
+                <span class="accordion-day-label">${day}</span>
+                <span class="accordion-meta">${meta}</span>
+                <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="accordion-body">${body}</div>
+            </div>`;
+        }).join('')}
+      </div>`;
+
+    document.getElementById('eventsSignOut').addEventListener('click', () => {
+      sessionStorage.removeItem('ncs_token');
+      sessionStorage.removeItem('ncs_email');
+      buildWeeklyGate();
+    });
+    bindAccordions(wrap);
+  } catch(err) {
     buildWeeklyGate();
   }
-});
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+async function init() {
+  loadYearly();
+
+  // Check for token in URL hash (after Google redirect)
+  const hash = window.location.hash;
+  if (hash.includes('access_token')) {
+    const params = new URLSearchParams(hash.substring(1));
+    const token = params.get('access_token');
+    if (token) {
+      // Get user email
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${token}` }
+      });
+      const user = await res.json();
+      const email = user.email || 'Enrolled Parent';
+      sessionStorage.setItem('ncs_token', token);
+      sessionStorage.setItem('ncs_email', email);
+      window.history.replaceState(null, '', window.location.pathname);
+      buildWeeklyLoggedIn(token, email);
+      return;
+    }
+  }
+
+  // Check session storage
+  const token = sessionStorage.getItem('ncs_token');
+  const email = sessionStorage.getItem('ncs_email');
+  if (token) {
+    buildWeeklyLoggedIn(token, email);
+  } else {
+    buildWeeklyGate();
+  }
+}
 
 init();
-
-// Fallback — if still loading after 8 seconds show error
-setTimeout(() => {
-  const weekly = document.getElementById('weeklyEventsWrap');
-  const yearly = document.getElementById('yearlyScheduleWrap');
-  if (weekly && weekly.innerHTML.includes('Loading')) {
-    weekly.innerHTML = '<div class="login-gate"><p>🔒 Events are visible to enrolled families only.</p><button class="google-btn" id="eventsSignIn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">Sign in with Google</button></div>';
-    document.getElementById('eventsSignIn').addEventListener('click', () => {
-      sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
-    });
-  }
-  if (yearly && yearly.innerHTML.includes('Loading')) {
-    yearly.innerHTML = '<div class="accordion-list"><p class="accordion-empty" style="padding:24px;">No dates added yet.</p></div>';
-  }
-}, 8000);
 </script>
 </body>
 </html>
