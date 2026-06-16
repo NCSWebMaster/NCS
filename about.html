@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About NCS | Northridge Community School</title>
 <link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .login-gate{ text-align:center; padding:36px 24px; }
+  .login-gate p{ color:#6b5e58; font-size:0.95rem; margin-bottom:20px; }
+  .google-btn{ display:inline-flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--grey-line); border-radius:8px; padding:12px 22px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.9rem; color:var(--ink); cursor:pointer; transition:box-shadow 0.2s; }
+  .google-btn:hover{ box-shadow:0 4px 14px rgba(0,0,0,0.1); }
+  .signout-small{ background:none; border:1px solid var(--grey-line); border-radius:6px; padding:6px 14px; font-family:'Trebuchet MS',sans-serif; font-size:0.8rem; cursor:pointer; color:#6b5e58; margin-left:12px; }
+  .signout-small:hover{ background:var(--red); color:#fff; border-color:var(--red); }
+  .events-user-bar{ display:flex; align-items:center; justify-content:space-between; padding:12px 24px; background:#fdf6f2; border-bottom:1px solid var(--grey-line); font-size:0.82rem; color:#6b5e58; font-family:'Trebuchet MS',sans-serif; }
+  .loading-state{ text-align:center; padding:32px; color:#aaa; font-style:italic; font-size:0.9rem; }
+</style>
 </head>
 <body>
 
@@ -29,7 +40,6 @@
   <p>Discover what makes Northridge Community School a place where students thrive in faith, character, and academics.</p>
 </div>
 
-<!-- ABOUT CARDS -->
 <section id="about">
   <div class="section-header">
     <span class="eyebrow">Our Community</span>
@@ -139,106 +149,18 @@
         <h3>Weekly Events</h3>
       </div>
       <div id="weeklyEventsWrap">
-        <div class="login-gate">
-          <p>🔒 Events are visible to enrolled families only.</p>
-          <button class="google-btn" id="eventsSignIn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
-            Sign in with Google
-          </button>
-        </div>
+        <div class="loading-state">Loading...</div>
       </div>
     </div>
 
+    <!-- YEARLY SCHEDULE - public, live from Supabase -->
     <div class="accordion-card">
       <div class="accordion-card-header">
         <div class="accordion-card-icon">📆</div>
         <h3>Yearly Schedule</h3>
       </div>
-      <div class="accordion-list">
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">August</span>
-            <span class="accordion-meta">2 Dates</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-badge">🏫</span><div><strong>First Day of School</strong><p>Aug 20</p></div></div>
-            <div class="event-item"><span class="event-badge">📝</span><div><strong>Parent Orientation</strong><p>Aug 16</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">September</span>
-            <span class="accordion-meta">1 Date</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-badge">🎉</span><div><strong>Labor Day — No School</strong><p>Sep 1</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">October</span>
-            <span class="accordion-meta">2 Dates</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-badge">📸</span><div><strong>Picture Day</strong><p>Oct 3</p></div></div>
-            <div class="event-item"><span class="event-badge">🍂</span><div><strong>Fall Break</strong><p>Oct 13–17</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">November</span>
-            <span class="accordion-meta">1 Date</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-badge">🦃</span><div><strong>Thanksgiving Break</strong><p>Nov 24–28</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">December</span>
-            <span class="accordion-meta">2 Dates</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-badge">🎄</span><div><strong>Christmas Program</strong><p>Dec 12</p></div></div>
-            <div class="event-item"><span class="event-badge">❄️</span><div><strong>Winter Break</strong><p>Dec 22 – Jan 2</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">January</span>
-            <span class="accordion-meta">1 Date</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-badge">🏫</span><div><strong>School Resumes</strong><p>Jan 5</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">March</span>
-            <span class="accordion-meta">1 Date</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-badge">🌸</span><div><strong>Spring Break</strong><p>Mar 23–27</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">May</span>
-            <span class="accordion-meta">2 Dates</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-badge">🎓</span><div><strong>Graduation Ceremony</strong><p>May 22</p></div></div>
-            <div class="event-item"><span class="event-badge">🏫</span><div><strong>Last Day of School</strong><p>May 28</p></div></div>
-          </div>
-        </div>
+      <div id="yearlyScheduleWrap">
+        <div class="loading-state">Loading...</div>
       </div>
     </div>
 
@@ -256,77 +178,123 @@
   <p>&copy; 2026 Northridge Community School. All rights reserved.</p>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="shared.js"></script>
-<style>
-  .login-gate{ text-align:center; padding:36px 24px; }
-  .login-gate p{ color:#6b5e58; font-size:0.95rem; margin-bottom:20px; }
-  .google-btn{ display:inline-flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--grey-line); border-radius:8px; padding:12px 22px; font-family:"Trebuchet MS",sans-serif; font-weight:700; font-size:0.9rem; color:var(--ink); cursor:pointer; transition:box-shadow 0.2s; }
-  .google-btn:hover{ box-shadow:0 4px 14px rgba(0,0,0,0.1); }
-  .signout-small{ background:none; border:1px solid var(--grey-line); border-radius:6px; padding:6px 14px; font-family:"Trebuchet MS",sans-serif; font-size:0.8rem; cursor:pointer; color:#6b5e58; margin-left:12px; }
-  .signout-small:hover{ background:var(--red); color:#fff; border-color:var(--red); }
-  .events-user-bar{ display:flex; align-items:center; justify-content:space-between; padding:12px 24px; background:#fdf6f2; border-bottom:1px solid var(--grey-line); font-size:0.82rem; color:#6b5e58; font-family:"Trebuchet MS",sans-serif; }
-</style>
 <script>
 const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 
-sb.auth.onAuthStateChange(async (event, session) => {
-  const wrap = document.getElementById('weeklyEventsWrap');
-  if (session) {
-    // Build weekly events from Supabase
-    const { data } = await sb.from('weekly_events').select('*').order('id');
-    const byDay = {};
-    DAYS.forEach(d => byDay[d] = []);
-    (data || []).forEach(e => { if (byDay[e.day]) byDay[e.day].push(e); });
+// ── YEARLY SCHEDULE (public) ──────────────────────────────────
+async function loadYearly() {
+  const wrap = document.getElementById('yearlyScheduleWrap');
+  const { data, error } = await sb.from('yearly_schedule').select('*').order('id');
 
-    wrap.innerHTML = `<div class="events-user-bar">
+  if (error || !data || data.length === 0) {
+    wrap.innerHTML = '<div class="accordion-list"><div class="accordion-item"><p class="accordion-empty" style="padding:24px;">No dates added yet.</p></div></div>';
+    return;
+  }
+
+  // Group by month
+  const byMonth = {};
+  data.forEach(e => {
+    if (!byMonth[e.month]) byMonth[e.month] = [];
+    byMonth[e.month].push(e);
+  });
+
+  wrap.innerHTML = '<div class="accordion-list">' +
+    Object.entries(byMonth).map(([month, entries]) => `
+      <div class="accordion-item has-event">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="accordion-day-label">${month}</span>
+          <span class="accordion-meta">${entries.length} Date${entries.length > 1 ? 's' : ''}</span>
+          <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="accordion-body">
+          ${entries.map(e => `
+            <div class="event-item">
+              <span class="event-badge">${e.emoji || '📌'}</span>
+              <div><strong>${e.title}</strong><p>${e.date}</p></div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('') + '</div>';
+
+  bindAccordions(wrap);
+}
+
+// ── WEEKLY EVENTS (login required) ───────────────────────────
+function buildWeeklyLoggedIn(session, data) {
+  const wrap = document.getElementById('weeklyEventsWrap');
+  const byDay = {};
+  DAYS.forEach(d => byDay[d] = []);
+  (data || []).forEach(e => { if (byDay[e.day]) byDay[e.day].push(e); });
+
+  wrap.innerHTML = `
+    <div class="events-user-bar">
       <span>Signed in as ${session.user.email}</span>
       <button class="signout-small" id="eventsSignOut">Sign Out</button>
     </div>
-    <div class="accordion-list">` +
-    DAYS.map(day => {
-      const events = byDay[day];
-      const hasEvent = events.length > 0;
-      const meta = hasEvent ? `${events.length} Event${events.length > 1 ? 's' : ''}` : 'No Events';
-      const body = hasEvent
-        ? events.map(e => `<div class="event-item"><span class="event-time">${e.time}</span><div><strong>${e.title}</strong><p>${e.description || ''}</p></div></div>`).join('')
-        : `<p class="accordion-empty">Nothing scheduled.</p>`;
-      return `<div class="accordion-item ${hasEvent ? 'has-event' : ''}">
-        <button class="accordion-trigger" aria-expanded="false">
-          <span class="accordion-day-label">${day}</span>
-          <span class="accordion-meta">${meta}</span>
-          <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="accordion-body">${body}</div>
-      </div>`;
-    }).join('') + '</div>';
+    <div class="accordion-list">
+      ${DAYS.map(day => {
+        const events = byDay[day];
+        const hasEvent = events.length > 0;
+        const meta = hasEvent ? `${events.length} Event${events.length > 1 ? 's' : ''}` : 'No Events';
+        const body = hasEvent
+          ? events.map(e => `<div class="event-item"><span class="event-time">${e.time}</span><div><strong>${e.title}</strong><p>${e.description || ''}</p></div></div>`).join('')
+          : `<p class="accordion-empty">Nothing scheduled.</p>`;
+        return `
+          <div class="accordion-item ${hasEvent ? 'has-event' : ''}">
+            <button class="accordion-trigger" aria-expanded="false">
+              <span class="accordion-day-label">${day}</span>
+              <span class="accordion-meta">${meta}</span>
+              <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="accordion-body">${body}</div>
+          </div>`;
+      }).join('')}
+    </div>`;
 
-    document.getElementById('eventsSignOut').addEventListener('click', () => sb.auth.signOut());
+  document.getElementById('eventsSignOut').addEventListener('click', () => sb.auth.signOut());
+  bindAccordions(wrap);
+}
 
-    // Re-bind accordion triggers for new DOM
-    wrap.querySelectorAll('.accordion-trigger').forEach(trigger => {
-      trigger.addEventListener('click', () => {
-        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
-        trigger.setAttribute('aria-expanded', !isOpen);
-        trigger.nextElementSibling.classList.toggle('open', !isOpen);
-      });
-    });
-  } else {
-    wrap.innerHTML = `<div class="login-gate">
+function buildWeeklyGate() {
+  const wrap = document.getElementById('weeklyEventsWrap');
+  wrap.innerHTML = `
+    <div class="login-gate">
       <p>🔒 Events are visible to enrolled families only.</p>
       <button class="google-btn" id="eventsSignIn">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
         Sign in with Google
       </button>
     </div>`;
-    document.getElementById('eventsSignIn').addEventListener('click', () => {
-      sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+  document.getElementById('eventsSignIn').addEventListener('click', () => {
+    sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+  });
+}
+
+function bindAccordions(container) {
+  container.querySelectorAll('.accordion-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', !isOpen);
+      trigger.nextElementSibling.classList.toggle('open', !isOpen);
     });
+  });
+}
+
+// ── AUTH STATE ────────────────────────────────────────────────
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (session) {
+    const { data } = await sb.from('weekly_events').select('*').order('id');
+    buildWeeklyLoggedIn(session, data);
+  } else {
+    buildWeeklyGate();
   }
 });
+
+// Load yearly schedule immediately (public)
+loadYearly();
 </script>
 </body>
 </html>
