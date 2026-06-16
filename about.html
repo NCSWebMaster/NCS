@@ -284,17 +284,31 @@ function bindAccordions(container) {
 }
 
 // ── AUTH STATE ────────────────────────────────────────────────
-sb.auth.onAuthStateChange(async (event, session) => {
+async function init() {
+  // Load yearly schedule immediately (always public)
+  loadYearly();
+
+  // Check current session
+  const { data: { session } } = await sb.auth.getSession();
   if (session) {
     const { data } = await sb.from('weekly_events').select('*').order('id');
     buildWeeklyLoggedIn(session, data);
   } else {
     buildWeeklyGate();
   }
+}
+
+// Also listen for auth changes (e.g. after Google redirect)
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_IN') {
+    const { data } = await sb.from('weekly_events').select('*').order('id');
+    buildWeeklyLoggedIn(session, data);
+  } else if (event === 'SIGNED_OUT') {
+    buildWeeklyGate();
+  }
 });
 
-// Load yearly schedule immediately (public)
-loadYearly();
+init();
 </script>
 </body>
 </html>
