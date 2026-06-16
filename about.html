@@ -132,58 +132,19 @@
   </div>
   <div class="events-grid">
 
+    <!-- WEEKLY EVENTS - login required -->
     <div class="accordion-card">
       <div class="accordion-card-header">
         <div class="accordion-card-icon">📅</div>
         <h3>Weekly Events</h3>
       </div>
-      <div class="accordion-list">
-        <div class="accordion-item">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">Monday</span>
-            <span class="accordion-meta">No Events</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div id="weeklyEventsWrap">
+        <div class="login-gate">
+          <p>🔒 Events are visible to enrolled families only.</p>
+          <button class="google-btn" id="eventsSignIn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
+            Sign in with Google
           </button>
-          <div class="accordion-body"><p class="accordion-empty">Nothing scheduled — Home day.</p></div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">Tuesday</span>
-            <span class="accordion-meta">2 Events</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-time">8:00 AM</span><div><strong>Chapel Service</strong><p>All students K–8</p></div></div>
-            <div class="event-item"><span class="event-time">2:30 PM</span><div><strong>Parent Pick-Up</strong><p>Regular dismissal</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">Wednesday</span>
-            <span class="accordion-meta">1 Event</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-time">1:00 PM</span><div><strong>Science Fair Prep</strong><p>Grades 4–8, Room 12</p></div></div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">Thursday</span>
-            <span class="accordion-meta">No Events</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body"><p class="accordion-empty">Nothing scheduled — Home day.</p></div>
-        </div>
-        <div class="accordion-item has-event">
-          <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">Friday</span>
-            <span class="accordion-meta">1 Event</span>
-            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="accordion-body">
-            <div class="event-item"><span class="event-time">9:00 AM</span><div><strong>Spelling Bee</strong><p>Gymnasium, all grades</p></div></div>
-          </div>
         </div>
       </div>
     </div>
@@ -295,6 +256,77 @@
   <p>&copy; 2026 Northridge Community School. All rights reserved.</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="shared.js"></script>
+<style>
+  .login-gate{ text-align:center; padding:36px 24px; }
+  .login-gate p{ color:#6b5e58; font-size:0.95rem; margin-bottom:20px; }
+  .google-btn{ display:inline-flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--grey-line); border-radius:8px; padding:12px 22px; font-family:"Trebuchet MS",sans-serif; font-weight:700; font-size:0.9rem; color:var(--ink); cursor:pointer; transition:box-shadow 0.2s; }
+  .google-btn:hover{ box-shadow:0 4px 14px rgba(0,0,0,0.1); }
+  .signout-small{ background:none; border:1px solid var(--grey-line); border-radius:6px; padding:6px 14px; font-family:"Trebuchet MS",sans-serif; font-size:0.8rem; cursor:pointer; color:#6b5e58; margin-left:12px; }
+  .signout-small:hover{ background:var(--red); color:#fff; border-color:var(--red); }
+  .events-user-bar{ display:flex; align-items:center; justify-content:space-between; padding:12px 24px; background:#fdf6f2; border-bottom:1px solid var(--grey-line); font-size:0.82rem; color:#6b5e58; font-family:"Trebuchet MS",sans-serif; }
+</style>
+<script>
+const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+
+sb.auth.onAuthStateChange(async (event, session) => {
+  const wrap = document.getElementById('weeklyEventsWrap');
+  if (session) {
+    // Build weekly events from Supabase
+    const { data } = await sb.from('weekly_events').select('*').order('id');
+    const byDay = {};
+    DAYS.forEach(d => byDay[d] = []);
+    (data || []).forEach(e => { if (byDay[e.day]) byDay[e.day].push(e); });
+
+    wrap.innerHTML = `<div class="events-user-bar">
+      <span>Signed in as ${session.user.email}</span>
+      <button class="signout-small" id="eventsSignOut">Sign Out</button>
+    </div>
+    <div class="accordion-list">` +
+    DAYS.map(day => {
+      const events = byDay[day];
+      const hasEvent = events.length > 0;
+      const meta = hasEvent ? `${events.length} Event${events.length > 1 ? 's' : ''}` : 'No Events';
+      const body = hasEvent
+        ? events.map(e => `<div class="event-item"><span class="event-time">${e.time}</span><div><strong>${e.title}</strong><p>${e.description || ''}</p></div></div>`).join('')
+        : `<p class="accordion-empty">Nothing scheduled.</p>`;
+      return `<div class="accordion-item ${hasEvent ? 'has-event' : ''}">
+        <button class="accordion-trigger" aria-expanded="false">
+          <span class="accordion-day-label">${day}</span>
+          <span class="accordion-meta">${meta}</span>
+          <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="accordion-body">${body}</div>
+      </div>`;
+    }).join('') + '</div>';
+
+    document.getElementById('eventsSignOut').addEventListener('click', () => sb.auth.signOut());
+
+    // Re-bind accordion triggers for new DOM
+    wrap.querySelectorAll('.accordion-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        trigger.setAttribute('aria-expanded', !isOpen);
+        trigger.nextElementSibling.classList.toggle('open', !isOpen);
+      });
+    });
+  } else {
+    wrap.innerHTML = `<div class="login-gate">
+      <p>🔒 Events are visible to enrolled families only.</p>
+      <button class="google-btn" id="eventsSignIn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
+        Sign in with Google
+      </button>
+    </div>`;
+    document.getElementById('eventsSignIn').addEventListener('click', () => {
+      sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+    });
+  }
+});
+</script>
 </body>
 </html>

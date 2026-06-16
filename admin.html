@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Northridge Community School</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .admin-wrap{ max-width:900px; margin:0 auto; padding:40px 6%; }
+  .admin-login{ text-align:center; padding:80px 6%; }
+  .admin-login h2{ color:var(--red); margin-bottom:12px; font-size:2rem; }
+  .admin-login p{ color:#5a4d47; margin-bottom:32px; font-size:1.05rem; }
+  .google-btn{ display:inline-flex; align-items:center; gap:12px; background:#fff; border:2px solid var(--grey-line); border-radius:8px; padding:14px 28px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1rem; color:var(--ink); cursor:pointer; transition:box-shadow 0.2s; }
+  .google-btn:hover{ box-shadow:0 4px 14px rgba(0,0,0,0.1); }
+  .google-btn img{ width:24px; }
+  .admin-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:36px; padding-bottom:20px; border-bottom:1px solid var(--grey-line); }
+  .admin-header h2{ color:var(--red); font-size:1.5rem; }
+  .admin-user{ font-size:0.88rem; color:#6b5e58; font-family:'Trebuchet MS',sans-serif; }
+  .signout-btn{ background:none; border:1px solid var(--grey-line); border-radius:6px; padding:8px 16px; font-family:'Trebuchet MS',sans-serif; font-size:0.85rem; cursor:pointer; color:#6b5e58; transition:all 0.2s; }
+  .signout-btn:hover{ background:var(--red); color:#fff; border-color:var(--red); }
+  .admin-tabs{ display:flex; gap:12px; margin-bottom:32px; }
+  .admin-tab{ padding:10px 24px; border-radius:6px; border:2px solid var(--grey-line); background:#fff; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; color:#6b5e58; transition:all 0.2s; }
+  .admin-tab.active{ background:var(--red); color:#fff; border-color:var(--red); }
+  .admin-panel{ display:none; }
+  .admin-panel.active{ display:block; }
+  .admin-form{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:10px; padding:28px; margin-bottom:28px; }
+  .admin-form h3{ color:var(--ink); font-size:1.1rem; margin-bottom:20px; }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .form-group{ display:flex; flex-direction:column; gap:6px; }
+  .form-group label{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.85rem; color:var(--ink); }
+  .form-group input, .form-group select, .form-group textarea{ padding:10px 14px; border:1px solid var(--grey-line); border-radius:6px; font-family:Georgia,serif; font-size:0.95rem; color:var(--ink); background:#fff; transition:border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus{ outline:none; border-color:var(--bronze); }
+  .form-group textarea{ resize:vertical; min-height:80px; }
+  .save-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:12px 28px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:opacity 0.2s; }
+  .save-btn:hover{ opacity:0.85; }
+  .save-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .events-list{ margin-top:28px; }
+  .events-list h3{ color:var(--ink); font-size:1.1rem; margin-bottom:16px; }
+  .event-row{ display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:#fff; border:1px solid var(--grey-line); border-radius:8px; margin-bottom:10px; }
+  .event-row-info strong{ font-family:'Trebuchet MS',sans-serif; font-size:0.95rem; color:var(--ink); display:block; }
+  .event-row-info span{ font-size:0.82rem; color:#888; }
+  .delete-btn{ background:none; border:1px solid #e0b0b0; color:#c0392b; border-radius:6px; padding:6px 14px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; cursor:pointer; transition:all 0.2s; }
+  .delete-btn:hover{ background:#c0392b; color:#fff; }
+  .toast{ position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; }
+  .toast.show{ opacity:1; }
+  .empty-state{ text-align:center; padding:32px; color:#aaa; font-style:italic; font-size:0.95rem; }
+  @media(max-width:600px){ .form-row{ grid-template-columns:1fr; } .admin-tabs{ flex-direction:column; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="brand">
+    <img src="logo.png" alt="NCS Crest">
+    <span>Northridge Community School</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="admissions.html">Admissions</a></li>
+  </ul>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="admin-login">
+  <h2>Admin Login</h2>
+  <p>Sign in with your NCS Google account to manage events and schedules.</p>
+  <button class="google-btn" id="googleSignIn">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+    Sign in with Google
+  </button>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="adminDashboard" class="admin-wrap" style="display:none;">
+  <div class="admin-header">
+    <div>
+      <h2>NCS Admin Dashboard</h2>
+      <p class="admin-user" id="adminUserEmail"></p>
+    </div>
+    <button class="signout-btn" id="signOutBtn">Sign Out</button>
+  </div>
+
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="weekly">📅 Weekly Events</button>
+    <button class="admin-tab" data-tab="yearly">📆 Yearly Schedule</button>
+  </div>
+
+  <!-- WEEKLY EVENTS PANEL -->
+  <div class="admin-panel active" id="panel-weekly">
+    <div class="admin-form">
+      <h3>Add Weekly Event</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Day</label>
+          <select id="w-day">
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="text" id="w-time" placeholder="e.g. 8:00 AM">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Event Title</label>
+          <input type="text" id="w-title" placeholder="e.g. Chapel Service">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="w-desc" placeholder="e.g. All students K–8">
+        </div>
+      </div>
+      <button class="save-btn" id="saveWeekly">Add Event</button>
+    </div>
+    <div class="events-list">
+      <h3>Current Weekly Events</h3>
+      <div id="weeklyList"></div>
+    </div>
+  </div>
+
+  <!-- YEARLY SCHEDULE PANEL -->
+  <div class="admin-panel" id="panel-yearly">
+    <div class="admin-form">
+      <h3>Add Yearly Schedule Date</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Month</label>
+          <select id="y-month">
+            <option>August</option><option>September</option><option>October</option>
+            <option>November</option><option>December</option><option>January</option>
+            <option>February</option><option>March</option><option>April</option>
+            <option>May</option><option>June</option><option>July</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="text" id="y-date" placeholder="e.g. Oct 3 or Oct 13–17">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="y-title" placeholder="e.g. Picture Day">
+        </div>
+        <div class="form-group">
+          <label>Emoji</label>
+          <input type="text" id="y-emoji" placeholder="e.g. 📸 🎄 🏫 🌸">
+        </div>
+      </div>
+      <button class="save-btn" id="saveYearly">Add Date</button>
+    </div>
+    <div class="events-list">
+      <h3>Current Yearly Schedule</h3>
+      <div id="yearlyList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="shared.js"></script>
+<script>
+const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Auth
+sb.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminDashboard').style.display = 'block';
+    document.getElementById('adminUserEmail').textContent = 'Signed in as ' + session.user.email;
+    loadWeekly();
+    loadYearly();
+  } else {
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('adminDashboard').style.display = 'none';
+  }
+});
+
+document.getElementById('googleSignIn').addEventListener('click', async () => {
+  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+});
+
+document.getElementById('signOutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  showToast('Signed out successfully');
+});
+
+// Tabs
+document.querySelectorAll('.admin-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// Weekly Events
+async function loadWeekly() {
+  const { data } = await sb.from('weekly_events').select('*').order('id');
+  const list = document.getElementById('weeklyList');
+  if (!data || data.length === 0) {
+    list.innerHTML = '<p class="empty-state">No events yet — add one above.</p>';
+    return;
+  }
+  list.innerHTML = data.map(e => `
+    <div class="event-row">
+      <div class="event-row-info">
+        <strong>${e.day} — ${e.title}</strong>
+        <span>${e.time}${e.description ? ' · ' + e.description : ''}</span>
+      </div>
+      <button class="delete-btn" onclick="deleteWeekly(${e.id})">Delete</button>
+    </div>`).join('');
+}
+
+document.getElementById('saveWeekly').addEventListener('click', async () => {
+  const btn = document.getElementById('saveWeekly');
+  btn.disabled = true;
+  const { error } = await sb.from('weekly_events').insert({
+    day: document.getElementById('w-day').value,
+    time: document.getElementById('w-time').value,
+    title: document.getElementById('w-title').value,
+    description: document.getElementById('w-desc').value
+  });
+  btn.disabled = false;
+  if (error) { showToast('Error: ' + error.message); return; }
+  document.getElementById('w-time').value = '';
+  document.getElementById('w-title').value = '';
+  document.getElementById('w-desc').value = '';
+  showToast('Event added!');
+  loadWeekly();
+});
+
+window.deleteWeekly = async (id) => {
+  if (!confirm('Delete this event?')) return;
+  await sb.from('weekly_events').delete().eq('id', id);
+  showToast('Event deleted');
+  loadWeekly();
+};
+
+// Yearly Schedule
+async function loadYearly() {
+  const { data } = await sb.from('yearly_schedule').select('*').order('id');
+  const list = document.getElementById('yearlyList');
+  if (!data || data.length === 0) {
+    list.innerHTML = '<p class="empty-state">No dates yet — add one above.</p>';
+    return;
+  }
+  list.innerHTML = data.map(e => `
+    <div class="event-row">
+      <div class="event-row-info">
+        <strong>${e.emoji || ''} ${e.title}</strong>
+        <span>${e.month} ${e.date}</span>
+      </div>
+      <button class="delete-btn" onclick="deleteYearly(${e.id})">Delete</button>
+    </div>`).join('');
+}
+
+document.getElementById('saveYearly').addEventListener('click', async () => {
+  const btn = document.getElementById('saveYearly');
+  btn.disabled = true;
+  const { error } = await sb.from('yearly_schedule').insert({
+    month: document.getElementById('y-month').value,
+    date: document.getElementById('y-date').value,
+    title: document.getElementById('y-title').value,
+    emoji: document.getElementById('y-emoji').value
+  });
+  btn.disabled = false;
+  if (error) { showToast('Error: ' + error.message); return; }
+  document.getElementById('y-date').value = '';
+  document.getElementById('y-title').value = '';
+  document.getElementById('y-emoji').value = '';
+  showToast('Date added!');
+  loadYearly();
+});
+
+window.deleteYearly = async (id) => {
+  if (!confirm('Delete this date?')) return;
+  await sb.from('yearly_schedule').delete().eq('id', id);
+  showToast('Date deleted');
+  loadYearly();
+};
+</script>
+</body>
+</html>
