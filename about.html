@@ -188,38 +188,41 @@ const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 // ── YEARLY SCHEDULE (public) ──────────────────────────────────
 async function loadYearly() {
   const wrap = document.getElementById('yearlyScheduleWrap');
-  const { data, error } = await sb.from('yearly_schedule').select('*').order('id');
-
-  if (error || !data || data.length === 0) {
-    wrap.innerHTML = '<div class="accordion-list"><div class="accordion-item"><p class="accordion-empty" style="padding:24px;">No dates added yet.</p></div></div>';
-    return;
+  try {
+    const { data, error } = await sb.from('yearly_schedule').select('*').order('id');
+    if (error) {
+      wrap.innerHTML = `<p class="accordion-empty" style="padding:24px;">Error: ${error.message}</p>`;
+      return;
+    }
+    if (!data || data.length === 0) {
+      wrap.innerHTML = '<div class="accordion-list"><div class="accordion-item"><p class="accordion-empty" style="padding:24px;">No dates added yet.</p></div></div>';
+      return;
+    }
+    const byMonth = {};
+    data.forEach(e => {
+      if (!byMonth[e.month]) byMonth[e.month] = [];
+      byMonth[e.month].push(e);
+    });
+    wrap.innerHTML = '<div class="accordion-list">' +
+      Object.entries(byMonth).map(([month, entries]) => `
+        <div class="accordion-item has-event">
+          <button class="accordion-trigger" aria-expanded="false">
+            <span class="accordion-day-label">${month}</span>
+            <span class="accordion-meta">${entries.length} Date${entries.length > 1 ? 's' : ''}</span>
+            <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="accordion-body">
+            ${entries.map(e => `
+              <div class="event-item">
+                <span class="event-badge">${e.emoji || '📌'}</span>
+                <div><strong>${e.title}</strong><p>${e.date}</p></div>
+              </div>`).join('')}
+          </div>
+        </div>`).join('') + '</div>';
+    bindAccordions(wrap);
+  } catch(err) {
+    wrap.innerHTML = `<p class="accordion-empty" style="padding:24px;">Connection error: ${err.message}</p>`;
   }
-
-  // Group by month
-  const byMonth = {};
-  data.forEach(e => {
-    if (!byMonth[e.month]) byMonth[e.month] = [];
-    byMonth[e.month].push(e);
-  });
-
-  wrap.innerHTML = '<div class="accordion-list">' +
-    Object.entries(byMonth).map(([month, entries]) => `
-      <div class="accordion-item has-event">
-        <button class="accordion-trigger" aria-expanded="false">
-          <span class="accordion-day-label">${month}</span>
-          <span class="accordion-meta">${entries.length} Date${entries.length > 1 ? 's' : ''}</span>
-          <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="accordion-body">
-          ${entries.map(e => `
-            <div class="event-item">
-              <span class="event-badge">${e.emoji || '📌'}</span>
-              <div><strong>${e.title}</strong><p>${e.date}</p></div>
-            </div>`).join('')}
-        </div>
-      </div>`).join('') + '</div>';
-
-  bindAccordions(wrap);
 }
 
 // ── WEEKLY EVENTS (login required) ───────────────────────────
@@ -288,13 +291,25 @@ async function init() {
   // Load yearly schedule immediately (always public)
   loadYearly();
 
-  // Check current session
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    const { data } = await sb.from('weekly_events').select('*').order('id');
-    buildWeeklyLoggedIn(session, data);
-  } else {
-    buildWeeklyGate();
+  try {
+    // Check current session
+    const { data: { session }, error } = await sb.auth.getSession();
+    if (error) {
+      document.getElementById('weeklyEventsWrap').innerHTML = `<p class="accordion-empty" style="padding:24px;">Auth error: ${error.message}</p>`;
+      return;
+    }
+    if (session) {
+      const { data, error: fetchError } = await sb.from('weekly_events').select('*').order('id');
+      if (fetchError) {
+        document.getElementById('weeklyEventsWrap').innerHTML = `<p class="accordion-empty" style="padding:24px;">Error loading events: ${fetchError.message}</p>`;
+        return;
+      }
+      buildWeeklyLoggedIn(session, data);
+    } else {
+      buildWeeklyGate();
+    }
+  } catch(err) {
+    document.getElementById('weeklyEventsWrap').innerHTML = `<p class="accordion-empty" style="padding:24px;">Connection error: ${err.message}</p>`;
   }
 }
 
