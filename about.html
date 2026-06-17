@@ -15,14 +15,17 @@
 <style>
   /* FLIP CARD */
   .flip-card{ perspective:1000px; cursor:pointer; }
-  .flip-card-inner{ position:relative; width:100%; height:100%; min-height:220px; transition:transform 0.6s; transform-style:preserve-3d; }
+  .flip-card-inner{ position:relative; width:100%; height:260px; transition:transform 0.6s; transform-style:preserve-3d; }
   .flip-card.flipped .flip-card-inner{ transform:rotateY(180deg); }
-  .flip-card-front, .flip-card-back{ position:absolute; width:100%; height:100%; backface-visibility:hidden; border-radius:10px; overflow:hidden; }
-  .flip-card-front{ background:#fff; border:1px solid var(--grey-line); padding:32px 24px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .flip-card-front, .flip-card-back{ position:absolute; width:100%; height:100%; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:10px; overflow:hidden; }
+  .flip-card-front{ background:#fff; border:1px solid var(--grey-line); padding:28px 24px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
+  .flip-card-front .icon{ width:56px; height:56px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.4rem; font-family:'Trebuchet MS',sans-serif; font-weight:700; flex-shrink:0; }
+  .flip-card-front h3{ color:var(--ink); font-size:1.15rem; margin:0; }
+  .flip-card-front p{ font-size:0.92rem; color:#6b5e58; margin:0; }
   .flip-card-back{ transform:rotateY(180deg); background:#3A2E2A; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; }
   .flip-card-back img{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; object-position:center top; }
-  .flip-card-back p{ position:relative; z-index:2; color:#fff; font-size:0.82rem; font-family:'Trebuchet MS',sans-serif; text-align:center; padding:10px 12px; background:rgba(0,0,0,0.55); width:100%; }
-  .flip-hint{ font-size:0.75rem; color:var(--bronze); font-family:'Trebuchet MS',sans-serif; font-weight:600; margin-top:10px; }
+  .flip-card-back p{ position:relative; z-index:2; color:#fff; font-size:0.82rem; font-family:'Trebuchet MS',sans-serif; text-align:center; padding:10px 12px; background:rgba(0,0,0,0.55); width:100%; margin:0; }
+  .flip-hint{ font-size:0.75rem; color:var(--bronze); font-family:'Trebuchet MS',sans-serif; font-weight:600; margin:0; }
   .login-gate{ text-align:center; padding:36px 24px; }
   .login-gate p{ color:#6b5e58; font-size:0.95rem; margin-bottom:20px; }
   .google-btn{ display:inline-flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--grey-line); border-radius:8px; padding:12px 22px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.9rem; color:var(--ink); cursor:pointer; transition:box-shadow 0.2s; }
@@ -71,7 +74,7 @@
           <div class="icon">G</div>
           <h3>Godly Character</h3>
           <p>Daily devotions, biblical teaching, and mentorship help students grow in faith, integrity, and kindness.</p>
-          <span class="flip-hint">📸 Tap to see photo</span>
+          <span class="flip-hint">Tap to see photo</span>
         </div>
         <div class="flip-card-back">
           <img src="godly.jpeg" alt="NCS students volunteering at Wentz">
@@ -85,7 +88,7 @@
           <div class="icon">A</div>
           <h3>Great Academics</h3>
           <p>A rigorous, well-rounded curriculum from kindergarten through eighth grade taught by dedicated educators.</p>
-          <span class="flip-hint">📸 Tap to see photo</span>
+          <span class="flip-hint">Tap to see photo</span>
         </div>
         <div class="flip-card-back">
           <img src="academics.jpeg" alt="NCS students at awards ceremony">
@@ -99,7 +102,7 @@
           <div class="icon">C</div>
           <h3>Strong Community</h3>
           <p>Families, teachers, and students work together to create a supportive home away from home.</p>
-          <span class="flip-hint">📸 Tap to see photo</span>
+          <span class="flip-hint">Tap to see photo</span>
         </div>
         <div class="flip-card-back">
           <img src="community.jpeg" alt="NCS students and parents together">
@@ -113,7 +116,7 @@
           <div class="icon">P</div>
           <h3>Parent Partnership</h3>
           <p>We partner closely with parents through open communication, school events, and a welcoming community where every student feels known and valued.</p>
-          <span class="flip-hint">📸 Tap to see photo</span>
+          <span class="flip-hint">Tap to see photo</span>
         </div>
         <div class="flip-card-back">
           <img src="partnership.jpeg" alt="NCS teacher and parent in classroom">
