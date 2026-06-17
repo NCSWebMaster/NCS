@@ -23,6 +23,10 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 6
 .nav-links{display:flex;gap:24px;list-style:none;align-items:center;flex-wrap:nowrap;}
 .nav-links a{text-decoration:none;color:var(--ink);font-family:'Trebuchet MS',sans-serif;font-size:0.88rem;font-weight:600;transition:color 0.2s;white-space:nowrap;}
 .nav-links a:hover,.nav-links a.active{color:var(--red);}
+.nav-portal{margin-left:16px;border-left:1px solid var(--grey-line);padding-left:20px;}
+.nav-portal a{color:var(--bronze) !important;border:1px solid var(--bronze);border-radius:6px;padding:6px 14px;}
+.nav-portal a:hover{background:var(--bronze);color:#fff !important;}
+.nav-portal a.active{background:var(--bronze);color:#fff !important;}
 .menu-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px;}
 .menu-toggle span{display:block;width:24px;height:3px;background:var(--red);border-radius:2px;transition:transform 0.2s,opacity 0.2s;}
 .menu-toggle.open span:nth-child(1){transform:translateY(8px) rotate(45deg);}
