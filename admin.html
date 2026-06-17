@@ -120,8 +120,49 @@
           <input type="text" id="nl-title" placeholder="e.g. October 2026 Newsletter">
         </div>
         <div class="form-group">
-          <label>Date</label>
-          <input type="month" id="nl-date">
+          <label>School Week</label>
+          <select id="nl-date">
+            <option value="">Select a week...</option>
+            <option value="Back to School Edition">Back to School Edition</option>
+            <option value="Week 1">Week 1</option>
+            <option value="Week 2">Week 2</option>
+            <option value="Week 3">Week 3</option>
+            <option value="Week 4">Week 4</option>
+            <option value="Week 5">Week 5</option>
+            <option value="Week 6">Week 6</option>
+            <option value="Week 7">Week 7</option>
+            <option value="Week 8">Week 8</option>
+            <option value="Week 9">Week 9</option>
+            <option value="Week 10">Week 10</option>
+            <option value="Week 11">Week 11</option>
+            <option value="Week 12">Week 12</option>
+            <option value="Holiday Edition">Holiday Edition</option>
+            <option value="Week 13">Week 13</option>
+            <option value="Week 14">Week 14</option>
+            <option value="Week 15">Week 15</option>
+            <option value="Week 16">Week 16</option>
+            <option value="Week 17">Week 17</option>
+            <option value="Week 18">Week 18</option>
+            <option value="Week 19">Week 19</option>
+            <option value="Week 20">Week 20</option>
+            <option value="Week 21">Week 21</option>
+            <option value="Week 22">Week 22</option>
+            <option value="Week 23">Week 23</option>
+            <option value="Week 24">Week 24</option>
+            <option value="Week 25">Week 25</option>
+            <option value="Week 26">Week 26</option>
+            <option value="Week 27">Week 27</option>
+            <option value="Week 28">Week 28</option>
+            <option value="Week 29">Week 29</option>
+            <option value="Week 30">Week 30</option>
+            <option value="Week 31">Week 31</option>
+            <option value="Week 32">Week 32</option>
+            <option value="Week 33">Week 33</option>
+            <option value="Week 34">Week 34</option>
+            <option value="Week 35">Week 35</option>
+            <option value="Week 36">Week 36</option>
+            <option value="End of Year Edition">End of Year Edition</option>
+          </select>
         </div>
       </div>
       <div class="form-row single">
@@ -320,7 +361,7 @@ async function loadNewsletters() {
 async function uploadNewsletter(sendEmail) {
   const title = document.getElementById('nl-title').value.trim();
   const rawDate = document.getElementById('nl-date').value.trim();
-  const date = rawDate ? new Date(rawDate + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
+  const date = rawDate;
   const file = document.getElementById('nl-file').files[0];
 
   if (!title || !date || !file) { showToast('Please fill in all fields and select a PDF'); return; }
