@@ -151,20 +151,6 @@
     <div class="slot-summary" id="modalSlotSummary"></div>
     <div class="modal-form">
       <input type="text" id="sig-name" placeholder="Your full name">
-      <input type="text" id="sig-child" placeholder="Child's name">
-      <select id="sig-grade">
-        <option value="">Child's grade...</option>
-        <option>TK</option>
-        <option>Kindergarten</option>
-        <option>1st Grade</option>
-        <option>2nd Grade</option>
-        <option>3rd Grade</option>
-        <option>4th Grade</option>
-        <option>5th Grade</option>
-        <option>6th Grade</option>
-        <option>7th Grade</option>
-        <option>8th Grade</option>
-      </select>
     </div>
     <div class="modal-btns">
       <button class="modal-cancel" id="modalCancel">Cancel</button>
@@ -319,7 +305,6 @@ async function loadMySignups() {
       <div class="my-signup-row"><span class="my-signup-label">📅 Date & Time</span><span>${s.volunteer_slots.date} at ${s.volunteer_slots.time}</span></div>
       <div class="my-signup-row"><span class="my-signup-label">📍 Location</span><span>${s.volunteer_slots.classroom}${s.volunteer_slots.teacher ? ' · ' + s.volunteer_slots.teacher : ''}</span></div>
       <div class="my-signup-row"><span class="my-signup-label">🙋 Role</span><span>${s.volunteer_slots.role || s.role || '—'}</span></div>
-      <div class="my-signup-row"><span class="my-signup-label">👧 Child</span><span>${s.child_name} (${s.child_grade})</span></div>
       <span class="cancel-note">Need to cancel? Contact us at office@northridgecommunityschool.com</span>
     </div>`).join('');
 }
@@ -341,9 +326,7 @@ document.getElementById('modalCancel').addEventListener('click', () => {
 
 document.getElementById('modalConfirm').addEventListener('click', async () => {
   const name = document.getElementById('sig-name').value.trim();
-  const child = document.getElementById('sig-child').value.trim();
-  const grade = document.getElementById('sig-grade').value;
-  if (!name || !child || !grade) { showToast('Please fill in all fields'); return; }
+  if (!name) { showToast('Please enter your name'); return; }
 
   const btn = document.getElementById('modalConfirm');
   btn.disabled = true;
@@ -372,8 +355,6 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
         slot_id: currentSlotId,
         parent_name: name,
         parent_email: currentUserEmail,
-        child_name: child,
-        child_grade: grade,
         role: currentSlotRole
       })
     });
@@ -414,7 +395,6 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
             <p style="color:#3A2E2A;font-size:16px;">Thank you for signing up to volunteer at NCS!</p>
             <div style="background:#fdf6f2;border-radius:8px;padding:16px 20px;margin:20px 0;">
               <p style="margin:0;font-size:15px;color:#3A2E2A;"><strong>Date & Time:</strong> ${document.getElementById('modalSlotSummary').querySelector('strong').textContent}</p>
-              <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Child:</strong> ${child} (${grade})</p>
               <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Role:</strong> ${currentSlotRole}</p>
             </div>
             <p style="color:#3A2E2A;font-size:15px;">To cancel, contact us at <a href="mailto:office@northridgecommunityschool.com" style="color:#B07D4F;">office@northridgecommunityschool.com</a>.</p>
@@ -430,8 +410,6 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
     btn.textContent = 'Confirm Signup';
     document.getElementById('signupModal').style.display = 'none';
     document.getElementById('sig-name').value = '';
-    document.getElementById('sig-child').value = '';
-    document.getElementById('sig-grade').value = '';
     currentSlotId = null;
     currentSlotRole = null;
     showToast('✅ Signed up! Check your email for confirmation.', 4000);

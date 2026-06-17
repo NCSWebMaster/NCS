@@ -191,7 +191,7 @@ footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
   .admissions-wrap{grid-template-columns:1fr;}
   .donate-grid{grid-template-columns:repeat(2,1fr);}
   .menu-toggle{display:flex;}
-  .brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;}
+  .brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;font-size:0.95rem;}
   .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:#fff;border-bottom:1px solid var(--grey-line);padding:8px 6% 16px;gap:0;box-shadow:0 8px 16px rgba(0,0,0,0.05);}
   .nav-links.open{display:flex;}
   .nav-links li{border-top:1px solid var(--grey-line);}
