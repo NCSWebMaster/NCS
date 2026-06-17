@@ -67,6 +67,8 @@
   .view-btn:hover{ background:var(--bronze); color:#fff; }
   .resend-btn{ background:none; border:1px solid var(--red); color:var(--red); border-radius:6px; padding:6px 14px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; cursor:pointer; transition:all 0.2s; }
   .resend-btn:hover{ background:var(--red); color:#fff; }
+  .print-btn{ display:inline-flex; align-items:center; gap:8px; background:none; border:2px solid var(--bronze); color:var(--bronze); border-radius:6px; padding:9px 18px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:all 0.2s; margin-bottom:16px; }
+  .print-btn:hover{ background:var(--bronze); color:#fff; }
   .toast{ position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; max-width:320px; }
   .toast.show{ opacity:1; }
   .empty-state{ text-align:center; padding:32px; color:#aaa; font-style:italic; font-size:0.95rem; }
@@ -219,6 +221,7 @@
     </div>
     <div class="events-list">
       <h3>Enrolled Families <span class="family-count" id="familyCount"></span></h3>
+      <button class="print-btn" onclick="printFamilies()">🖨️ Print / Save as PDF</button>
       <div id="familyList"></div>
     </div>
   </div>
@@ -345,6 +348,7 @@
     </div>
     <div class="events-list" style="margin-top:32px;">
       <h3>All Signups</h3>
+      <button class="print-btn" onclick="printVolunteers()">🖨️ Print / Save as PDF</button>
       <div id="volSignupList"></div>
     </div>
   </div>
@@ -817,6 +821,93 @@ window.deleteYearly = async (id) => {
   showToast('Date deleted');
   loadYearly();
 };
+
+// ── PRINT FUNCTIONS ───────────────────────────────────────────
+function openPrintWindow(title, bodyHTML) {
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <title>${title} — NCS</title>
+  <style>
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{ font-family:Arial,sans-serif; color:#3A2E2A; padding:32px; }
+    .print-header{ text-align:center; margin-bottom:32px; border-bottom:3px solid #C8102E; padding-bottom:20px; }
+    .print-header img{ height:80px; margin-bottom:12px; }
+    .print-header h1{ font-size:1.5rem; color:#C8102E; margin-bottom:4px; }
+    .print-header p{ font-size:0.85rem; color:#888; }
+    .print-row{ display:flex; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #E6E1DC; font-size:0.9rem; align-items:center; }
+    .print-row:nth-child(even){ background:#fdf6f2; }
+    .print-row strong{ font-size:0.95rem; color:#3A2E2A; }
+    .print-row span{ color:#6b5e58; }
+    .print-slot{ border:1px solid #E6E1DC; border-radius:8px; margin-bottom:16px; overflow:hidden; }
+    .print-slot-header{ background:#C8102E; color:#fff; padding:10px 14px; font-weight:bold; font-size:0.9rem; }
+    .print-slot-signup{ padding:8px 14px; border-bottom:1px solid #E6E1DC; font-size:0.88rem; color:#3A2E2A; }
+    .print-slot-signup:last-child{ border-bottom:none; }
+    .print-footer{ margin-top:40px; text-align:center; font-size:0.78rem; color:#aaa; border-top:1px solid #E6E1DC; padding-top:16px; }
+    .badge{ background:#B07D4F; color:#fff; padding:2px 10px; border-radius:12px; font-size:0.78rem; margin-left:8px; }
+    @media print{ body{ padding:16px; } }
+  </style>
+</head>
+<body>
+  <div class="print-header">
+    <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo">
+    <h1>Northridge Community School</h1>
+    <p>${title} · Generated ${new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}</p>
+  </div>
+  ${bodyHTML}
+  <div class="print-footer">
+    Northridge Community School · Where Godly Character meets Great Academics · www.northridgecommunityschool.com
+  </div>
+</body>
+</html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 800);
+}
+
+async function printFamilies() {
+  const { data } = await sb.from('family_emails').select('*').order('name');
+  if (!data || data.length === 0) { showToast('No families to print'); return; }
+  const rows = data.map((f, i) => `
+    <div class="print-row">
+      <strong>${i + 1}. ${f.name}</strong>
+      <span>${f.email}</span>
+    </div>`).join('');
+  openPrintWindow(`Enrolled Families (${data.length})`,
+    `<div style="margin-bottom:24px;"><h2 style="margin-bottom:12px;font-size:1.1rem;color:#B07D4F;">Enrolled Families — ${data.length} total</h2>${rows}</div>`
+  );
+}
+
+async function printVolunteers() {
+  const { data: slots } = await sb.from('volunteer_slots').select('*').order('id');
+  const { data: signups } = await sb.from('volunteer_signups').select('*').order('slot_id');
+
+  if (!slots || slots.length === 0) { showToast('No volunteer data to print'); return; }
+
+  const signupsBySlot = {};
+  (signups || []).forEach(s => {
+    if (!signupsBySlot[s.slot_id]) signupsBySlot[s.slot_id] = [];
+    signupsBySlot[s.slot_id].push(s);
+  });
+
+  const slotsHTML = slots.map(slot => {
+    const slotSignups = signupsBySlot[slot.id] || [];
+    const signupRows = slotSignups.length > 0
+      ? slotSignups.map(s => `<div class="print-slot-signup">👤 ${s.parent_name} &nbsp;·&nbsp; ${s.parent_email}</div>`).join('')
+      : `<div class="print-slot-signup" style="color:#aaa;font-style:italic;">No signups yet</div>`;
+    return `
+      <div class="print-slot">
+        <div class="print-slot-header">
+          📅 ${slot.date} at ${slot.time} &nbsp;·&nbsp; 📍 ${slot.classroom}${slot.teacher ? ' · ' + slot.teacher : ''} &nbsp;·&nbsp; 🙋 ${slot.role || 'Volunteer'} <span class="badge">${slot.spots_filled}/${slot.spots_total} filled</span>
+        </div>
+        ${signupRows}
+      </div>`;
+  }).join('');
+
+  openPrintWindow('Volunteer Slots & Signups',
+    `<div><h2 style="margin-bottom:16px;font-size:1.1rem;color:#B07D4F;">Volunteer Slots & Signups</h2>${slotsHTML}</div>`
+  );
+}
 </script>
 </body>
 </html>
