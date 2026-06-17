@@ -748,7 +748,6 @@ async function loadVolSignups() {
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px 16px;width:100%;">
         <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">📧 Email:</strong> ${s.parent_email}</span>
-        <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">👧 Child:</strong> ${s.child_name} (${s.child_grade})</span>
         <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">🙋 Role:</strong> ${s.volunteer_slots.role || s.role || '—'}</span>
         <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">📅 Date:</strong> ${s.volunteer_slots.date} at ${s.volunteer_slots.time}</span>
         <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">📍 Location:</strong> ${s.volunteer_slots.classroom}${s.volunteer_slots.teacher ? ' · ' + s.volunteer_slots.teacher : ''}</span>
