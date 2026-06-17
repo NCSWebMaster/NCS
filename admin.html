@@ -408,19 +408,23 @@ async function sendNewsletterEmail(title, date, fileUrl) {
     </div>`;
 
   // Send via Supabase database function (avoids CORS issues)
-  const emailPromises = families.map(family =>
-    sb.rpc('send_email_via_resend', {
+  const emailPromises = families.map(async family => {
+    const result = await sb.rpc('send_email_via_resend', {
       to_email: family.email,
       subject: `📰 New NCS Newsletter: ${title}`,
       html_body: htmlBody(family.name)
-    })
-  );
+    });
+    console.log(`Email to ${family.email}:`, result);
+    return result;
+  });
 
   const results = await Promise.all(emailPromises);
   const errors = results.filter(r => r.error);
   if (errors.length > 0) {
-    console.error('Some emails failed:', errors);
-    showToast(`⚠️ ${errors.length} email(s) failed to send. Check console.`, 5000);
+    showToast(`⚠️ Error: ${errors[0].error.message}`, 6000);
+    console.error('Email errors:', errors);
+  } else {
+    showToast('✅ Emails sent successfully!', 4000);
   }
 }
 
