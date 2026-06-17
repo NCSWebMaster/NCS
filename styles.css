@@ -191,10 +191,11 @@ footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
   .admissions-wrap{grid-template-columns:1fr;}
   .donate-grid{grid-template-columns:repeat(2,1fr);}
   .menu-toggle{display:flex;}
+  .brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;}
   .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:#fff;border-bottom:1px solid var(--grey-line);padding:8px 6% 16px;gap:0;box-shadow:0 8px 16px rgba(0,0,0,0.05);}
   .nav-links.open{display:flex;}
   .nav-links li{border-top:1px solid var(--grey-line);}
-  .nav-links a{display:block;padding:14px 4px;}
+  .nav-links a{display:block;padding:14px 4px;font-size:1.05rem;}
   .hero h1{font-size:2.2rem;}
   .schedule-table{gap:0 8px;}
   .schedule-item .day-name{font-size:0.85rem;}
