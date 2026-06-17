@@ -164,6 +164,14 @@
         <option>7th Grade</option>
         <option>8th Grade</option>
       </select>
+      <select id="sig-role" onchange="toggleOtherRole(this)">
+        <option value="">Volunteer role...</option>
+        <option value="Classroom Helper">Classroom Helper</option>
+        <option value="Lunch Supervisor">Lunch Supervisor</option>
+        <option value="Office Helper">Office Helper</option>
+        <option value="Other">Other (please specify)</option>
+      </select>
+      <input type="text" id="sig-role-other" placeholder="Please describe your role..." style="display:none;">
     </div>
     <div class="modal-btns">
       <button class="modal-cancel" id="modalCancel">Cancel</button>
@@ -281,6 +289,12 @@ async function loadMySignups() {
 }
 
 // ── MODAL ─────────────────────────────────────────────────────
+function toggleOtherRole(select) {
+  const otherInput = document.getElementById('sig-role-other');
+  otherInput.style.display = select.value === 'Other' ? 'block' : 'none';
+  if (select.value !== 'Other') otherInput.value = '';
+}
+
 window.openSignupModal = (id, date, time, classroom, teacher) => {
   currentSlotId = id;
   document.getElementById('modalSlotSummary').innerHTML =
@@ -297,7 +311,10 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
   const name = document.getElementById('sig-name').value.trim();
   const child = document.getElementById('sig-child').value.trim();
   const grade = document.getElementById('sig-grade').value;
-  if (!name || !child || !grade) { showToast('Please fill in all fields'); return; }
+  const roleSelect = document.getElementById('sig-role').value;
+  const roleOther = document.getElementById('sig-role-other').value.trim();
+  const role = roleSelect === 'Other' ? roleOther : roleSelect;
+  if (!name || !child || !grade || !role) { showToast('Please fill in all fields including your role'); return; }
 
   const btn = document.getElementById('modalConfirm');
   btn.disabled = true;
@@ -322,7 +339,8 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
     parent_name: name,
     parent_email: currentUserEmail,
     child_name: child,
-    child_grade: grade
+    child_grade: grade,
+    role: role
   });
 
   if (error) { showToast('Error: ' + error.message); btn.disabled = false; btn.textContent = 'Confirm Signup'; return; }
@@ -343,6 +361,7 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
         <div style="background:#fdf6f2;border-radius:8px;padding:16px 20px;margin:20px 0;">
           <p style="margin:0;font-size:15px;color:#3A2E2A;"><strong>Date & Time:</strong> ${document.getElementById('modalSlotSummary').querySelector('strong').textContent}</p>
           <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Child:</strong> ${child} (${grade})</p>
+          <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Role:</strong> ${role}</p>
         </div>
         <p style="color:#3A2E2A;font-size:15px;">If you need to cancel or make changes, please contact our office at <a href="mailto:office@northridgecommunityschool.com" style="color:#B07D4F;">office@northridgecommunityschool.com</a>.</p>
         <p style="color:#9a8b84;font-size:13px;border-top:1px solid #E6E1DC;padding-top:16px;margin-top:24px;">
@@ -357,6 +376,9 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
   document.getElementById('sig-name').value = '';
   document.getElementById('sig-child').value = '';
   document.getElementById('sig-grade').value = '';
+  document.getElementById('sig-role').value = '';
+  document.getElementById('sig-role-other').value = '';
+  document.getElementById('sig-role-other').style.display = 'none';
   currentSlotId = null;
   showToast('✅ Signed up! Check your email for confirmation.', 4000);
   loadSlots();

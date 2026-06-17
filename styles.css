@@ -16,8 +16,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 6
 .brand{display:flex;align-items:center;gap:12px;}
 .brand img{height:48px;}
 .brand span{font-size:1.25rem;color:var(--red);font-weight:700;}
-.nav-links{display:flex;gap:32px;list-style:none;}
-.nav-links a{text-decoration:none;color:var(--ink);font-family:'Trebuchet MS',sans-serif;font-size:0.95rem;font-weight:600;transition:color 0.2s;}
+.nav-links{display:flex;gap:24px;list-style:none;align-items:center;flex-wrap:nowrap;}
+.nav-links a{text-decoration:none;color:var(--ink);font-family:'Trebuchet MS',sans-serif;font-size:0.88rem;font-weight:600;transition:color 0.2s;white-space:nowrap;}
 .nav-links a:hover,.nav-links a.active{color:var(--red);}
 .menu-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px;}
 .menu-toggle span{display:block;width:24px;height:3px;background:var(--red);border-radius:2px;transition:transform 0.2s,opacity 0.2s;}
@@ -181,7 +181,11 @@ footer{background:#fdf6f2;border-top:1px solid var(--grey-line);padding:40px 6%;
 footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
 
 /* RESPONSIVE */
-@media(max-width:900px){
+@media(max-width:1024px){
+  .nav-links{gap:16px;}
+  .nav-links a{font-size:0.82rem;}
+  .brand span{font-size:1.05rem;}
+}
   .about-grid,.staff-grid,.tuition-grid{grid-template-columns:repeat(2,1fr);}
   .admissions-wrap{grid-template-columns:1fr;}
   .donate-grid{grid-template-columns:repeat(2,1fr);}
