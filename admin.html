@@ -394,7 +394,7 @@ async function sendNewsletterEmail(title, date, fileUrl) {
 
   const htmlBody = (name) => `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
-      <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:80px;margin-bottom:24px;">
+      <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:100px;width:auto;display:block;margin:0 auto 24px;">
       <h2 style="color:#C8102E;font-family:Arial,sans-serif;">New Newsletter Available</h2>
       <p style="color:#3A2E2A;font-size:16px;">Dear ${name},</p>
       <p style="color:#3A2E2A;font-size:16px;">The <strong>${title}</strong> (${date}) is now available. Click the button below to read it.</p>
