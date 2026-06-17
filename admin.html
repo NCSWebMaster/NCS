@@ -104,6 +104,7 @@
     <button class="admin-tab active" data-tab="newsletter">📰 Newsletter</button>
     <button class="admin-tab" data-tab="families">👨‍👩‍👧 Family Emails</button>
     <button class="admin-tab" data-tab="yearly">📆 Yearly Schedule</button>
+    <button class="admin-tab" data-tab="infonights">📣 Info Nights</button>
   </div>
 
   <!-- NEWSLETTER PANEL -->
@@ -162,6 +163,38 @@
     <div class="events-list">
       <h3>Enrolled Families <span class="family-count" id="familyCount"></span></h3>
       <div id="familyList"></div>
+    </div>
+  </div>
+
+  <!-- INFO NIGHTS PANEL -->
+  <div class="admin-panel" id="panel-infonights">
+    <div class="admin-form">
+      <h3>Add Information Night</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="text" id="in-date" placeholder="e.g. January 15, 2027">
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="text" id="in-time" placeholder="e.g. 6:00 PM">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="in-location" placeholder="e.g. Main Campus">
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <input type="text" id="in-notes" placeholder="e.g. Light refreshments provided">
+        </div>
+      </div>
+      <button class="save-btn" id="saveInfoNight">Add Info Night</button>
+    </div>
+    <div class="events-list">
+      <h3>Upcoming Info Nights</h3>
+      <div id="infoNightList"></div>
     </div>
   </div>
 
@@ -244,8 +277,8 @@ document.getElementById('signOutBtn').addEventListener('click', async () => {
 function loadAll() {
   loadNewsletters();
   loadFamilies();
-  loadWeekly();
   loadYearly();
+  loadInfoNights();
 }
 
 // ── TABS ──────────────────────────────────────────────────────
@@ -492,6 +525,52 @@ document.getElementById('saveYearly').addEventListener('click', async () => {
   showToast('Date added!');
   loadYearly();
 });
+
+// ── INFO NIGHTS ───────────────────────────────────────────────
+async function loadInfoNights() {
+  const { data } = await sb.from('info_nights').select('*').order('id');
+  const list = document.getElementById('infoNightList');
+  if (!data || data.length === 0) {
+    list.innerHTML = '<p class="empty-state">No info nights yet.</p>';
+    return;
+  }
+  list.innerHTML = data.map(n => `
+    <div class="event-row">
+      <div class="event-row-info">
+        <strong>📣 ${n.date} at ${n.time}</strong>
+        <span>${n.location}${n.notes ? ' · ' + n.notes : ''}</span>
+      </div>
+      <div class="event-row-actions">
+        <button class="delete-btn" onclick="deleteInfoNight(${n.id})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('saveInfoNight').addEventListener('click', async () => {
+  const btn = document.getElementById('saveInfoNight');
+  btn.disabled = true;
+  const { error } = await sb.from('info_nights').insert({
+    date: document.getElementById('in-date').value,
+    time: document.getElementById('in-time').value,
+    location: document.getElementById('in-location').value,
+    notes: document.getElementById('in-notes').value
+  });
+  btn.disabled = false;
+  if (error) { showToast('Error: ' + error.message); return; }
+  document.getElementById('in-date').value = '';
+  document.getElementById('in-time').value = '';
+  document.getElementById('in-location').value = '';
+  document.getElementById('in-notes').value = '';
+  showToast('Info night added!');
+  loadInfoNights();
+});
+
+window.deleteInfoNight = async (id) => {
+  if (!confirm('Delete this info night?')) return;
+  await sb.from('info_nights').delete().eq('id', id);
+  showToast('Info night deleted');
+  loadInfoNights();
+};
 
 window.deleteYearly = async (id) => {
   if (!confirm('Delete this date?')) return;

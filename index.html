@@ -20,6 +20,19 @@
   .hero-buttons a:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,0.12);}
   .intro-strip{text-align:center;padding:56px 6%;background:#fff;border-bottom:1px solid var(--grey-line);}
   .intro-strip p{max-width:700px;margin:0 auto;font-size:1.1rem;color:#5a4d47;line-height:1.8;}
+  .info-nights-section{background:#fff;border-bottom:1px solid var(--grey-line);text-align:center;}
+  .info-nights-table{width:100%;max-width:700px;margin:0 auto 24px;border-collapse:collapse;}
+  .info-nights-table th{font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.85rem;color:var(--bronze);text-transform:uppercase;letter-spacing:1px;padding:12px 16px;border-bottom:2px solid var(--grey-line);text-align:left;}
+  .info-nights-table td{padding:16px;border-bottom:1px solid var(--grey-line);font-size:0.95rem;color:var(--ink);text-align:left;}
+  .info-nights-table tr:last-child td{border-bottom:none;}
+  .info-nights-table tr:hover td{background:#fdf6f2;}
+  .info-nights-date{font-family:'Trebuchet MS',sans-serif;font-weight:700;color:var(--red);}
+  .info-nights-loading{color:#aaa;font-style:italic;padding:32px;}
+  .info-nights-empty{color:#aaa;font-style:italic;padding:32px;text-align:center;}
+  .info-nights-contact{font-size:0.9rem;color:#6b5e58;margin-top:8px;}
+  .info-nights-contact a{color:var(--bronze);text-decoration:none;font-weight:600;}
+  .info-nights-contact a:hover{text-decoration:underline;}
+  @media(max-width:600px){.info-nights-table th,.info-nights-table td{padding:10px 8px;font-size:0.88rem;}}
   .preview-section{background:#fdf6f2;border-bottom:1px solid var(--grey-line);}
   .preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1100px;margin:0 auto;}
   .preview-card{background:#fff;border:1px solid var(--grey-line);border-radius:12px;padding:36px 28px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.03);display:flex;flex-direction:column;align-items:center;}
@@ -105,6 +118,18 @@
   </div>
 </section>
 
+<section class="info-nights-section">
+  <div class="section-header">
+    <span class="eyebrow">Come See Us</span>
+    <h2>Upcoming Information Nights</h2>
+    <div class="divider"></div>
+  </div>
+  <div id="infoNightsList">
+    <p class="info-nights-loading">Loading upcoming dates...</p>
+  </div>
+  <p class="info-nights-contact">Questions? Contact us at <a href="mailto:office@northridgecommunityschool.com">office@northridgecommunityschool.com</a></p>
+</section>
+
 <section class="enroll-cta">
   <h2>Ready to Enroll?</h2>
   <p>Join NCS and give your child a place to grow in faith, character, and academics.</p>
@@ -133,5 +158,47 @@
 </footer>
 
 <script src="shared.js"></script>
+<script>
+const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
+
+async function loadInfoNights() {
+  const wrap = document.getElementById('infoNightsList');
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/info_nights?select=*&order=id`, {
+      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    if (!data || data.length === 0) {
+      wrap.innerHTML = '<p class="info-nights-empty">No upcoming information nights scheduled. Check back soon!</p>';
+      return;
+    }
+    wrap.innerHTML = `
+      <table class="info-nights-table">
+        <thead>
+          <tr>
+            <th>📅 Date</th>
+            <th>🕐 Time</th>
+            <th>📍 Location</th>
+            <th>📝 Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map(n => `
+            <tr>
+              <td class="info-nights-date">${n.date}</td>
+              <td>${n.time}</td>
+              <td>${n.location}</td>
+              <td>${n.notes || '—'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  } catch(err) {
+    wrap.innerHTML = '<p class="info-nights-empty">No upcoming information nights scheduled. Check back soon!</p>';
+  }
+}
+
+loadInfoNights();
+</script>
 </body>
 </html>
