@@ -218,13 +218,21 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = 'Checking...';
 
+  // Debug — show exactly what we're sending
+  console.log('Email sent:', email);
+  console.log('Code sent:', code);
+
   // Check email + code against family_emails table
+  const url = `${SUPABASE_URL}/rest/v1/family_emails?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=*`;
+  console.log('Query URL:', url);
   const data = await fetchData('family_emails', `?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=*`);
+  console.log('Result:', JSON.stringify(data));
 
   btn.disabled = false;
   btn.textContent = 'Sign In';
 
   if (!data || data.length === 0) {
+    errorDiv.textContent = `❌ No match found. Email: "${email}" Code: "${code}" — Check Supabase for exact values.`;
     errorDiv.style.display = 'block';
     return;
   }
