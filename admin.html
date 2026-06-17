@@ -103,7 +103,6 @@
   <div class="admin-tabs">
     <button class="admin-tab active" data-tab="newsletter">📰 Newsletter</button>
     <button class="admin-tab" data-tab="families">👨‍👩‍👧 Family Emails</button>
-    <button class="admin-tab" data-tab="weekly">📅 Weekly Events</button>
     <button class="admin-tab" data-tab="yearly">📆 Yearly Schedule</button>
   </div>
 
@@ -163,41 +162,6 @@
     <div class="events-list">
       <h3>Enrolled Families <span class="family-count" id="familyCount"></span></h3>
       <div id="familyList"></div>
-    </div>
-  </div>
-
-  <!-- WEEKLY EVENTS PANEL -->
-  <div class="admin-panel" id="panel-weekly">
-    <div class="admin-form">
-      <h3>Add Weekly Event</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Day</label>
-          <select id="w-day">
-            <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
-            <option>Thursday</option><option>Friday</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Time</label>
-          <input type="text" id="w-time" placeholder="e.g. 8:00 AM">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Event Title</label>
-          <input type="text" id="w-title" placeholder="e.g. Chapel Service">
-        </div>
-        <div class="form-group">
-          <label>Description</label>
-          <input type="text" id="w-desc" placeholder="e.g. All students K–8">
-        </div>
-      </div>
-      <button class="save-btn" id="saveWeekly">Add Event</button>
-    </div>
-    <div class="events-list">
-      <h3>Current Weekly Events</h3>
-      <div id="weeklyList"></div>
     </div>
   </div>
 
@@ -489,51 +453,6 @@ window.deleteFamily = async (id) => {
   await sb.from('family_emails').delete().eq('id', id);
   showToast('Family removed');
   loadFamilies();
-};
-
-// ── WEEKLY EVENTS ─────────────────────────────────────────────
-async function loadWeekly() {
-  const { data } = await sb.from('weekly_events').select('*').order('id');
-  const list = document.getElementById('weeklyList');
-  if (!data || data.length === 0) {
-    list.innerHTML = '<p class="empty-state">No events yet.</p>';
-    return;
-  }
-  list.innerHTML = data.map(e => `
-    <div class="event-row">
-      <div class="event-row-info">
-        <strong>${e.day} — ${e.title}</strong>
-        <span>${e.time}${e.description ? ' · ' + e.description : ''}</span>
-      </div>
-      <div class="event-row-actions">
-        <button class="delete-btn" onclick="deleteWeekly(${e.id})">Delete</button>
-      </div>
-    </div>`).join('');
-}
-
-document.getElementById('saveWeekly').addEventListener('click', async () => {
-  const btn = document.getElementById('saveWeekly');
-  btn.disabled = true;
-  const { error } = await sb.from('weekly_events').insert({
-    day: document.getElementById('w-day').value,
-    time: document.getElementById('w-time').value,
-    title: document.getElementById('w-title').value,
-    description: document.getElementById('w-desc').value
-  });
-  btn.disabled = false;
-  if (error) { showToast('Error: ' + error.message); return; }
-  document.getElementById('w-time').value = '';
-  document.getElementById('w-title').value = '';
-  document.getElementById('w-desc').value = '';
-  showToast('Event added!');
-  loadWeekly();
-});
-
-window.deleteWeekly = async (id) => {
-  if (!confirm('Delete this event?')) return;
-  await sb.from('weekly_events').delete().eq('id', id);
-  showToast('Event deleted');
-  loadWeekly();
 };
 
 // ── YEARLY SCHEDULE ───────────────────────────────────────────
