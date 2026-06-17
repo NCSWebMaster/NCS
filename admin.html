@@ -33,6 +33,9 @@
   .form-group input, .form-group select, .form-group textarea{ padding:10px 14px; border:1px solid var(--grey-line); border-radius:6px; font-family:Georgia,serif; font-size:0.95rem; color:var(--ink); background:#fff; transition:border-color 0.2s; }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus{ outline:none; border-color:var(--bronze); }
   .form-group input[type="file"]{ padding:8px; }
+  .form-group input[type="date"],
+  .form-group input[type="month"],
+  .form-group input[type="time"]{ padding:10px 14px; border:1px solid var(--grey-line); border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.95rem; color:var(--ink); background:#fff; cursor:pointer; }
   .save-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:12px 28px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:opacity 0.2s; }
   .save-btn:hover{ opacity:0.85; }
   .save-btn:disabled{ opacity:0.5; cursor:not-allowed; }
@@ -118,7 +121,7 @@
         </div>
         <div class="form-group">
           <label>Date</label>
-          <input type="text" id="nl-date" placeholder="e.g. October 2026">
+          <input type="month" id="nl-date">
         </div>
       </div>
       <div class="form-row single">
@@ -173,11 +176,11 @@
       <div class="form-row">
         <div class="form-group">
           <label>Date</label>
-          <input type="text" id="in-date" placeholder="e.g. January 15, 2027">
+          <input type="date" id="in-date">
         </div>
         <div class="form-group">
           <label>Time</label>
-          <input type="text" id="in-time" placeholder="e.g. 6:00 PM">
+          <input type="time" id="in-time">
         </div>
       </div>
       <div class="form-row">
@@ -214,7 +217,7 @@
         </div>
         <div class="form-group">
           <label>Date</label>
-          <input type="text" id="y-date" placeholder="e.g. Oct 3 or Oct 13–17">
+          <input type="date" id="y-date">
         </div>
       </div>
       <div class="form-row">
@@ -316,7 +319,8 @@ async function loadNewsletters() {
 
 async function uploadNewsletter(sendEmail) {
   const title = document.getElementById('nl-title').value.trim();
-  const date = document.getElementById('nl-date').value.trim();
+  const rawDate = document.getElementById('nl-date').value.trim();
+  const date = rawDate ? new Date(rawDate + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
   const file = document.getElementById('nl-file').files[0];
 
   if (!title || !date || !file) { showToast('Please fill in all fields and select a PDF'); return; }
@@ -513,7 +517,7 @@ document.getElementById('saveYearly').addEventListener('click', async () => {
   btn.disabled = true;
   const { error } = await sb.from('yearly_schedule').insert({
     month: document.getElementById('y-month').value,
-    date: document.getElementById('y-date').value,
+    date: (() => { const d = document.getElementById('y-date').value; return d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''; })(),
     title: document.getElementById('y-title').value,
     emoji: document.getElementById('y-emoji').value
   });
@@ -550,8 +554,8 @@ document.getElementById('saveInfoNight').addEventListener('click', async () => {
   const btn = document.getElementById('saveInfoNight');
   btn.disabled = true;
   const { error } = await sb.from('info_nights').insert({
-    date: document.getElementById('in-date').value,
-    time: document.getElementById('in-time').value,
+    date: (() => { const d = document.getElementById('in-date').value; return d ? new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''; })(),
+    time: (() => { const t = document.getElementById('in-time').value; if (!t) return ''; const [h, m] = t.split(':'); const hour = parseInt(h); const ampm = hour >= 12 ? 'PM' : 'AM'; return `${hour % 12 || 12}:${m} ${ampm}`; })(),
     location: document.getElementById('in-location').value,
     notes: document.getElementById('in-notes').value
   });
