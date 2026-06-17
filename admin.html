@@ -21,6 +21,18 @@
   .google-btn{ display:inline-flex; align-items:center; gap:12px; background:#fff; border:2px solid var(--grey-line); border-radius:8px; padding:14px 28px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1rem; color:var(--ink); cursor:pointer; transition:box-shadow 0.2s; }
   .google-btn:hover{ box-shadow:0 4px 14px rgba(0,0,0,0.1); }
   .google-btn img{ width:24px; }
+  .admin-greeting{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px; }
+  .greeting-text h2{ color:var(--red); font-size:1.5rem; margin-bottom:4px; }
+  .verse-card{ background:linear-gradient(135deg, #C8102E, #a00d25); border-radius:10px; padding:18px 24px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .verse-text{ color:#fff; font-family:Georgia,serif; font-style:italic; font-size:0.95rem; flex:1; line-height:1.6; }
+  .verse-ref{ color:rgba(255,255,255,0.75); font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.82rem; white-space:nowrap; }
+  .stats-dashboard{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
+  .stat-box{ background:#fff; border:1px solid var(--grey-line); border-radius:10px; padding:20px 16px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); }
+  .stat-box.highlight{ border-color:var(--bronze); background:#fdf6f2; }
+  .stat-box-number{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:2rem; color:var(--red); line-height:1; margin-bottom:6px; }
+  .stat-box.highlight .stat-box-number{ color:var(--bronze); }
+  .stat-box-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.78rem; font-weight:600; color:#9a8b84; text-transform:uppercase; letter-spacing:0.5px; }
+  @media(max-width:600px){ .stats-dashboard{ grid-template-columns:repeat(2,1fr); } .verse-card{ flex-direction:column; } }
   .admin-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:36px; padding-bottom:20px; border-bottom:1px solid var(--grey-line); }
   .admin-header h2{ color:var(--red); font-size:1.5rem; }
   .admin-user{ font-size:0.88rem; color:#6b5e58; font-family:'Trebuchet MS',sans-serif; }
@@ -109,12 +121,39 @@
 
 <!-- DASHBOARD -->
 <div id="adminDashboard" class="admin-wrap" style="display:none;">
-  <div class="admin-header">
-    <div>
-      <h2>NCS Admin Dashboard</h2>
+
+  <!-- GREETING & VERSE -->
+  <div class="admin-greeting" id="adminGreeting">
+    <div class="greeting-text">
+      <h2 id="greetingTitle">Good morning!</h2>
       <p class="admin-user" id="adminUserEmail"></p>
     </div>
     <button class="signout-btn" id="signOutBtn">Sign Out</button>
+  </div>
+
+  <div class="verse-card" id="verseCard">
+    <span class="verse-text" id="verseText"></span>
+    <span class="verse-ref" id="verseRef"></span>
+  </div>
+
+  <!-- STATS DASHBOARD -->
+  <div class="stats-dashboard" id="statsDashboard">
+    <div class="stat-box">
+      <div class="stat-box-number" id="statFamilies">—</div>
+      <div class="stat-box-label">Enrolled Families</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-number" id="statVolSlots">—</div>
+      <div class="stat-box-label">Open Vol. Slots</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-number" id="statNewsletters">—</div>
+      <div class="stat-box-label">Newsletters Sent</div>
+    </div>
+    <div class="stat-box highlight">
+      <div class="stat-box-number" id="statNextNight">—</div>
+      <div class="stat-box-label">Next Info Night</div>
+    </div>
   </div>
 
   <div class="admin-tabs">
@@ -400,6 +439,61 @@ function loadAll() {
   loadInfoNights();
   loadVolSlots();
   loadVolSignups();
+  loadGreetingAndStats();
+}
+
+// ── GREETING, VERSE & STATS ───────────────────────────────────
+const VERSES = [
+  { text: "I can do all things through Christ who strengthens me.", ref: "Philippians 4:13" },
+  { text: "Trust in the Lord with all your heart and lean not on your own understanding.", ref: "Proverbs 3:5" },
+  { text: "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you.", ref: "Jeremiah 29:11" },
+  { text: "The Lord is my shepherd; I shall not want.", ref: "Psalm 23:1" },
+  { text: "Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.", ref: "Joshua 1:9" },
+  { text: "And we know that in all things God works for the good of those who love him.", ref: "Romans 8:28" },
+  { text: "Commit to the Lord whatever you do, and he will establish your plans.", ref: "Proverbs 16:3" },
+  { text: "She is clothed with strength and dignity; she can laugh at the days to come.", ref: "Proverbs 31:25" },
+  { text: "Let your light shine before others, that they may see your good deeds and glorify your Father in heaven.", ref: "Matthew 5:16" },
+  { text: "Train up a child in the way he should go; even when he is old he will not depart from it.", ref: "Proverbs 22:6" },
+  { text: "Start children off on the way they should go, and even when they are old they will not turn from it.", ref: "Proverbs 22:6" },
+  { text: "The fear of the Lord is the beginning of wisdom.", ref: "Proverbs 9:10" },
+  { text: "Do everything in love.", ref: "1 Corinthians 16:14" },
+  { text: "Whatever you do, work at it with all your heart, as working for the Lord.", ref: "Colossians 3:23" }
+];
+
+async function loadGreetingAndStats() {
+  // Greeting by time of day
+  const hour = new Date().getHours();
+  let greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greetingTitle').textContent = `${greeting}! 🙏`;
+
+  // Daily verse — rotates by day of year
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  const verse = VERSES[dayOfYear % VERSES.length];
+  document.getElementById('verseText').textContent = `"${verse.text}"`;
+  document.getElementById('verseRef').textContent = verse.ref;
+
+  // Stats
+  const [families, newsletters, volSlots, infoNights] = await Promise.all([
+    sb.from('family_emails').select('id', { count: 'exact', head: true }),
+    sb.from('newsletters').select('id', { count: 'exact', head: true }),
+    sb.from('volunteer_slots').select('spots_total, spots_filled'),
+    sb.from('info_nights').select('date').order('id')
+  ]);
+
+  document.getElementById('statFamilies').textContent = families.count ?? '—';
+  document.getElementById('statNewsletters').textContent = newsletters.count ?? '—';
+
+  // Open volunteer spots
+  const openSlots = (volSlots.data || []).reduce((sum, s) => sum + (s.spots_total - s.spots_filled), 0);
+  document.getElementById('statVolSlots').textContent = openSlots;
+
+  // Next info night
+  if (infoNights.data && infoNights.data.length > 0) {
+    document.getElementById('statNextNight').textContent = infoNights.data[0].date.split(',')[0];
+  } else {
+    document.getElementById('statNextNight').textContent = 'None';
+    document.getElementById('statNextNight').style.fontSize = '1rem';
+  }
 }
 
 // ── TABS ──────────────────────────────────────────────────────
