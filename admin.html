@@ -392,37 +392,36 @@ async function sendNewsletterEmail(title, date, fileUrl) {
     return;
   }
 
-  // Send email to each family via Resend
+  const htmlBody = (name) => `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+      <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:80px;margin-bottom:24px;">
+      <h2 style="color:#C8102E;font-family:Arial,sans-serif;">New Newsletter Available</h2>
+      <p style="color:#3A2E2A;font-size:16px;">Dear ${name},</p>
+      <p style="color:#3A2E2A;font-size:16px;">The <strong>${title}</strong> (${date}) is now available. Click the button below to read it.</p>
+      <div style="text-align:center;margin:32px 0;">
+        <a href="${fileUrl}" style="background:#C8102E;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-family:Arial,sans-serif;font-weight:bold;font-size:16px;">📄 Read Newsletter</a>
+      </div>
+      <p style="color:#9a8b84;font-size:13px;border-top:1px solid #E6E1DC;padding-top:16px;margin-top:24px;">
+        Northridge Community School · Where Godly Character meets Great Academics<br>
+        You are receiving this because your child is enrolled at NCS.
+      </p>
+    </div>`;
+
+  // Send via Supabase database function (avoids CORS issues)
   const emailPromises = families.map(family =>
-    fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: `Northridge Community School <${FROM_EMAIL}>`,
-        to: [family.email],
-        subject: `📰 New NCS Newsletter: ${title}`,
-        html: `
-          <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
-            <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:80px;margin-bottom:24px;">
-            <h2 style="color:#C8102E;font-family:Arial,sans-serif;">New Newsletter Available</h2>
-            <p style="color:#3A2E2A;font-size:16px;">Dear ${family.name},</p>
-            <p style="color:#3A2E2A;font-size:16px;">The <strong>${title}</strong> (${date}) is now available. Click the button below to read it.</p>
-            <div style="text-align:center;margin:32px 0;">
-              <a href="${fileUrl}" style="background:#C8102E;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-family:Arial,sans-serif;font-weight:bold;font-size:16px;">📄 Read Newsletter</a>
-            </div>
-            <p style="color:#9a8b84;font-size:13px;border-top:1px solid #E6E1DC;padding-top:16px;margin-top:24px;">
-              Northridge Community School · Where Godly Character meets Great Academics<br>
-              You are receiving this because your child is enrolled at NCS.
-            </p>
-          </div>`
-      })
+    sb.rpc('send_email_via_resend', {
+      to_email: family.email,
+      subject: `📰 New NCS Newsletter: ${title}`,
+      html_body: htmlBody(family.name)
     })
   );
 
-  await Promise.all(emailPromises);
+  const results = await Promise.all(emailPromises);
+  const errors = results.filter(r => r.error);
+  if (errors.length > 0) {
+    console.error('Some emails failed:', errors);
+    showToast(`⚠️ ${errors.length} email(s) failed to send. Check console.`, 5000);
+  }
 }
 
 window.resendNewsletter = async (id, title, fileUrl, date) => {
