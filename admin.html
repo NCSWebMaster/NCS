@@ -36,10 +36,12 @@
   .save-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:12px 28px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:opacity 0.2s; }
   .save-btn:hover{ opacity:0.85; }
   .save-btn:disabled{ opacity:0.5; cursor:not-allowed; }
-  .send-btn{ background:var(--bronze); color:#fff; border:none; border-radius:6px; padding:12px 28px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:opacity 0.2s; margin-left:12px; }
+  .send-btn{ background:var(--bronze); color:#fff; border:none; border-radius:6px; padding:12px 28px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:opacity 0.2s; }
   .send-btn:hover{ opacity:0.85; }
   .send-btn:disabled{ opacity:0.5; cursor:not-allowed; }
   .btn-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .btn-row button{ flex:1; min-width:160px; text-align:center; }
+  @media(max-width:600px){ .btn-row{ flex-direction:column; } .btn-row button{ width:100%; flex:none; } }
   .events-list{ margin-top:28px; }
   .events-list h3{ color:var(--ink); font-size:1.1rem; margin-bottom:16px; }
   .event-row{ display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:#fff; border:1px solid var(--grey-line); border-radius:8px; margin-bottom:10px; gap:12px; }
