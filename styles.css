@@ -183,6 +183,8 @@ section{padding:70px 6%;}
 /* FOOTER */
 footer{background:#fdf6f2;border-top:1px solid var(--grey-line);padding:40px 6%;text-align:center;font-size:0.9rem;color:#9a8b84;font-family:'Trebuchet MS',sans-serif;}
 footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
+.footer-contact{margin-top:10px;font-size:0.85rem;color:#9a8b84;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
+.footer-divider{color:#ccc;}
 
 /* RESPONSIVE */
 @media(max-width:1024px){
