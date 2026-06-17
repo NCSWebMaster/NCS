@@ -378,6 +378,16 @@
           <label>Number of Spots Available</label>
           <input type="number" id="vol-spots" value="1" min="1" max="20">
         </div>
+        <div class="form-group">
+          <label>Send Reminder</label>
+          <select id="vol-reminder">
+            <option value="24">24 hours before (default)</option>
+            <option value="48">48 hours before</option>
+            <option value="72">3 days before</option>
+            <option value="168">1 week before</option>
+            <option value="0">No reminder</option>
+          </select>
+        </div>
       </div>
       <button class="save-btn" id="saveVolSlot">Add Slot</button>
     </div>
@@ -865,7 +875,7 @@ async function loadVolSlots() {
     <div class="event-row">
       <div class="event-row-info">
         <strong>${s.date} at ${s.time}</strong>
-        <span>${s.classroom}${s.teacher ? ' · ' + s.teacher : ''} · ${s.spots_filled}/${s.spots_total} filled</span>
+        <span>${s.classroom}${s.teacher ? ' · ' + s.teacher : ''} · ${s.spots_filled}/${s.spots_total} filled · ⏰ ${s.reminder_hours === 0 ? 'No reminder' : s.reminder_hours + 'hr reminder'} ${s.reminder_sent ? '✅ Sent' : ''}</span>
       </div>
       <div class="event-row-actions">
         <button class="delete-btn" onclick="deleteVolSlot(${s.id})">Delete</button>
@@ -911,7 +921,9 @@ document.getElementById('saveVolSlot').addEventListener('click', async () => {
     teacher: document.getElementById('vol-teacher').value,
     role: role,
     spots_total: parseInt(document.getElementById('vol-spots').value),
-    spots_filled: 0
+    spots_filled: 0,
+    reminder_hours: parseInt(document.getElementById('vol-reminder').value),
+    reminder_sent: false
   });
   btn.disabled = false;
   if (error) { showToast('Error: ' + error.message); return; }
@@ -921,6 +933,8 @@ document.getElementById('saveVolSlot').addEventListener('click', async () => {
   document.getElementById('vol-teacher').value = '';
   document.getElementById('vol-role').value = 'Classroom Helper';
   document.getElementById('vol-role-other').value = '';
+  document.getElementById('vol-spots').value = '1';
+  document.getElementById('vol-reminder').value = '24';
   showToast('Volunteer slot added!');
   loadVolSlots();
 });
