@@ -258,10 +258,23 @@ document.getElementById('volunteerSignOut').addEventListener('click', () => {
   showToast('Signed out');
 });
 
-// Check session on load
+// Check session on load — verify against database
 const savedEmail = sessionStorage.getItem('ncs_vol_email');
 const savedName = sessionStorage.getItem('ncs_vol_name');
-if (savedEmail && savedName) showDashboard(savedEmail, savedName);
+if (savedEmail && savedName) {
+  // Re-verify email still exists in family_emails
+  fetchData('family_emails', `?email=eq.${encodeURIComponent(savedEmail)}&select=id`).then(data => {
+    if (data && data.length > 0) {
+      showDashboard(savedEmail, savedName);
+    } else {
+      // Family was removed — clear session and show login
+      sessionStorage.removeItem('ncs_vol_email');
+      sessionStorage.removeItem('ncs_vol_name');
+      document.getElementById('loginError').textContent = '⚠️ Your account is no longer active. Please contact the office.';
+      document.getElementById('loginError').style.display = 'block';
+    }
+  });
+}
 
 // ── SLOTS ─────────────────────────────────────────────────────
 async function loadSlots() {
