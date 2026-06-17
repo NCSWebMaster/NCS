@@ -206,7 +206,7 @@ footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
   .hero h1{font-size:2.2rem;}
   .schedule-table{gap:0 8px;}
   .schedule-item .day-name{font-size:0.85rem;}
-  .day-tag{padding:5px 12px;font-size:0.75rem;}
+  .day-tag{width:80px;padding:5px 0;font-size:0.75rem;}
   .events-grid{grid-template-columns:1fr;gap:20px;}
 }
 @media(max-width:600px){
