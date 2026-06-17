@@ -307,6 +307,21 @@
       </div>
       <div class="form-row">
         <div class="form-group">
+          <label>Role Needed</label>
+          <select id="vol-role">
+            <option value="Classroom Helper">Classroom Helper</option>
+            <option value="Lunch Supervisor">Lunch Supervisor</option>
+            <option value="Office Helper">Office Helper</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>If Other, specify</label>
+          <input type="text" id="vol-role-other" placeholder="e.g. Field Trip Chaperone">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
           <label>Number of Spots Available</label>
           <input type="number" id="vol-spots" value="1" min="1" max="20">
         </div>
@@ -706,11 +721,15 @@ document.getElementById('saveVolSlot').addEventListener('click', async () => {
   const rawTime = document.getElementById('vol-time').value;
   const date = rawDate ? new Date(rawDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
   const time = rawTime ? (() => { const [h,m] = rawTime.split(':'); const hour = parseInt(h); return `${hour%12||12}:${m} ${hour>=12?'PM':'AM'}`; })() : '';
+  const roleSelect = document.getElementById('vol-role').value;
+  const roleOther = document.getElementById('vol-role-other').value.trim();
+  const role = roleSelect === 'Other' && roleOther ? roleOther : roleSelect;
   const { error } = await sb.from('volunteer_slots').insert({
     date,
     time,
     classroom: document.getElementById('vol-classroom').value,
     teacher: document.getElementById('vol-teacher').value,
+    role: role,
     spots_total: parseInt(document.getElementById('vol-spots').value),
     spots_filled: 0
   });
@@ -720,7 +739,8 @@ document.getElementById('saveVolSlot').addEventListener('click', async () => {
   document.getElementById('vol-time').value = '';
   document.getElementById('vol-classroom').value = '';
   document.getElementById('vol-teacher').value = '';
-  document.getElementById('vol-spots').value = '1';
+  document.getElementById('vol-role').value = 'Classroom Helper';
+  document.getElementById('vol-role-other').value = '';
   showToast('Volunteer slot added!');
   loadVolSlots();
 });

@@ -164,14 +164,6 @@
         <option>7th Grade</option>
         <option>8th Grade</option>
       </select>
-      <select id="sig-role" onchange="toggleOtherRole(this)">
-        <option value="">Volunteer role...</option>
-        <option value="Classroom Helper">Classroom Helper</option>
-        <option value="Lunch Supervisor">Lunch Supervisor</option>
-        <option value="Office Helper">Office Helper</option>
-        <option value="Other">Other (please specify)</option>
-      </select>
-      <input type="text" id="sig-role-other" placeholder="Please describe your role..." style="display:none;">
     </div>
     <div class="modal-btns">
       <button class="modal-cancel" id="modalCancel">Cancel</button>
@@ -256,12 +248,13 @@ async function loadSlots() {
         <div class="slot-info">
           <div class="slot-date">📅 ${slot.date} at ${slot.time}</div>
           <div class="slot-details">📍 ${slot.classroom}${slot.teacher ? ' · ' + slot.teacher : ''}</div>
+          <div class="slot-details" style="color:var(--bronze);font-weight:600;">🙋 ${slot.role || 'Volunteer'}</div>
           <div class="slot-spots ${isFull ? 'full' : 'open'}">
             ${isFull ? '🔴 Full' : `🟢 ${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining`}
           </div>
         </div>
         <button class="signup-btn ${isFull ? 'full' : ''}" 
-          ${isFull ? 'disabled' : `onclick="openSignupModal(${slot.id}, '${slot.date}', '${slot.time}', '${slot.classroom}', '${slot.teacher || ''}')"`}>
+          ${isFull ? 'disabled' : `onclick="openSignupModal(${slot.id}, '${slot.date}', '${slot.time}', '${slot.classroom}', '${slot.teacher || ''}', '${slot.role || 'Volunteer'}')"`}>
           ${isFull ? 'Full' : 'Sign Up'}
         </button>
       </div>`;
@@ -289,16 +282,15 @@ async function loadMySignups() {
 }
 
 // ── MODAL ─────────────────────────────────────────────────────
-function toggleOtherRole(select) {
-  const otherInput = document.getElementById('sig-role-other');
-  otherInput.style.display = select.value === 'Other' ? 'block' : 'none';
-  if (select.value !== 'Other') otherInput.value = '';
-}
+function toggleOtherRole(select) {}
 
-window.openSignupModal = (id, date, time, classroom, teacher) => {
+let currentSlotRole = null;
+
+window.openSignupModal = (id, date, time, classroom, teacher, role) => {
   currentSlotId = id;
+  currentSlotRole = role;
   document.getElementById('modalSlotSummary').innerHTML =
-    `<strong>${date} at ${time}</strong><br>${classroom}${teacher ? ' · ' + teacher : ''}`;
+    `<strong>${date} at ${time}</strong><br>${classroom}${teacher ? ' · ' + teacher : ''}<br><span style="color:var(--bronze);font-weight:600;">Role: ${role}</span>`;
   document.getElementById('signupModal').style.display = 'flex';
 };
 
@@ -311,10 +303,7 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
   const name = document.getElementById('sig-name').value.trim();
   const child = document.getElementById('sig-child').value.trim();
   const grade = document.getElementById('sig-grade').value;
-  const roleSelect = document.getElementById('sig-role').value;
-  const roleOther = document.getElementById('sig-role-other').value.trim();
-  const role = roleSelect === 'Other' ? roleOther : roleSelect;
-  if (!name || !child || !grade || !role) { showToast('Please fill in all fields including your role'); return; }
+  if (!name || !child || !grade) { showToast('Please fill in all fields'); return; }
 
   const btn = document.getElementById('modalConfirm');
   btn.disabled = true;
@@ -340,7 +329,7 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
     parent_email: currentUserEmail,
     child_name: child,
     child_grade: grade,
-    role: role
+    role: currentSlotRole
   });
 
   if (error) { showToast('Error: ' + error.message); btn.disabled = false; btn.textContent = 'Confirm Signup'; return; }
@@ -376,9 +365,7 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
   document.getElementById('sig-name').value = '';
   document.getElementById('sig-child').value = '';
   document.getElementById('sig-grade').value = '';
-  document.getElementById('sig-role').value = '';
-  document.getElementById('sig-role-other').value = '';
-  document.getElementById('sig-role-other').style.display = 'none';
+  currentSlotRole = null;
   currentSlotId = null;
   showToast('✅ Signed up! Check your email for confirmation.', 4000);
   loadSlots();
