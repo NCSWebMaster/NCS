@@ -40,6 +40,9 @@
   .form-group input, .form-group select, .form-group textarea{ padding:10px 14px; border:1px solid var(--grey-line); border-radius:6px; font-family:Georgia,serif; font-size:0.95rem; color:var(--ink); background:#fff; transition:border-color 0.2s; }
   .form-group input:focus, .form-group select:focus, .form-group textarea:focus{ outline:none; border-color:var(--bronze); }
   .form-group input[type="file"]{ padding:8px; }
+  @media(max-width:600px){
+    .form-group input[type="file"]{ width:100%; max-width:100%; box-sizing:border-box; font-size:0.85rem; }
+  }
   .form-group input[type="date"],
   .form-group input[type="month"],
   .form-group input[type="time"]{ padding:10px 14px; border:1px solid var(--grey-line); border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.95rem; color:var(--ink); background:#fff; cursor:pointer; }
