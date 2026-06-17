@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volunteer | Northridge Community School</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .volunteer-hero{ text-align:center; padding:60px 6% 50px; background:linear-gradient(180deg,#fff 0%,#fdf6f2 100%); border-bottom:1px solid var(--grey-line); }
+  .volunteer-hero h1{ font-size:2.6rem; color:var(--red); margin-bottom:12px; }
+  .volunteer-hero p{ font-size:1.05rem; color:#5a4d47; max-width:600px; margin:0 auto; }
+
+  /* LOGIN */
+  .login-section{ max-width:480px; margin:0 auto; text-align:center; padding:60px 6%; }
+  .login-section h2{ color:var(--red); margin-bottom:10px; }
+  .login-section p{ color:#5a4d47; margin-bottom:28px; font-size:0.95rem; }
+  .magic-form{ display:flex; flex-direction:column; gap:12px; max-width:360px; margin:0 auto; }
+  .magic-form input{ padding:12px 16px; border:1px solid var(--grey-line); border-radius:6px; font-family:Georgia,serif; font-size:0.95rem; color:var(--ink); }
+  .magic-form input:focus{ outline:none; border-color:var(--bronze); }
+  .magic-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:13px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:opacity 0.2s; }
+  .magic-btn:hover{ opacity:0.85; }
+  .magic-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .magic-sent{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:10px; padding:28px; margin-top:20px; }
+  .magic-sent h3{ color:var(--red); margin-bottom:8px; }
+  .magic-sent p{ color:#5a4d47; font-size:0.95rem; }
+
+  /* VOLUNTEER DASHBOARD */
+  .volunteer-wrap{ max-width:900px; margin:0 auto; padding:40px 6%; }
+  .volunteer-welcome{ display:flex; align-items:center; justify-content:space-between; margin-bottom:36px; padding-bottom:20px; border-bottom:1px solid var(--grey-line); flex-wrap:wrap; gap:12px; }
+  .volunteer-welcome h2{ color:var(--red); font-size:1.4rem; }
+  .volunteer-welcome p{ color:#6b5e58; font-size:0.88rem; font-family:'Trebuchet MS',sans-serif; }
+  .signout-btn{ background:none; border:1px solid var(--grey-line); border-radius:6px; padding:8px 16px; font-family:'Trebuchet MS',sans-serif; font-size:0.85rem; cursor:pointer; color:#6b5e58; transition:all 0.2s; }
+  .signout-btn:hover{ background:var(--red); color:#fff; border-color:var(--red); }
+
+  /* SLOTS */
+  .slots-header{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1.1rem; color:var(--ink); margin-bottom:18px; }
+  .slot-card{ background:#fff; border:1px solid var(--grey-line); border-radius:10px; padding:22px 24px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03); }
+  .slot-card.full{ background:#fdf6f2; opacity:0.7; }
+  .slot-info{ flex:1; }
+  .slot-date{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1rem; color:var(--red); margin-bottom:4px; }
+  .slot-details{ font-size:0.9rem; color:#6b5e58; margin-bottom:6px; }
+  .slot-spots{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; }
+  .slot-spots.open{ color:var(--bronze); }
+  .slot-spots.full{ color:#aaa; }
+  .signup-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:11px 22px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.88rem; cursor:pointer; transition:opacity 0.2s; white-space:nowrap; }
+  .signup-btn:hover{ opacity:0.85; }
+  .signup-btn.full{ background:#ddd; color:#aaa; cursor:not-allowed; }
+  .empty-slots{ text-align:center; padding:48px; color:#aaa; font-style:italic; }
+
+  /* SIGNUP MODAL */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .modal{ background:#fff; border-radius:12px; padding:36px 32px; max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+  .modal h3{ color:var(--red); font-size:1.3rem; margin-bottom:6px; }
+  .modal .slot-summary{ background:#fdf6f2; border-radius:8px; padding:14px 16px; margin-bottom:24px; font-size:0.9rem; color:#5a4d47; }
+  .modal-form{ display:flex; flex-direction:column; gap:14px; }
+  .modal-form input, .modal-form select{ padding:11px 14px; border:1px solid var(--grey-line); border-radius:6px; font-family:Georgia,serif; font-size:0.95rem; color:var(--ink); }
+  .modal-form input:focus, .modal-form select:focus{ outline:none; border-color:var(--bronze); }
+  .modal-btns{ display:flex; gap:12px; margin-top:8px; }
+  .modal-btns button{ flex:1; padding:12px; border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; border:none; transition:opacity 0.2s; }
+  .modal-confirm{ background:var(--red); color:#fff; }
+  .modal-confirm:hover{ opacity:0.85; }
+  .modal-confirm:disabled{ opacity:0.5; cursor:not-allowed; }
+  .modal-cancel{ background:#f3eee9; color:#6b5e58; }
+  .modal-cancel:hover{ background:#e6ddd6; }
+
+  /* MY SIGNUPS */
+  .my-signups{ margin-top:40px; padding-top:32px; border-top:1px solid var(--grey-line); }
+  .my-signups h3{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1.1rem; color:var(--ink); margin-bottom:18px; }
+  .my-signup-card{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:8px; padding:16px 20px; margin-bottom:12px; }
+  .my-signup-card strong{ font-family:'Trebuchet MS',sans-serif; font-size:0.95rem; color:var(--ink); display:block; margin-bottom:4px; }
+  .my-signup-card span{ font-size:0.85rem; color:#6b5e58; }
+  .cancel-note{ font-size:0.82rem; color:#aaa; font-style:italic; margin-top:6px; display:block; }
+
+  .toast{ position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; max-width:320px; }
+  .toast.show{ opacity:1; }
+
+  @media(max-width:600px){
+    .slot-card{ flex-direction:column; align-items:flex-start; }
+    .signup-btn{ width:100%; }
+    .modal{ padding:24px 20px; }
+    .modal-btns{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="brand">
+    <img src="logo.png" alt="NCS Crest">
+    <span>Northridge Community School</span>
+  </a>
+    <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="admissions.html">Admissions</a></li>
+    <li><a href="volunteer.html" class="active">Volunteer</a></li>
+    <li><a href="index.html#donate">Donate</a></li>
+  </ul>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="volunteer-hero">
+  <h1>Volunteer at NCS</h1>
+  <p>We'd love your help! Sign in with your email to view and sign up for available volunteer opportunities.</p>
+</div>
+
+<!-- LOGIN -->
+<div id="loginSection">
+  <div class="login-section">
+    <h2>Sign In to Volunteer</h2>
+    <p>Enter your email and we'll send you a magic link — no password needed.</p>
+    <div class="magic-form">
+      <input type="email" id="magicEmail" placeholder="your@email.com">
+      <button class="magic-btn" id="sendMagicLink">Send Magic Link</button>
+    </div>
+    <div id="magicSent" style="display:none;" class="magic-sent">
+      <h3>Check your inbox! 📬</h3>
+      <p>We sent a sign-in link to your email. Click it to access your volunteer dashboard.</p>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="volunteerDashboard" style="display:none;">
+  <div class="volunteer-wrap">
+    <div class="volunteer-welcome">
+      <div>
+        <h2>Volunteer Opportunities</h2>
+        <p id="volunteerUserEmail"></p>
+      </div>
+      <button class="signout-btn" id="volunteerSignOut">Sign Out</button>
+    </div>
+
+    <div class="slots-header">Available Slots</div>
+    <div id="slotsList"></div>
+
+    <div class="my-signups">
+      <h3>My Signups</h3>
+      <div id="mySignupsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-overlay" id="signupModal" style="display:none;">
+  <div class="modal">
+    <h3>Sign Up to Volunteer</h3>
+    <div class="slot-summary" id="modalSlotSummary"></div>
+    <div class="modal-form">
+      <input type="text" id="sig-name" placeholder="Your full name">
+      <input type="text" id="sig-child" placeholder="Child's name">
+      <select id="sig-grade">
+        <option value="">Child's grade...</option>
+        <option>TK</option>
+        <option>Kindergarten</option>
+        <option>1st Grade</option>
+        <option>2nd Grade</option>
+        <option>3rd Grade</option>
+        <option>4th Grade</option>
+        <option>5th Grade</option>
+        <option>6th Grade</option>
+        <option>7th Grade</option>
+        <option>8th Grade</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+      <button class="modal-confirm" id="modalConfirm">Confirm Signup</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <img class="crest-small" src="logo.png" alt="NCS Crest">
+  <p>&copy; 2026 Northridge Community School. All rights reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared.js"></script>
+<script>
+const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let currentSlotId = null;
+let currentUserEmail = null;
+
+function showToast(msg, duration = 3500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ── AUTH ──────────────────────────────────────────────────────
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (session) {
+    currentUserEmail = session.user.email;
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('volunteerDashboard').style.display = 'block';
+    document.getElementById('volunteerUserEmail').textContent = 'Signed in as ' + currentUserEmail;
+    loadSlots();
+    loadMySignups();
+  } else {
+    document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('volunteerDashboard').style.display = 'none';
+  }
+});
+
+document.getElementById('sendMagicLink').addEventListener('click', async () => {
+  const email = document.getElementById('magicEmail').value.trim();
+  if (!email) { showToast('Please enter your email'); return; }
+  const btn = document.getElementById('sendMagicLink');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.href }
+  });
+  btn.disabled = false;
+  btn.textContent = 'Send Magic Link';
+  if (error) { showToast('Error: ' + error.message); return; }
+  document.getElementById('magicSent').style.display = 'block';
+});
+
+document.getElementById('volunteerSignOut').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  showToast('Signed out');
+});
+
+// ── SLOTS ─────────────────────────────────────────────────────
+async function loadSlots() {
+  const { data } = await sb.from('volunteer_slots').select('*').order('id');
+  const list = document.getElementById('slotsList');
+  if (!data || data.length === 0) {
+    list.innerHTML = '<p class="empty-slots">No volunteer opportunities available right now. Check back soon!</p>';
+    return;
+  }
+  list.innerHTML = data.map(slot => {
+    const spotsLeft = slot.spots_total - slot.spots_filled;
+    const isFull = spotsLeft <= 0;
+    return `
+      <div class="slot-card ${isFull ? 'full' : ''}">
+        <div class="slot-info">
+          <div class="slot-date">📅 ${slot.date} at ${slot.time}</div>
+          <div class="slot-details">📍 ${slot.classroom}${slot.teacher ? ' · ' + slot.teacher : ''}</div>
+          <div class="slot-spots ${isFull ? 'full' : 'open'}">
+            ${isFull ? '🔴 Full' : `🟢 ${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining`}
+          </div>
+        </div>
+        <button class="signup-btn ${isFull ? 'full' : ''}" 
+          ${isFull ? 'disabled' : `onclick="openSignupModal(${slot.id}, '${slot.date}', '${slot.time}', '${slot.classroom}', '${slot.teacher || ''}')"`}>
+          ${isFull ? 'Full' : 'Sign Up'}
+        </button>
+      </div>`;
+  }).join('');
+}
+
+// ── MY SIGNUPS ────────────────────────────────────────────────
+async function loadMySignups() {
+  const { data } = await sb.from('volunteer_signups')
+    .select('*, volunteer_slots(date, time, classroom)')
+    .eq('parent_email', currentUserEmail)
+    .order('id', { ascending: false });
+
+  const list = document.getElementById('mySignupsList');
+  if (!data || data.length === 0) {
+    list.innerHTML = '<p style="color:#aaa;font-style:italic;font-size:0.9rem;">You have no upcoming signups.</p>';
+    return;
+  }
+  list.innerHTML = data.map(s => `
+    <div class="my-signup-card">
+      <strong>${s.volunteer_slots.date} at ${s.volunteer_slots.time}</strong>
+      <span>${s.volunteer_slots.classroom} · ${s.child_name} (${s.child_grade})</span>
+      <span class="cancel-note">Need to cancel? Contact us at office@northridgecommunityschool.com</span>
+    </div>`).join('');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────
+window.openSignupModal = (id, date, time, classroom, teacher) => {
+  currentSlotId = id;
+  document.getElementById('modalSlotSummary').innerHTML =
+    `<strong>${date} at ${time}</strong><br>${classroom}${teacher ? ' · ' + teacher : ''}`;
+  document.getElementById('signupModal').style.display = 'flex';
+};
+
+document.getElementById('modalCancel').addEventListener('click', () => {
+  document.getElementById('signupModal').style.display = 'none';
+  currentSlotId = null;
+});
+
+document.getElementById('modalConfirm').addEventListener('click', async () => {
+  const name = document.getElementById('sig-name').value.trim();
+  const child = document.getElementById('sig-child').value.trim();
+  const grade = document.getElementById('sig-grade').value;
+  if (!name || !child || !grade) { showToast('Please fill in all fields'); return; }
+
+  const btn = document.getElementById('modalConfirm');
+  btn.disabled = true;
+  btn.textContent = 'Signing up...';
+
+  // Check not already signed up for this slot
+  const { data: existing } = await sb.from('volunteer_signups')
+    .select('id')
+    .eq('slot_id', currentSlotId)
+    .eq('parent_email', currentUserEmail);
+
+  if (existing && existing.length > 0) {
+    showToast('You are already signed up for this slot!');
+    btn.disabled = false;
+    btn.textContent = 'Confirm Signup';
+    return;
+  }
+
+  // Insert signup
+  const { error } = await sb.from('volunteer_signups').insert({
+    slot_id: currentSlotId,
+    parent_name: name,
+    parent_email: currentUserEmail,
+    child_name: child,
+    child_grade: grade
+  });
+
+  if (error) { showToast('Error: ' + error.message); btn.disabled = false; btn.textContent = 'Confirm Signup'; return; }
+
+  // Increment spots_filled
+  await sb.rpc('increment_spots_filled', { slot_id_input: currentSlotId });
+
+  // Send confirmation email
+  await sb.rpc('send_email_via_resend', {
+    to_email: currentUserEmail,
+    subject: '✅ Volunteer Signup Confirmed — NCS',
+    html_body: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+        <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:100px;width:auto;display:block;margin:0 auto 24px;">
+        <h2 style="color:#C8102E;text-align:center;">Volunteer Signup Confirmed!</h2>
+        <p style="color:#3A2E2A;font-size:16px;">Dear ${name},</p>
+        <p style="color:#3A2E2A;font-size:16px;">Thank you for signing up to volunteer at NCS! Here are your details:</p>
+        <div style="background:#fdf6f2;border-radius:8px;padding:16px 20px;margin:20px 0;">
+          <p style="margin:0;font-size:15px;color:#3A2E2A;"><strong>Date & Time:</strong> ${document.getElementById('modalSlotSummary').querySelector('strong').textContent}</p>
+          <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Child:</strong> ${child} (${grade})</p>
+        </div>
+        <p style="color:#3A2E2A;font-size:15px;">If you need to cancel or make changes, please contact our office at <a href="mailto:office@northridgecommunityschool.com" style="color:#B07D4F;">office@northridgecommunityschool.com</a>.</p>
+        <p style="color:#9a8b84;font-size:13px;border-top:1px solid #E6E1DC;padding-top:16px;margin-top:24px;">
+          Northridge Community School · Where Godly Character meets Great Academics
+        </p>
+      </div>`
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Confirm Signup';
+  document.getElementById('signupModal').style.display = 'none';
+  document.getElementById('sig-name').value = '';
+  document.getElementById('sig-child').value = '';
+  document.getElementById('sig-grade').value = '';
+  currentSlotId = null;
+  showToast('✅ Signed up! Check your email for confirmation.', 4000);
+  loadSlots();
+  loadMySignups();
+});
+</script>
+</body>
+</html>

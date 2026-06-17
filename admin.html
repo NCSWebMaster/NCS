@@ -73,10 +73,12 @@
     <img src="logo.png" alt="NCS Crest">
     <span>Northridge Community School</span>
   </a>
-  <ul class="nav-links" id="navLinks">
+    <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="admissions.html">Admissions</a></li>
+    <li><a href="volunteer.html">Volunteer</a></li>
+    <li><a href="index.html#donate">Donate</a></li>
   </ul>
   <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">
     <span></span><span></span><span></span>
@@ -108,6 +110,7 @@
     <button class="admin-tab" data-tab="families">👨‍👩‍👧 Family Emails</button>
     <button class="admin-tab" data-tab="yearly">📆 Yearly Schedule</button>
     <button class="admin-tab" data-tab="infonights">📣 Info Nights</button>
+    <button class="admin-tab" data-tab="volunteer">🙋 Volunteer Slots</button>
   </div>
 
   <!-- NEWSLETTER PANEL -->
@@ -278,6 +281,48 @@
       <div id="yearlyList"></div>
     </div>
   </div>
+  <!-- VOLUNTEER SLOTS PANEL -->
+  <div class="admin-panel" id="panel-volunteer">
+    <div class="admin-form">
+      <h3>Add Volunteer Slot</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="vol-date">
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="time" id="vol-time">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Classroom / Location</label>
+          <input type="text" id="vol-classroom" placeholder="e.g. Room 4 - Mrs. Roush">
+        </div>
+        <div class="form-group">
+          <label>Teacher Name</label>
+          <input type="text" id="vol-teacher" placeholder="e.g. Mrs. Roush">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Number of Spots Available</label>
+          <input type="number" id="vol-spots" value="1" min="1" max="20">
+        </div>
+      </div>
+      <button class="save-btn" id="saveVolSlot">Add Slot</button>
+    </div>
+    <div class="events-list">
+      <h3>Current Volunteer Slots</h3>
+      <div id="volSlotList"></div>
+    </div>
+    <div class="events-list" style="margin-top:32px;">
+      <h3>All Signups</h3>
+      <div id="volSignupList"></div>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -323,6 +368,8 @@ function loadAll() {
   loadFamilies();
   loadYearly();
   loadInfoNights();
+  loadVolSlots();
+  loadVolSignups();
 }
 
 // ── TABS ──────────────────────────────────────────────────────
@@ -615,6 +662,89 @@ window.deleteInfoNight = async (id) => {
   await sb.from('info_nights').delete().eq('id', id);
   showToast('Info night deleted');
   loadInfoNights();
+};
+
+// ── VOLUNTEER SLOTS ───────────────────────────────────────────
+async function loadVolSlots() {
+  const { data } = await sb.from('volunteer_slots').select('*').order('id');
+  const list = document.getElementById('volSlotList');
+  if (!data || data.length === 0) { list.innerHTML = '<p class="empty-state">No slots yet.</p>'; return; }
+  list.innerHTML = data.map(s => `
+    <div class="event-row">
+      <div class="event-row-info">
+        <strong>${s.date} at ${s.time}</strong>
+        <span>${s.classroom}${s.teacher ? ' · ' + s.teacher : ''} · ${s.spots_filled}/${s.spots_total} filled</span>
+      </div>
+      <div class="event-row-actions">
+        <button class="delete-btn" onclick="deleteVolSlot(${s.id})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+async function loadVolSignups() {
+  const { data } = await sb.from('volunteer_signups')
+    .select('*, volunteer_slots(date, time, classroom)')
+    .order('id', { ascending: false });
+  const list = document.getElementById('volSignupList');
+  if (!data || data.length === 0) { list.innerHTML = '<p class="empty-state">No signups yet.</p>'; return; }
+  list.innerHTML = data.map(s => `
+    <div class="event-row">
+      <div class="event-row-info">
+        <strong>${s.parent_name}</strong>
+        <span>${s.parent_email} · ${s.child_name} (${s.child_grade}) · ${s.volunteer_slots.date} ${s.volunteer_slots.time}</span>
+      </div>
+      <div class="event-row-actions">
+        <button class="delete-btn" onclick="deleteVolSignup(${s.id}, ${s.slot_id})">Remove</button>
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('saveVolSlot').addEventListener('click', async () => {
+  const btn = document.getElementById('saveVolSlot');
+  btn.disabled = true;
+  const rawDate = document.getElementById('vol-date').value;
+  const rawTime = document.getElementById('vol-time').value;
+  const date = rawDate ? new Date(rawDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+  const time = rawTime ? (() => { const [h,m] = rawTime.split(':'); const hour = parseInt(h); return `${hour%12||12}:${m} ${hour>=12?'PM':'AM'}`; })() : '';
+  const { error } = await sb.from('volunteer_slots').insert({
+    date,
+    time,
+    classroom: document.getElementById('vol-classroom').value,
+    teacher: document.getElementById('vol-teacher').value,
+    spots_total: parseInt(document.getElementById('vol-spots').value),
+    spots_filled: 0
+  });
+  btn.disabled = false;
+  if (error) { showToast('Error: ' + error.message); return; }
+  document.getElementById('vol-date').value = '';
+  document.getElementById('vol-time').value = '';
+  document.getElementById('vol-classroom').value = '';
+  document.getElementById('vol-teacher').value = '';
+  document.getElementById('vol-spots').value = '1';
+  showToast('Volunteer slot added!');
+  loadVolSlots();
+});
+
+window.deleteVolSlot = async (id) => {
+  if (!confirm('Delete this slot and all its signups?')) return;
+  await sb.from('volunteer_signups').delete().eq('slot_id', id);
+  await sb.from('volunteer_slots').delete().eq('id', id);
+  showToast('Slot deleted');
+  loadVolSlots();
+  loadVolSignups();
+};
+
+window.deleteVolSignup = async (id, slotId) => {
+  if (!confirm('Remove this signup?')) return;
+  await sb.from('volunteer_signups').delete().eq('id', id);
+  // Decrement spots_filled
+  const { data } = await sb.from('volunteer_slots').select('spots_filled').eq('id', slotId).single();
+  if (data && data.spots_filled > 0) {
+    await sb.from('volunteer_slots').update({ spots_filled: data.spots_filled - 1 }).eq('id', slotId);
+  }
+  showToast('Signup removed');
+  loadVolSlots();
+  loadVolSignups();
 };
 
 window.deleteYearly = async (id) => {
