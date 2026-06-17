@@ -562,13 +562,17 @@ async function loadFamilies() {
     return;
   }
   list.innerHTML = data.map(f => `
-    <div class="event-row">
-      <div class="event-row-info">
-        <strong>${f.name}</strong>
-        <span>${f.email}</span>
+    <div class="event-row" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
+        <strong style="font-family:'Trebuchet MS',sans-serif;font-size:0.95rem;color:var(--ink);">${f.name}</strong>
+        <div class="event-row-actions">
+          <button class="resend-btn" onclick="resendAccessCode(${f.id}, '${f.email}', '${f.name}', '${f.access_code}')">Resend Code</button>
+          <button class="delete-btn" onclick="deleteFamily(${f.id})">Remove</button>
+        </div>
       </div>
-      <div class="event-row-actions">
-        <button class="delete-btn" onclick="deleteFamily(${f.id})">Remove</button>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;">
+        <span style="font-size:0.85rem;color:#6b5e58;">📧 ${f.email}</span>
+        <span style="font-size:0.85rem;font-family:'Trebuchet MS',sans-serif;font-weight:700;color:var(--red);letter-spacing:3px;">🔑 ${f.access_code || 'No code'}</span>
       </div>
     </div>`).join('');
 }
@@ -579,14 +583,40 @@ document.getElementById('saveFamiliy').addEventListener('click', async () => {
   if (!name || !email) { showToast('Please enter both name and email'); return; }
   const btn = document.getElementById('saveFamiliy');
   btn.disabled = true;
+  btn.textContent = 'Adding...';
   const { error } = await sb.from('family_emails').insert({ name, email });
   btn.disabled = false;
+  btn.textContent = 'Add Family';
   if (error) { showToast('Error: ' + error.message); return; }
   document.getElementById('fam-name').value = '';
   document.getElementById('fam-email').value = '';
-  showToast('Family added!');
+  showToast('✅ Family added and access code emailed!', 4000);
   loadFamilies();
 });
+
+window.resendAccessCode = async (id, email, name, code) => {
+  if (!confirm(`Resend access code to ${email}?`)) return;
+  const { error } = await sb.rpc('send_email_via_resend', {
+    to_email: email,
+    subject: 'Your NCS Volunteer Access Code',
+    html_body: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+      <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:100px;width:auto;display:block;margin:0 auto 24px;">
+      <h2 style="color:#C8102E;text-align:center;">Your Volunteer Access Code</h2>
+      <p style="color:#3A2E2A;font-size:16px;">Dear ${name},</p>
+      <p style="color:#3A2E2A;font-size:16px;">Here is your NCS volunteer access code:</p>
+      <div style="background:#fdf6f2;border-radius:8px;padding:24px;margin:24px 0;text-align:center;">
+        <p style="margin:0 0 8px;font-size:14px;color:#888;">Your Access Code</p>
+        <p style="margin:0;font-size:2.5rem;font-weight:bold;color:#C8102E;letter-spacing:8px;">${code}</p>
+      </div>
+      <p style="color:#3A2E2A;font-size:15px;">Use this code along with your email to sign in at <a href="https://ncswebmaster.github.io/NCS/volunteer.html" style="color:#B07D4F;">our volunteer page</a>.</p>
+      <p style="color:#9a8b84;font-size:13px;border-top:1px solid #E6E1DC;padding-top:16px;margin-top:24px;">
+        Northridge Community School · Where Godly Character meets Great Academics
+      </p>
+    </div>`
+  });
+  if (error) { showToast('Error: ' + error.message); return; }
+  showToast('✅ Access code resent!');
+};
 
 window.deleteFamily = async (id) => {
   if (!confirm('Remove this family from the email list?')) return;
@@ -698,18 +728,22 @@ async function loadVolSlots() {
 
 async function loadVolSignups() {
   const { data } = await sb.from('volunteer_signups')
-    .select('*, volunteer_slots(date, time, classroom)')
+    .select('*, volunteer_slots(date, time, classroom, teacher, role)')
     .order('id', { ascending: false });
   const list = document.getElementById('volSignupList');
   if (!data || data.length === 0) { list.innerHTML = '<p class="empty-state">No signups yet.</p>'; return; }
   list.innerHTML = data.map(s => `
-    <div class="event-row">
-      <div class="event-row-info">
-        <strong>${s.parent_name}</strong>
-        <span>${s.parent_email} · ${s.child_name} (${s.child_grade}) · ${s.volunteer_slots.date} ${s.volunteer_slots.time}</span>
-      </div>
-      <div class="event-row-actions">
+    <div class="event-row" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
+        <strong style="font-family:'Trebuchet MS',sans-serif;font-size:0.95rem;color:var(--ink);">${s.parent_name}</strong>
         <button class="delete-btn" onclick="deleteVolSignup(${s.id}, ${s.slot_id})">Remove</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px 16px;width:100%;">
+        <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">📧 Email:</strong> ${s.parent_email}</span>
+        <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">👧 Child:</strong> ${s.child_name} (${s.child_grade})</span>
+        <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">🙋 Role:</strong> ${s.volunteer_slots.role || s.role || '—'}</span>
+        <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">📅 Date:</strong> ${s.volunteer_slots.date} at ${s.volunteer_slots.time}</span>
+        <span style="font-size:0.82rem;color:#888;"><strong style="color:var(--bronze);">📍 Location:</strong> ${s.volunteer_slots.classroom}${s.volunteer_slots.teacher ? ' · ' + s.volunteer_slots.teacher : ''}</span>
       </div>
     </div>`).join('');
 }

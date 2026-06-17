@@ -14,15 +14,14 @@
   .login-section{ max-width:480px; margin:0 auto; text-align:center; padding:60px 6%; }
   .login-section h2{ color:var(--red); margin-bottom:10px; }
   .login-section p{ color:#5a4d47; margin-bottom:28px; font-size:0.95rem; }
-  .magic-form{ display:flex; flex-direction:column; gap:12px; max-width:360px; margin:0 auto; }
-  .magic-form input{ padding:12px 16px; border:1px solid var(--grey-line); border-radius:6px; font-family:Georgia,serif; font-size:0.95rem; color:var(--ink); }
-  .magic-form input:focus{ outline:none; border-color:var(--bronze); }
-  .magic-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:13px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:opacity 0.2s; }
-  .magic-btn:hover{ opacity:0.85; }
-  .magic-btn:disabled{ opacity:0.5; cursor:not-allowed; }
-  .magic-sent{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:10px; padding:28px; margin-top:20px; }
-  .magic-sent h3{ color:var(--red); margin-bottom:8px; }
-  .magic-sent p{ color:#5a4d47; font-size:0.95rem; }
+  .login-form{ display:flex; flex-direction:column; gap:12px; max-width:360px; margin:0 auto; }
+  .login-form input{ padding:12px 16px; border:1px solid var(--grey-line); border-radius:6px; font-family:Georgia,serif; font-size:0.95rem; color:var(--ink); }
+  .login-form input:focus{ outline:none; border-color:var(--bronze); }
+  .login-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:13px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.95rem; cursor:pointer; transition:opacity 0.2s; }
+  .login-btn:hover{ opacity:0.85; }
+  .login-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .login-note{ font-size:0.82rem; color:#aaa; margin-top:8px; font-style:italic; }
+  .login-error{ background:#fff0f2; border:1px solid #f5c0c8; border-radius:8px; padding:12px 16px; color:#c0392b; font-size:0.9rem; margin-top:12px; display:none; }
 
   /* VOLUNTEER DASHBOARD */
   .volunteer-wrap{ max-width:900px; margin:0 auto; padding:40px 6%; }
@@ -38,9 +37,10 @@
   .slot-card.full{ background:#fdf6f2; opacity:0.7; }
   .slot-info{ flex:1; }
   .slot-date{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1rem; color:var(--red); margin-bottom:4px; }
-  .slot-details{ font-size:0.9rem; color:#6b5e58; margin-bottom:6px; }
+  .slot-details{ font-size:0.9rem; color:#6b5e58; margin-bottom:4px; }
+  .slot-role{ font-family:'Trebuchet MS',sans-serif; font-size:0.88rem; font-weight:700; color:var(--bronze); margin-bottom:6px; }
   .slot-spots{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; }
-  .slot-spots.open{ color:var(--bronze); }
+  .slot-spots.open{ color:#2e7d32; }
   .slot-spots.full{ color:#aaa; }
   .signup-btn{ background:var(--red); color:#fff; border:none; border-radius:6px; padding:11px 22px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.88rem; cursor:pointer; transition:opacity 0.2s; white-space:nowrap; }
   .signup-btn:hover{ opacity:0.85; }
@@ -67,9 +67,10 @@
   .my-signups{ margin-top:40px; padding-top:32px; border-top:1px solid var(--grey-line); }
   .my-signups h3{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1.1rem; color:var(--ink); margin-bottom:18px; }
   .my-signup-card{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:8px; padding:16px 20px; margin-bottom:12px; }
-  .my-signup-card strong{ font-family:'Trebuchet MS',sans-serif; font-size:0.95rem; color:var(--ink); display:block; margin-bottom:4px; }
-  .my-signup-card span{ font-size:0.85rem; color:#6b5e58; }
-  .cancel-note{ font-size:0.82rem; color:#aaa; font-style:italic; margin-top:6px; display:block; }
+  .my-signup-row{ display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--grey-line); font-size:0.9rem; color:var(--ink); gap:12px; }
+  .my-signup-row:last-of-type{ border-bottom:none; }
+  .my-signup-label{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.82rem; color:var(--bronze); white-space:nowrap; }
+  .cancel-note{ font-size:0.82rem; color:#aaa; font-style:italic; margin-top:10px; display:block; }
 
   .toast{ position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; max-width:320px; }
   .toast.show{ opacity:1; }
@@ -79,6 +80,7 @@
     .signup-btn{ width:100%; }
     .modal{ padding:24px 20px; }
     .modal-btns{ flex-direction:column; }
+    .volunteer-hero h1{ font-size:1.8rem; }
   }
 </style>
 </head>
@@ -89,7 +91,7 @@
     <img src="logo.png" alt="NCS Crest">
     <span>Northridge Community School</span>
   </a>
-    <ul class="nav-links" id="navLinks">
+  <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="admissions.html">Admissions</a></li>
@@ -103,22 +105,21 @@
 
 <div class="volunteer-hero">
   <h1>Volunteer at NCS</h1>
-  <p>We'd love your help! Sign in with your email to view and sign up for available volunteer opportunities.</p>
+  <p>We'd love your help! Sign in with your email and access code to view and sign up for available volunteer opportunities.</p>
 </div>
 
 <!-- LOGIN -->
 <div id="loginSection">
   <div class="login-section">
     <h2>Sign In to Volunteer</h2>
-    <p>Enter your email and we'll send you a magic link — no password needed.</p>
-    <div class="magic-form">
-      <input type="email" id="magicEmail" placeholder="your@email.com">
-      <button class="magic-btn" id="sendMagicLink">Send Magic Link</button>
+    <p>Enter your email address and the access code that was sent to you when you were added to our system.</p>
+    <div class="login-form">
+      <input type="email" id="loginEmail" placeholder="Your email address">
+      <input type="text" id="loginCode" placeholder="Access code (e.g. X7K9P2)" style="text-transform:uppercase;letter-spacing:4px;font-weight:700;">
+      <button class="login-btn" id="loginBtn">Sign In</button>
+      <p class="login-note">Don't have an access code? Contact the office at office@northridgecommunityschool.com</p>
     </div>
-    <div id="magicSent" style="display:none;" class="magic-sent">
-      <h3>Check your inbox! 📬</h3>
-      <p>We sent a sign-in link to your email. Click it to access your volunteer dashboard.</p>
-    </div>
+    <div class="login-error" id="loginError">❌ Email or access code not recognized. Please check your details or contact the office.</div>
   </div>
 </div>
 
@@ -179,15 +180,14 @@
   <p>&copy; 2026 Northridge Community School. All rights reserved.</p>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="shared.js"></script>
 <script>
 const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-let currentSlotId = null;
 let currentUserEmail = null;
+let currentSlotId = null;
+let currentSlotRole = null;
 
 function showToast(msg, duration = 3500) {
   const t = document.getElementById('toast');
@@ -196,45 +196,76 @@ function showToast(msg, duration = 3500) {
   setTimeout(() => t.classList.remove('show'), duration);
 }
 
-// ── AUTH ──────────────────────────────────────────────────────
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (session) {
-    currentUserEmail = session.user.email;
-    document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('volunteerDashboard').style.display = 'block';
-    document.getElementById('volunteerUserEmail').textContent = 'Signed in as ' + currentUserEmail;
-    loadSlots();
-    loadMySignups();
-  } else {
-    document.getElementById('loginSection').style.display = 'block';
-    document.getElementById('volunteerDashboard').style.display = 'none';
-  }
-});
-
-document.getElementById('sendMagicLink').addEventListener('click', async () => {
-  const email = document.getElementById('magicEmail').value.trim();
-  if (!email) { showToast('Please enter your email'); return; }
-  const btn = document.getElementById('sendMagicLink');
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-  const { error } = await sb.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: window.location.href }
+async function fetchData(table, params = '') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}${params}`, {
+    headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' }
   });
-  btn.disabled = false;
-  btn.textContent = 'Send Magic Link';
-  if (error) { showToast('Error: ' + error.message); return; }
-  document.getElementById('magicSent').style.display = 'block';
+  return res.json();
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────
+document.getElementById('loginCode').addEventListener('input', function() {
+  this.value = this.value.toUpperCase();
 });
 
-document.getElementById('volunteerSignOut').addEventListener('click', async () => {
-  await sb.auth.signOut();
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const code = document.getElementById('loginCode').value.trim().toUpperCase();
+  const errorDiv = document.getElementById('loginError');
+  errorDiv.style.display = 'none';
+
+  if (!email || !code) { showToast('Please enter both email and access code'); return; }
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Checking...';
+
+  // Check email + code against family_emails table
+  const data = await fetchData('family_emails', `?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=*`);
+
+  btn.disabled = false;
+  btn.textContent = 'Sign In';
+
+  if (!data || data.length === 0) {
+    errorDiv.style.display = 'block';
+    return;
+  }
+
+  // Valid! Store in session
+  currentUserEmail = email;
+  sessionStorage.setItem('ncs_vol_email', email);
+  sessionStorage.setItem('ncs_vol_name', data[0].name);
+  showDashboard(email, data[0].name);
+});
+
+function showDashboard(email, name) {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('volunteerDashboard').style.display = 'block';
+  document.getElementById('volunteerUserEmail').textContent = `Signed in as ${name} (${email})`;
+  currentUserEmail = email;
+  loadSlots();
+  loadMySignups();
+}
+
+document.getElementById('volunteerSignOut').addEventListener('click', () => {
+  sessionStorage.removeItem('ncs_vol_email');
+  sessionStorage.removeItem('ncs_vol_name');
+  currentUserEmail = null;
+  document.getElementById('loginSection').style.display = 'block';
+  document.getElementById('volunteerDashboard').style.display = 'none';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginCode').value = '';
   showToast('Signed out');
 });
 
+// Check session on load
+const savedEmail = sessionStorage.getItem('ncs_vol_email');
+const savedName = sessionStorage.getItem('ncs_vol_name');
+if (savedEmail && savedName) showDashboard(savedEmail, savedName);
+
 // ── SLOTS ─────────────────────────────────────────────────────
 async function loadSlots() {
-  const { data } = await sb.from('volunteer_slots').select('*').order('id');
+  const data = await fetchData('volunteer_slots', '?select=*&order=id');
   const list = document.getElementById('slotsList');
   if (!data || data.length === 0) {
     list.innerHTML = '<p class="empty-slots">No volunteer opportunities available right now. Check back soon!</p>';
@@ -248,12 +279,12 @@ async function loadSlots() {
         <div class="slot-info">
           <div class="slot-date">📅 ${slot.date} at ${slot.time}</div>
           <div class="slot-details">📍 ${slot.classroom}${slot.teacher ? ' · ' + slot.teacher : ''}</div>
-          <div class="slot-details" style="color:var(--bronze);font-weight:600;">🙋 ${slot.role || 'Volunteer'}</div>
+          <div class="slot-role">🙋 ${slot.role || 'Volunteer'}</div>
           <div class="slot-spots ${isFull ? 'full' : 'open'}">
             ${isFull ? '🔴 Full' : `🟢 ${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining`}
           </div>
         </div>
-        <button class="signup-btn ${isFull ? 'full' : ''}" 
+        <button class="signup-btn ${isFull ? 'full' : ''}"
           ${isFull ? 'disabled' : `onclick="openSignupModal(${slot.id}, '${slot.date}', '${slot.time}', '${slot.classroom}', '${slot.teacher || ''}', '${slot.role || 'Volunteer'}')"`}>
           ${isFull ? 'Full' : 'Sign Up'}
         </button>
@@ -263,11 +294,8 @@ async function loadSlots() {
 
 // ── MY SIGNUPS ────────────────────────────────────────────────
 async function loadMySignups() {
-  const { data } = await sb.from('volunteer_signups')
-    .select('*, volunteer_slots(date, time, classroom)')
-    .eq('parent_email', currentUserEmail)
-    .order('id', { ascending: false });
-
+  const data = await fetchData('volunteer_signups',
+    `?parent_email=eq.${encodeURIComponent(currentUserEmail)}&select=*,volunteer_slots(date,time,classroom,teacher,role)&order=id.desc`);
   const list = document.getElementById('mySignupsList');
   if (!data || data.length === 0) {
     list.innerHTML = '<p style="color:#aaa;font-style:italic;font-size:0.9rem;">You have no upcoming signups.</p>';
@@ -275,17 +303,15 @@ async function loadMySignups() {
   }
   list.innerHTML = data.map(s => `
     <div class="my-signup-card">
-      <strong>${s.volunteer_slots.date} at ${s.volunteer_slots.time}</strong>
-      <span>${s.volunteer_slots.classroom} · ${s.child_name} (${s.child_grade})</span>
+      <div class="my-signup-row"><span class="my-signup-label">📅 Date & Time</span><span>${s.volunteer_slots.date} at ${s.volunteer_slots.time}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">📍 Location</span><span>${s.volunteer_slots.classroom}${s.volunteer_slots.teacher ? ' · ' + s.volunteer_slots.teacher : ''}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">🙋 Role</span><span>${s.volunteer_slots.role || s.role || '—'}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">👧 Child</span><span>${s.child_name} (${s.child_grade})</span></div>
       <span class="cancel-note">Need to cancel? Contact us at office@northridgecommunityschool.com</span>
     </div>`).join('');
 }
 
 // ── MODAL ─────────────────────────────────────────────────────
-function toggleOtherRole(select) {}
-
-let currentSlotRole = null;
-
 window.openSignupModal = (id, date, time, classroom, teacher, role) => {
   currentSlotId = id;
   currentSlotRole = role;
@@ -297,6 +323,7 @@ window.openSignupModal = (id, date, time, classroom, teacher, role) => {
 document.getElementById('modalCancel').addEventListener('click', () => {
   document.getElementById('signupModal').style.display = 'none';
   currentSlotId = null;
+  currentSlotRole = null;
 });
 
 document.getElementById('modalConfirm').addEventListener('click', async () => {
@@ -309,69 +336,100 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = 'Signing up...';
 
-  // Check not already signed up for this slot
-  const { data: existing } = await sb.from('volunteer_signups')
-    .select('id')
-    .eq('slot_id', currentSlotId)
-    .eq('parent_email', currentUserEmail);
+  try {
+    // Check not already signed up
+    const existing = await fetchData('volunteer_signups',
+      `?slot_id=eq.${currentSlotId}&parent_email=eq.${encodeURIComponent(currentUserEmail)}&select=id`);
+    if (existing && existing.length > 0) {
+      showToast('You are already signed up for this slot!');
+      btn.disabled = false;
+      btn.textContent = 'Confirm Signup';
+      return;
+    }
 
-  if (existing && existing.length > 0) {
-    showToast('You are already signed up for this slot!');
+    // Insert signup
+    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/volunteer_signups`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        slot_id: currentSlotId,
+        parent_name: name,
+        parent_email: currentUserEmail,
+        child_name: child,
+        child_grade: grade,
+        role: currentSlotRole
+      })
+    });
+
+    if (!insertRes.ok) {
+      const err = await insertRes.json();
+      showToast('Error: ' + (err.message || 'Could not save signup'));
+      btn.disabled = false;
+      btn.textContent = 'Confirm Signup';
+      return;
+    }
+
+    // Increment spots
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_spots_filled`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slot_id_input: currentSlotId })
+      });
+    } catch(e) { console.warn('increment error', e); }
+
+    // Send confirmation email
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/rpc/send_email_via_resend`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON,
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          to_email: currentUserEmail,
+          subject: '✅ Volunteer Signup Confirmed — NCS',
+          html_body: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+            <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:100px;width:auto;display:block;margin:0 auto 24px;">
+            <h2 style="color:#C8102E;text-align:center;">Volunteer Signup Confirmed!</h2>
+            <p style="color:#3A2E2A;font-size:16px;">Dear ${name},</p>
+            <p style="color:#3A2E2A;font-size:16px;">Thank you for signing up to volunteer at NCS!</p>
+            <div style="background:#fdf6f2;border-radius:8px;padding:16px 20px;margin:20px 0;">
+              <p style="margin:0;font-size:15px;color:#3A2E2A;"><strong>Date & Time:</strong> ${document.getElementById('modalSlotSummary').querySelector('strong').textContent}</p>
+              <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Child:</strong> ${child} (${grade})</p>
+              <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Role:</strong> ${currentSlotRole}</p>
+            </div>
+            <p style="color:#3A2E2A;font-size:15px;">To cancel, contact us at <a href="mailto:office@northridgecommunityschool.com" style="color:#B07D4F;">office@northridgecommunityschool.com</a>.</p>
+            <p style="color:#9a8b84;font-size:13px;border-top:1px solid #E6E1DC;padding-top:16px;margin-top:24px;">
+              Northridge Community School · Where Godly Character meets Great Academics
+            </p>
+          </div>`
+        })
+      });
+    } catch(e) { console.warn('email error', e); }
+
     btn.disabled = false;
     btn.textContent = 'Confirm Signup';
-    return;
+    document.getElementById('signupModal').style.display = 'none';
+    document.getElementById('sig-name').value = '';
+    document.getElementById('sig-child').value = '';
+    document.getElementById('sig-grade').value = '';
+    currentSlotId = null;
+    currentSlotRole = null;
+    showToast('✅ Signed up! Check your email for confirmation.', 4000);
+    loadSlots();
+    loadMySignups();
+
+  } catch(err) {
+    showToast('Something went wrong. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Confirm Signup';
   }
-
-  // Insert signup
-  const { error } = await sb.from('volunteer_signups').insert({
-    slot_id: currentSlotId,
-    parent_name: name,
-    parent_email: currentUserEmail,
-    child_name: child,
-    child_grade: grade,
-    role: currentSlotRole
-  });
-
-  if (error) { showToast('Error: ' + error.message); btn.disabled = false; btn.textContent = 'Confirm Signup'; return; }
-
-  // Increment spots_filled
-  try { await sb.rpc('increment_spots_filled', { slot_id_input: currentSlotId }); } catch(e) { console.warn('increment error', e); }
-
-  // Send confirmation email
-  try {
-    await sb.rpc('send_email_via_resend', {
-      to_email: currentUserEmail,
-      subject: '✅ Volunteer Signup Confirmed — NCS',
-      html_body: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
-          <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:100px;width:auto;display:block;margin:0 auto 24px;">
-          <h2 style="color:#C8102E;text-align:center;">Volunteer Signup Confirmed!</h2>
-          <p style="color:#3A2E2A;font-size:16px;">Dear ${name},</p>
-          <p style="color:#3A2E2A;font-size:16px;">Thank you for signing up to volunteer at NCS! Here are your details:</p>
-          <div style="background:#fdf6f2;border-radius:8px;padding:16px 20px;margin:20px 0;">
-            <p style="margin:0;font-size:15px;color:#3A2E2A;"><strong>Date & Time:</strong> ${document.getElementById('modalSlotSummary').querySelector('strong').textContent}</p>
-            <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Child:</strong> ${child} (${grade})</p>
-            <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Role:</strong> ${currentSlotRole}</p>
-          </div>
-          <p style="color:#3A2E2A;font-size:15px;">If you need to cancel or make changes, please contact our office at <a href="mailto:office@northridgecommunityschool.com" style="color:#B07D4F;">office@northridgecommunityschool.com</a>.</p>
-          <p style="color:#9a8b84;font-size:13px;border-top:1px solid #E6E1DC;padding-top:16px;margin-top:24px;">
-            Northridge Community School · Where Godly Character meets Great Academics
-          </p>
-        </div>`
-    });
-  } catch(e) { console.warn('email error', e); }
-
-  btn.disabled = false;
-  btn.textContent = 'Confirm Signup';
-  document.getElementById('signupModal').style.display = 'none';
-  document.getElementById('sig-name').value = '';
-  document.getElementById('sig-child').value = '';
-  document.getElementById('sig-grade').value = '';
-  currentSlotRole = null;
-  currentSlotId = null;
-  showToast('✅ Signed up! Check your email for confirmation.', 4000);
-  loadSlots();
-  loadMySignups();
 });
 </script>
 </body>
