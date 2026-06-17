@@ -159,7 +159,7 @@
   <div class="admin-tabs">
     <button class="admin-tab active" data-tab="newsletter">📰 Newsletter</button>
     <button class="admin-tab" data-tab="families">👨‍👩‍👧 Family Emails</button>
-    <button class="admin-tab" data-tab="yearly">📆 Yearly Schedule</button>
+    <button class="admin-tab" data-tab="yearly">📆 Year at a Glance</button>
     <button class="admin-tab" data-tab="infonights">📣 Info Nights</button>
     <button class="admin-tab" data-tab="volunteer">🙋 Volunteer Slots</button>
   </div>
@@ -296,7 +296,7 @@
   <!-- YEARLY SCHEDULE PANEL -->
   <div class="admin-panel" id="panel-yearly">
     <div class="admin-form">
-      <h3>Add Yearly Schedule Date</h3>
+      <h3>Add Year at a Glance Date</h3>
       <div class="form-row">
         <div class="form-group">
           <label>Month</label>
@@ -325,7 +325,7 @@
       <button class="save-btn" id="saveYearly">Add Date</button>
     </div>
     <div class="events-list">
-      <h3>Current Yearly Schedule</h3>
+      <h3>Current Year at a Glance</h3>
       <div id="yearlyList"></div>
     </div>
   </div>
@@ -574,12 +574,12 @@ async function loadNewsletters() {
 }
 
 async function uploadNewsletter(sendEmail) {
-  const title = document.getElementById('nl-title').value.trim();
   const rawDate = document.getElementById('nl-date').value.trim();
   const date = rawDate;
+  const title = date;
   const file = document.getElementById('nl-file').files[0];
 
-  if (!title || !date || !file) { showToast('Please fill in all fields and select a PDF'); return; }
+  if (!date || !file) { showToast('Please select a school week and PDF'); return; }
 
   const uploadBtn = document.getElementById('uploadOnly');
   const sendBtn = document.getElementById('uploadAndSend');
