@@ -186,6 +186,7 @@ footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
   .nav-links a{font-size:0.82rem;}
   .brand span{font-size:1.05rem;}
 }
+@media(max-width:900px){
   .about-grid,.staff-grid,.tuition-grid{grid-template-columns:repeat(2,1fr);}
   .admissions-wrap{grid-template-columns:1fr;}
   .donate-grid{grid-template-columns:repeat(2,1fr);}
