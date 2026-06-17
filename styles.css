@@ -25,7 +25,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 6
 .menu-toggle.open span:nth-child(2){opacity:0;}
 .menu-toggle.open span:nth-child(3){transform:translateY(-8px) rotate(-45deg);}
 
-/* PAGE HEADER */
+/* PAGE HEADER */ 
 .page-header{text-align:center;padding:60px 6% 50px;background:linear-gradient(180deg,#fff 0%,#fdf6f2 100%);}
 .page-header h1{font-size:2.6rem;color:var(--red);margin-bottom:12px;}
 .page-header p{font-size:1.05rem;color:#5a4d47;max-width:600px;margin:0 auto;}
