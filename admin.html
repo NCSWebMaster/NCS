@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin | Northridge Community School</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+.brand-name{font-size:1.25rem;color:#C8102E;font-weight:700;}
+@media(max-width:900px){
+  .brand-name::after{content:"NCS";}
+  .brand-name-text{display:none;}
+}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   .admin-wrap{ max-width:960px; margin:0 auto; padding:40px 6%; }
@@ -71,7 +78,7 @@
 <nav>
   <a href="index.html" class="brand">
     <img src="logo.png" alt="NCS Crest">
-    <span class="brand-name-full">Northridge Community School</span><span class="brand-name-short">NCS</span>
+    <span class="brand-name"><span class="brand-name-text">Northridge Community School</span></span>
   </a>
     <ul class="nav-links" id="navLinks">
     <li><a href="index.html">Home</a></li>

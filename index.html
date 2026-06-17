@@ -6,6 +6,13 @@
 <title>Northridge Community School</title>
 <link rel="stylesheet" href="styles.css">
 <style>
+.brand-name{font-size:1.25rem;color:#C8102E;font-weight:700;}
+@media(max-width:900px){
+  .brand-name::after{content:"NCS";}
+  .brand-name-text{display:none;}
+}
+</style>
+<style>
   .hero{text-align:center;padding:90px 6% 80px;background:linear-gradient(180deg,#fff 0%,#fdf6f2 100%);}
   .hero img.crest{height:220px;margin-bottom:24px;}
   .hero h1{font-size:3rem;color:var(--red);margin-bottom:14px;}
@@ -63,7 +70,7 @@
 <nav>
   <a href="index.html" class="brand">
     <img src="logo.png" alt="NCS Crest">
-    <span class="brand-name-full">Northridge Community School</span><span class="brand-name-short">NCS</span>
+    <span class="brand-name"><span class="brand-name-text">Northridge Community School</span></span>
   </a>
         <ul class="nav-links" id="navLinks">
     <li><a href="index.html" class="active">Home</a></li>
