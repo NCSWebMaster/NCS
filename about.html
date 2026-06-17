@@ -195,7 +195,7 @@
 <section id="events-schedule" class="events-section">
   <div class="section-header">
     <span class="eyebrow">Stay Informed</span>
-    <h2>Newsletter &amp; Yearly Schedule</h2>
+    <h2>Newsletter &amp; Year at a Glance</h2>
     <div class="divider"></div>
   </div>
   <div class="events-grid">
@@ -215,7 +215,7 @@
     <div class="accordion-card">
       <div class="accordion-card-header">
         <div class="accordion-card-icon">📆</div>
-        <h3>Yearly Schedule</h3>
+        <h3>Year at a Glance</h3>
       </div>
       <div id="yearlyScheduleWrap">
         <div class="loading-state">Loading...</div>
@@ -245,7 +245,6 @@
 <script>
 const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 
 async function fetchTable(table, token) {
   const headers = {
@@ -304,20 +303,64 @@ async function loadYearly() {
   }
 }
 
-// ── WEEKLY EVENTS (login gate) ────────────────────────────────
-function buildWeeklyGate() {
+// ── NEWSLETTER (parent portal access code gate) ──────────────
+function buildNewsletterGate() {
   const wrap = document.getElementById('weeklyEventsWrap');
   wrap.innerHTML = `
     <div class="login-gate">
-      <p>🔒 Events are visible to enrolled families only.</p>
-      <button class="google-btn" id="eventsSignIn">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
-        Sign in with Google
-      </button>
+      <p>Newsletters are available to enrolled families.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:16px auto 0;">
+        <input type="email" id="nlEmail" placeholder="Your email" style="padding:10px 14px;border:1px solid #E6E1DC;border-radius:6px;font-family:Georgia,serif;font-size:0.9rem;">
+        <input type="text" id="nlCode" placeholder="Access code" style="padding:10px 14px;border:1px solid #E6E1DC;border-radius:6px;font-family:Georgia,serif;font-size:0.9rem;text-transform:uppercase;letter-spacing:3px;font-weight:700;">
+        <button id="nlSignInBtn" style="background:#C8102E;color:#fff;border:none;border-radius:6px;padding:11px;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">View Newsletters</button>
+      </div>
+      <p style="font-size:0.78rem;color:#aaa;margin-top:10px;">Use your Parent Portal email and access code</p>
+      <div id="nlError" style="display:none;color:#c0392b;font-size:0.85rem;margin-top:8px;"></div>
     </div>`;
-  document.getElementById('eventsSignIn').addEventListener('click', () => {
-    window.location.href = `${SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(window.location.href)}`;
+
+  document.getElementById('nlCode').addEventListener('input', function() { this.value = this.value.toUpperCase(); });
+  document.getElementById('nlSignInBtn').addEventListener('click', async () => {
+    const email = document.getElementById('nlEmail').value.trim().toLowerCase();
+    const code = document.getElementById('nlCode').value.trim().toUpperCase();
+    const errorDiv = document.getElementById('nlError');
+    errorDiv.style.display = 'none';
+    if (!email || !code) { errorDiv.textContent = 'Please enter your email and access code'; errorDiv.style.display = 'block'; return; }
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/family_emails?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=id`, {
+      headers: { 'apikey': SUPABASE_ANON }
+    });
+    const data = await res.json();
+    if (!data || data.length === 0) {
+      errorDiv.textContent = 'Email or access code not recognized.';
+      errorDiv.style.display = 'block';
+      return;
+    }
+    sessionStorage.setItem('ncs_nl_verified', '1');
+    buildNewsletterLoggedIn();
   });
+}
+
+async function buildNewsletterLoggedIn() {
+  const wrap = document.getElementById('weeklyEventsWrap');
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/newsletters?select=*&order=id.desc`, {
+    headers: { 'apikey': SUPABASE_ANON }
+  });
+  const data = await res.json();
+  if (!data || data.length === 0) {
+    wrap.innerHTML = '<p class="accordion-empty" style="padding:24px;">No newsletters yet.</p>';
+    return;
+  }
+  wrap.innerHTML = `
+    <div style="padding:16px 0;">
+      ${data.map(n => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #E6E1DC;gap:12px;">
+          <div>
+            <strong style="font-family:'Trebuchet MS',sans-serif;font-size:0.9rem;color:#3A2E2A;display:block;">${n.date}</strong>
+            <span style="font-size:0.78rem;color:#aaa;">${new Date(n.sent_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+          </div>
+          <a href="${n.file_url}" target="_blank" style="background:#B07D4F;color:#fff;padding:7px 16px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">View PDF</a>
+        </div>`).join('')}
+      <button onclick="sessionStorage.removeItem('ncs_nl_verified');buildNewsletterGate();" style="background:none;border:none;color:#aaa;font-size:0.78rem;font-family:'Trebuchet MS',sans-serif;cursor:pointer;padding:12px 16px;">Sign Out</button>
+    </div>`;
 }
 
 async function buildWeeklyLoggedIn(token, email) {
@@ -356,11 +399,11 @@ async function buildWeeklyLoggedIn(token, email) {
     document.getElementById('eventsSignOut').addEventListener('click', () => {
       sessionStorage.removeItem('ncs_token');
       sessionStorage.removeItem('ncs_email');
-      buildWeeklyGate();
+      if (sessionStorage.getItem('ncs_nl_verified')) { buildNewsletterLoggedIn(); } else { buildNewsletterGate(); }
     });
     bindAccordions(wrap);
   } catch(err) {
-    buildWeeklyGate();
+    if (sessionStorage.getItem('ncs_nl_verified')) { buildNewsletterLoggedIn(); } else { buildNewsletterGate(); }
   }
 }
 
@@ -394,7 +437,7 @@ async function init() {
   if (token) {
     buildWeeklyLoggedIn(token, email);
   } else {
-    buildWeeklyGate();
+    if (sessionStorage.getItem('ncs_nl_verified')) { buildNewsletterLoggedIn(); } else { buildNewsletterGate(); }
   }
 }
 
