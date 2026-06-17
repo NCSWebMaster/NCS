@@ -168,11 +168,7 @@
   <div class="admin-panel active" id="panel-newsletter">
     <div class="admin-form">
       <h3>Send Newsletter</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Newsletter Title</label>
-          <input type="text" id="nl-title" placeholder="e.g. October 2026 Newsletter">
-        </div>
+      <div class="form-row single">
         <div class="form-group">
           <label>School Week</label>
           <select id="nl-date">
@@ -566,12 +562,12 @@ async function loadNewsletters() {
   list.innerHTML = data.map(n => `
     <div class="event-row">
       <div class="event-row-info">
-        <strong>📰 ${n.title}</strong>
+        <strong>📰 ${n.date}</strong>
         <span>${n.date} · Sent ${new Date(n.sent_at).toLocaleDateString()}</span>
       </div>
       <div class="event-row-actions">
         <a href="${n.file_url}" target="_blank" class="view-btn">View PDF</a>
-        <button class="resend-btn" onclick="resendNewsletter('${n.id}','${n.title}','${n.file_url}','${n.date}')">Resend</button>
+        <button class="resend-btn" onclick="resendNewsletter('${n.id}','${n.date}','${n.file_url}','${n.date}')">Resend</button>
         <button class="delete-btn" onclick="deleteNewsletter(${n.id}, '${n.file_url}')">Delete</button>
       </div>
     </div>`).join('');
@@ -617,7 +613,7 @@ async function uploadNewsletter(sendEmail) {
   const fileUrl = urlData.publicUrl;
 
   // Save to database
-  const { error: dbError } = await sb.from('newsletters').insert({ title, date, file_url: fileUrl });
+  const { error: dbError } = await sb.from('newsletters').insert({ title: date, date, file_url: fileUrl });
   if (dbError) {
     showToast('Database error: ' + dbError.message);
     uploadBtn.disabled = false;
@@ -636,7 +632,6 @@ async function uploadNewsletter(sendEmail) {
   setTimeout(() => { progress.style.display = 'none'; fill.style.width = '0%'; }, 800);
 
   // Reset form
-  document.getElementById('nl-title').value = '';
   document.getElementById('nl-date').value = '';
   document.getElementById('nl-file').value = '';
   uploadBtn.disabled = false;
@@ -658,7 +653,7 @@ async function sendNewsletterEmail(title, date, fileUrl) {
       <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:100px;width:auto;display:block;margin:0 auto 24px;">
       <h2 style="color:#C8102E;font-family:Arial,sans-serif;">New Newsletter Available</h2>
       <p style="color:#3A2E2A;font-size:16px;">Dear ${name},</p>
-      <p style="color:#3A2E2A;font-size:16px;">The <strong>${title}</strong> (${date}) is now available. Click the button below to read it.</p>
+      <p style="color:#3A2E2A;font-size:16px;">The <strong>${title}</strong> newsletter is now available. Click the button below to read it.</p>
       <div style="text-align:center;margin:32px 0;">
         <a href="${fileUrl}" style="background:#C8102E;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-family:Arial,sans-serif;font-weight:bold;font-size:16px;">📄 Read Newsletter</a>
       </div>
@@ -672,7 +667,7 @@ async function sendNewsletterEmail(title, date, fileUrl) {
   const emailPromises = families.map(async family => {
     const result = await sb.rpc('send_email_via_resend', {
       to_email: family.email,
-      subject: `📰 New NCS Newsletter: ${title}`,
+      subject: `📰 NCS Newsletter — ${title}`,
       html_body: htmlBody(family.name)
     });
     console.log(`Email to ${family.email}:`, result);
