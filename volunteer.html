@@ -232,7 +232,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   btn.textContent = 'Sign In';
 
   if (!data || data.length === 0) {
-    errorDiv.textContent = `❌ No match found. Email: "${email}" Code: "${code}" — Check Supabase for exact values.`;
+    errorDiv.innerHTML = `❌ No match found.<br><small>Email tried: <strong>${email}</strong></small><br><small>Code tried: <strong>${code}</strong></small>`;
     errorDiv.style.display = 'block';
     return;
   }

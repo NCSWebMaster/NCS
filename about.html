@@ -15,9 +15,9 @@
 <style>
   /* FLIP CARD */
   .flip-card{ perspective:1000px; cursor:pointer; }
-  .flip-card-inner{ position:relative; width:100%; height:320px; transition:transform 0.6s; transform-style:preserve-3d; }
-  @media(max-width:1024px){ .flip-card-inner{ height:340px; } }
-  @media(max-width:600px){ .flip-card-inner{ height:300px; } }
+  .flip-card-inner{ position:relative; width:100%; height:290px; transition:transform 0.6s; transform-style:preserve-3d; }
+  @media(max-width:1024px){ .flip-card-inner{ height:290px; } }
+  @media(max-width:600px){ .flip-card-inner{ height:290px; } }
   .flip-card.flipped .flip-card-inner{ transform:rotateY(180deg); }
   .flip-card-front, .flip-card-back{ position:absolute; width:100%; height:100%; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:10px; overflow:hidden; }
   .flip-card-front{ background:#fff; border:1px solid var(--grey-line); padding:28px 24px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
@@ -103,7 +103,7 @@
         <div class="flip-card-front about-card">
           <div class="icon">C</div>
           <h3>Strong Community</h3>
-          <p>Families, teachers, and students work together to create a supportive home away from home.</p>
+          <p>Families, teachers, and students work together to create a supportive and welcoming home away from home.</p>
           <span class="flip-hint">Tap to see photo</span>
         </div>
         <div class="flip-card-back">
@@ -117,7 +117,7 @@
         <div class="flip-card-front about-card">
           <div class="icon">P</div>
           <h3>Parent Partnership</h3>
-          <p>We partner closely with parents through open communication, school events, and a welcoming community where every student feels known and valued.</p>
+          <p>We partner closely with parents through open communication and school events so every student feels known and valued.</p>
           <span class="flip-hint">Tap to see photo</span>
         </div>
         <div class="flip-card-back">
