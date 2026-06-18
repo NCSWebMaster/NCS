@@ -466,15 +466,58 @@
 
 <!-- RESET MODAL -->
 <div class="reset-overlay" id="resetOverlay" style="display:none;">
-  <div class="reset-modal">
-    <h3>Start New School Year</h3>
-    <p>This will permanently delete all <strong>newsletters</strong>, <strong>Year at a Glance dates</strong>, <strong>volunteer slots & signups</strong>, and <strong>info nights</strong>. This cannot be undone.</p>
-    <p style="font-size:0.85rem;color:var(--red);font-weight:700;">Type RESET to confirm:</p>
-    <input type="text" id="resetConfirmInput" placeholder="RESET" autocomplete="off">
-    <div class="reset-modal-btns">
-      <button class="reset-cancel-btn" id="resetCancelBtn">Cancel</button>
-      <button class="reset-confirm-btn" id="resetConfirmBtn" disabled>Confirm Reset</button>
+  <div class="reset-modal" style="max-width:560px;">
+
+    <!-- STEP 1: Confirm -->
+    <div id="resetStep1">
+      <h3>Start New School Year</h3>
+      <p>This will clear all <strong>newsletters</strong>, <strong>Year at a Glance dates</strong>, <strong>volunteer signups</strong>, and <strong>info nights</strong>. Volunteer slots will be copied to the new school year. Family emails are kept.</p>
+      <p style="font-size:0.85rem;color:var(--red);font-weight:700;margin-bottom:8px;">Type RESET to confirm:</p>
+      <input type="text" id="resetConfirmInput" placeholder="RESET" autocomplete="off" style="margin-bottom:16px;">
+      <div class="reset-modal-btns">
+        <button class="reset-cancel-btn" id="resetCancelBtn">Cancel</button>
+        <button class="reset-confirm-btn" id="resetConfirmBtn" disabled>Next →</button>
+      </div>
     </div>
+
+    <!-- STEP 2: School Year Dates -->
+    <div id="resetStep2" style="display:none;">
+      <h3>New School Year Dates</h3>
+      <p style="color:#5a4d47;font-size:0.9rem;margin-bottom:20px;">Enter the new school year dates. Volunteer slots will be mapped to the same days of the week.</p>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
+        <div class="form-group">
+          <label>First Day of School</label>
+          <input type="date" id="resetStartDate">
+        </div>
+        <div class="form-group">
+          <label>Last Day of School</label>
+          <input type="date" id="resetEndDate">
+        </div>
+        <div class="form-group">
+          <label>Holiday / Break Dates to Skip</label>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <input type="date" id="resetHolidayInput" style="flex:1;">
+            <button onclick="addHoliday()" style="background:var(--bronze);color:#fff;border:none;border-radius:6px;padding:8px 14px;font-family:'Trebuchet MS',sans-serif;font-weight:700;cursor:pointer;">Add</button>
+          </div>
+          <div id="holidayList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        </div>
+      </div>
+      <div class="reset-modal-btns">
+        <button class="reset-cancel-btn" onclick="document.getElementById('resetStep2').style.display='none';document.getElementById('resetStep1').style.display='block';">← Back</button>
+        <button class="reset-confirm-btn" id="previewBtn">Preview →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Preview -->
+    <div id="resetStep3" style="display:none;">
+      <h3>Review Before Confirming</h3>
+      <div id="previewContent" style="max-height:360px;overflow-y:auto;margin-bottom:20px;"></div>
+      <div class="reset-modal-btns">
+        <button class="reset-cancel-btn" onclick="document.getElementById('resetStep3').style.display='none';document.getElementById('resetStep2').style.display='block';">← Back</button>
+        <button class="reset-confirm-btn" id="finalConfirmBtn">Confirm & Start New Year</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1226,10 +1269,28 @@ async function printVolunteers() {
 }
 
 // ── NEW SCHOOL YEAR RESET ─────────────────────────────────────
+let holidayDates = [];
+let mappedSlots = [];
+let flaggedSlots = [];
+
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+function formatDateNice(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'long', day:'numeric', year:'numeric' });
+}
+
 document.getElementById('resetYearBtn').addEventListener('click', () => {
-  document.getElementById('resetOverlay').style.display = 'flex';
+  holidayDates = [];
+  mappedSlots = [];
+  flaggedSlots = [];
+  document.getElementById('holidayList').innerHTML = '';
   document.getElementById('resetConfirmInput').value = '';
   document.getElementById('resetConfirmBtn').disabled = true;
+  document.getElementById('resetStep1').style.display = 'block';
+  document.getElementById('resetStep2').style.display = 'none';
+  document.getElementById('resetStep3').style.display = 'none';
+  document.getElementById('resetOverlay').style.display = 'flex';
 });
 
 document.getElementById('resetConfirmInput').addEventListener('input', function() {
@@ -1240,22 +1301,161 @@ document.getElementById('resetCancelBtn').addEventListener('click', () => {
   document.getElementById('resetOverlay').style.display = 'none';
 });
 
-document.getElementById('resetConfirmBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('resetConfirmBtn');
+document.getElementById('resetConfirmBtn').addEventListener('click', () => {
+  document.getElementById('resetStep1').style.display = 'none';
+  document.getElementById('resetStep2').style.display = 'block';
+});
+
+window.addHoliday = () => {
+  const val = document.getElementById('resetHolidayInput').value;
+  if (!val || holidayDates.includes(val)) return;
+  holidayDates.push(val);
+  const tag = document.createElement('span');
+  tag.style.cssText = 'background:#fff;border:1px solid #E6E1DC;border-radius:20px;padding:3px 10px;font-size:0.78rem;font-family:Trebuchet MS,sans-serif;color:#5a4d47;cursor:pointer;display:inline-flex;align-items:center;gap:6px;';
+  tag.innerHTML = `${formatDateNice(val)} <span onclick="removeHoliday('${val}',this.parentElement)" style="color:#c0392b;font-weight:700;">×</span>`;
+  document.getElementById('holidayList').appendChild(tag);
+  document.getElementById('resetHolidayInput').value = '';
+};
+
+window.removeHoliday = (date, el) => {
+  holidayDates = holidayDates.filter(d => d !== date);
+  el.remove();
+};
+
+document.getElementById('previewBtn').addEventListener('click', async () => {
+  const startDate = document.getElementById('resetStartDate').value;
+  const endDate = document.getElementById('resetEndDate').value;
+  if (!startDate || !endDate) { showToast('Please enter both start and end dates'); return; }
+
+  const btn = document.getElementById('previewBtn');
   btn.disabled = true;
-  btn.textContent = 'Resetting...';
+  btn.textContent = 'Calculating...';
+
+  const { data: oldSlots } = await sb.from('volunteer_slots').select('*');
+  mappedSlots = [];
+  flaggedSlots = [];
+
+  const start = new Date(startDate + 'T00:00:00');
+  const end = new Date(endDate + 'T00:00:00');
+
+  (oldSlots || []).forEach(slot => {
+    // Get day of week from old slot date
+    const oldDate = new Date(slot.date);
+    const dayOfWeek = oldDate.getDay(); // 0=Sun, 1=Mon...
+
+    // Find next occurrence of that day on or after start date
+    let newDate = new Date(start);
+    while (newDate.getDay() !== dayOfWeek) {
+      newDate.setDate(newDate.getDate() + 1);
+    }
+
+    // Check if within school year
+    if (newDate > end) {
+      flaggedSlots.push({ slot, reason: 'Falls outside school year', suggestedDate: null });
+      return;
+    }
+
+    const newDateStr = newDate.toISOString().split('T')[0];
+    const isHoliday = holidayDates.includes(newDateStr);
+
+    if (isHoliday) {
+      flaggedSlots.push({ slot, reason: `Falls on a holiday (${formatDateNice(newDateStr)})`, suggestedDate: newDateStr });
+    } else {
+      mappedSlots.push({ ...slot, newDate: newDateStr, newDateFormatted: formatDateNice(newDateStr) });
+    }
+  });
+
+  // Build preview
+  let html = '';
+  if (mappedSlots.length > 0) {
+    html += `<div style="margin-bottom:16px;">
+      <div style="font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.9rem;color:#22c55e;margin-bottom:10px;">✅ Ready to Copy (${mappedSlots.length} slots)</div>
+      ${mappedSlots.map(s => `
+        <div style="padding:8px 12px;border-bottom:1px solid #E6E1DC;font-size:0.82rem;color:#3A2E2A;">
+          <strong>${s.newDateFormatted}</strong> · ${s.time} · ${s.classroom}${s.teacher ? ' · ' + s.teacher : ''} · ${s.role || 'Volunteer'}
+        </div>`).join('')}
+    </div>`;
+  }
+  if (flaggedSlots.length > 0) {
+    html += `<div>
+      <div style="font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.9rem;color:var(--red);margin-bottom:10px;">⚠️ Needs Review (${flaggedSlots.length} slots)</div>
+      ${flaggedSlots.map((f, i) => `
+        <div style="padding:10px 12px;border-bottom:1px solid #E6E1DC;font-size:0.82rem;">
+          <div style="color:#3A2E2A;margin-bottom:6px;"><strong>${f.slot.date}</strong> · ${f.slot.time} · ${f.slot.classroom} · ${f.slot.role || 'Volunteer'}</div>
+          <div style="color:var(--red);margin-bottom:6px;">⚠️ ${f.reason}</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="date" id="flag-${i}" style="padding:4px 8px;border:1px solid #E6E1DC;border-radius:4px;font-size:0.8rem;">
+            <button onclick="useFlagDate(${i})" style="background:var(--bronze);color:#fff;border:none;border-radius:4px;padding:4px 10px;font-size:0.78rem;cursor:pointer;">Use This Date</button>
+            <button onclick="skipFlag(${i})" style="background:none;border:1px solid #E6E1DC;border-radius:4px;padding:4px 10px;font-size:0.78rem;cursor:pointer;color:#aaa;">Skip</button>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }
+  if (!mappedSlots.length && !flaggedSlots.length) {
+    html = '<p style="color:#aaa;font-style:italic;text-align:center;padding:24px;">No existing volunteer slots to copy.</p>';
+  }
+
+  document.getElementById('previewContent').innerHTML = html;
+  document.getElementById('resetStep2').style.display = 'none';
+  document.getElementById('resetStep3').style.display = 'block';
+  btn.disabled = false;
+  btn.textContent = 'Preview →';
+});
+
+window.useFlagDate = (i) => {
+  const val = document.getElementById(`flag-${i}`).value;
+  if (!val) { showToast('Please pick a date'); return; }
+  const s = flaggedSlots[i];
+  mappedSlots.push({ ...s.slot, newDate: val, newDateFormatted: formatDateNice(val) });
+  flaggedSlots[i].resolved = true;
+  const row = document.getElementById(`flag-${i}`).closest('div[style*="padding:10px"]');
+  row.style.opacity = '0.4';
+  row.style.pointerEvents = 'none';
+  showToast(`Slot added for ${formatDateNice(val)}`);
+};
+
+window.skipFlag = (i) => {
+  flaggedSlots[i].resolved = true;
+  const row = document.getElementById(`flag-${i}`).closest('div[style*="padding:10px"]');
+  row.style.opacity = '0.3';
+  row.style.pointerEvents = 'none';
+};
+
+document.getElementById('finalConfirmBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('finalConfirmBtn');
+  btn.disabled = true;
+  btn.textContent = 'Setting up new year...';
 
   try {
+    // Delete old data (keep families)
     await sb.from('volunteer_signups').delete().neq('id', 0);
     await sb.from('volunteer_slots').delete().neq('id', 0);
     await sb.from('newsletters').delete().neq('id', 0);
     await sb.from('yearly_schedule').delete().neq('id', 0);
     await sb.from('info_nights').delete().neq('id', 0);
 
+    // Delete newsletter PDFs
     const { data: files } = await sb.storage.from('newsletters').list();
     if (files && files.length > 0) {
       await sb.storage.from('newsletters').remove(files.map(f => f.name));
     }
+
+    // Insert new mapped slots
+    if (mappedSlots.length > 0) {
+      const newSlots = mappedSlots.map(s => ({
+        date: formatDateNice(s.newDate),
+        time: s.time,
+        classroom: s.classroom,
+        teacher: s.teacher,
+        role: s.role,
+        spots_total: s.spots_total,
+        spots_filled: 0,
+        reminder_hours: s.reminder_hours || 24,
+        reminder_sent: false
+      }));
+      await sb.from('volunteer_slots').insert(newSlots);
+    }
+
   } catch(e) { console.warn('Reset error:', e); }
 
   document.getElementById('resetOverlay').style.display = 'none';
