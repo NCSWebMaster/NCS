@@ -40,8 +40,8 @@
   .signout-btn:hover{ background:var(--red); color:#fff; border-color:var(--red); }
   .reset-btn{ background:none; border:1px solid #e0b0b0; border-radius:6px; padding:8px 16px; font-family:'Trebuchet MS',sans-serif; font-size:0.85rem; cursor:pointer; color:#c0392b; transition:all 0.2s; }
   .reset-btn:hover{ background:#c0392b; color:#fff; border-color:#c0392b; }
-  .reset-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px; }
-  .reset-modal{ background:#fff; border-radius:14px; padding:24px 20px; max-width:480px; width:calc(100% - 32px); box-shadow:0 20px 60px rgba(0,0,0,0.2); text-align:center; max-height:90vh; overflow-y:auto; overflow-x:hidden; box-sizing:border-box; }
+  .reset-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; display:flex; align-items:center; justify-content:center; padding:16px; box-sizing:border-box; }
+  .reset-modal{ background:#fff; border-radius:14px; padding:24px 20px; max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); text-align:center; max-height:90vh; overflow-y:auto; overflow-x:hidden; box-sizing:border-box; }
   .reset-modal h3{ color:var(--red); font-size:1.3rem; margin-bottom:12px; }
   .reset-modal p{ color:#5a4d47; font-size:0.95rem; margin-bottom:20px; line-height:1.6; }
   .reset-modal input{ width:100%; padding:12px 16px; border:2px solid var(--grey-line); border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:1.1rem; font-weight:700; text-align:center; letter-spacing:4px; margin-bottom:16px; box-sizing:border-box; }
@@ -123,12 +123,12 @@
   .vol-form-row-btn{ grid-template-columns:1fr 1fr 1fr; }
   @media(max-width:700px){ .vol-form-row-3{ grid-template-columns:1fr 1fr; } .vol-form-row-btn{ grid-template-columns:1fr 1fr; } }
   @media(max-width:480px){ .vol-form-row-3{ grid-template-columns:1fr; } .vol-form-row-btn{ grid-template-columns:1fr; } }
-  .break-row{ margin-bottom:12px; padding:10px 12px; background:#f9f5f2; border:1px solid var(--grey-line); border-radius:8px; }
-  .break-label{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.88rem; color:var(--ink); display:block; margin-bottom:8px; }
-  .break-dates{ display:flex; gap:8px; width:100%; }
+  .break-row{ margin-bottom:12px; padding:12px 10px; background:#f9f5f2; border:1px solid var(--grey-line); border-radius:8px; width:100%; box-sizing:border-box; overflow:hidden; }
+  .break-label{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.88rem; color:var(--ink); display:block; margin-bottom:8px; text-align:center; }
+  .break-dates{ display:flex; gap:10px; width:100%; padding:0 2px; box-sizing:border-box; }
   .break-date-group{ flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
-  .break-date-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.72rem; font-weight:600; color:#9a8b84; text-transform:uppercase; letter-spacing:0.5px; }
-  .break-input{ width:100%; padding:8px 6px; border:1px solid var(--grey-line); border-radius:6px; font-size:0.82rem; color:var(--ink); background:#fff; box-sizing:border-box; min-width:0; }
+  .break-date-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.72rem; font-weight:600; color:#9a8b84; text-transform:uppercase; letter-spacing:0.5px; text-align:center; }
+  .break-input{ width:100%; min-height:44px; padding:8px 4px; border:1px solid var(--grey-line); border-radius:6px; font-size:0.75rem; color:var(--ink); background:#fff; box-sizing:border-box; min-width:0; overflow:hidden; }
   .vol-req-row label{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; color:var(--ink); white-space:nowrap; }
   .vol-req-row input{ width:60px; padding:6px 10px; border:1px solid var(--grey-line); border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; text-align:center; }
   .vol-req-row button{ padding:6px 14px; background:var(--red); color:#fff; border:none; border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; }
@@ -493,11 +493,11 @@
       <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
         <div class="form-group">
           <label>First Day of School</label>
-          <input type="date" id="resetStartDate" style="width:100%;padding:10px 14px;border:1px solid var(--grey-line);border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-size:0.95rem;color:var(--ink);background:#fff;box-sizing:border-box;">
+          <input type="date" id="resetStartDate" style="width:100%;padding:10px 8px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.9rem;color:var(--ink);background:#fff;box-sizing:border-box;display:block;">
         </div>
         <div class="form-group">
           <label>Last Day of School</label>
-          <input type="date" id="resetEndDate" style="width:100%;padding:10px 14px;border:1px solid var(--grey-line);border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-size:0.95rem;color:var(--ink);background:#fff;box-sizing:border-box;">
+          <input type="date" id="resetEndDate" style="width:100%;padding:10px 8px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.9rem;color:var(--ink);background:#fff;box-sizing:border-box;display:block;">
         </div>
         <div class="form-group">
           <label>Holiday / Break Dates to Skip</label>
