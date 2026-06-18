@@ -944,10 +944,10 @@ async function loadVolSlots() {
   const openSpots = totalSpots - filledSpots;
   const pct = totalSpots > 0 ? Math.round((filledSpots / totalSpots) * 100) : 0;
 
-  // Find slots with open spots and who signed up
+  // Find families who haven't signed up
   const signedUpEmails = new Set((signups || []).map(s => s.parent_email));
-  const { data: families } = await sb.from('family_emails').select('name, email');
-  const unsignedFamilies = (families || []).filter(f => !signedUpEmails.has(f.email));
+  const { data: families, error: famError } = await sb.from('family_emails').select('name, email');
+  const unsignedFamilies = famError ? [] : (families || []).filter(f => !signedUpEmails.has(f.email));
 
   summary.innerHTML = `
     <div class="vol-summary">
