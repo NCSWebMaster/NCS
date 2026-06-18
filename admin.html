@@ -100,6 +100,23 @@
   .view-btn:hover{ background:var(--bronze); color:#fff; }
   .resend-btn{ background:none; border:1px solid var(--red); color:var(--red); border-radius:6px; padding:6px 14px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; cursor:pointer; transition:all 0.2s; }
   .resend-btn:hover{ background:var(--red); color:#fff; }
+  .vol-summary{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:10px; padding:20px 24px; margin-bottom:8px; }
+  .vol-summary-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:16px; }
+  .vol-stat{ text-align:center; }
+  .vol-stat-num{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1.8rem; line-height:1; margin-bottom:4px; }
+  .vol-stat-num.green{ color:#22c55e; }
+  .vol-stat-num.red{ color:var(--red); }
+  .vol-stat-num.bronze{ color:var(--bronze); }
+  .vol-stat-num.blue{ color:#3b82f6; }
+  .vol-stat-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.75rem; font-weight:600; color:#9a8b84; text-transform:uppercase; letter-spacing:0.5px; }
+  .vol-progress-bar{ height:10px; background:#e6e1dc; border-radius:5px; overflow:hidden; margin-bottom:8px; }
+  .vol-progress-fill{ height:100%; border-radius:5px; background:linear-gradient(90deg,#22c55e,#16a34a); transition:width 0.8s ease; }
+  .vol-progress-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; color:#6b5e58; text-align:center; }
+  .vol-unsigned{ margin-top:16px; padding-top:16px; border-top:1px solid var(--grey-line); }
+  .vol-unsigned h4{ font-family:'Trebuchet MS',sans-serif; font-size:0.88rem; color:var(--red); margin-bottom:10px; font-weight:700; }
+  .vol-unsigned-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .vol-unsigned-tag{ background:#fff; border:1px solid var(--grey-line); border-radius:20px; padding:4px 12px; font-size:0.82rem; font-family:'Trebuchet MS',sans-serif; color:#5a4d47; }
+  @media(max-width:600px){ .vol-summary-stats{ grid-template-columns:repeat(2,1fr); } }
   .print-btn{ display:inline-flex; align-items:center; gap:8px; background:none; border:2px solid var(--bronze); color:var(--bronze); border-radius:6px; padding:9px 18px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:all 0.2s; margin-bottom:16px; }
   .print-btn:hover{ background:var(--bronze); color:#fff; }
   .toast{ position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; max-width:320px; }
@@ -411,6 +428,7 @@
     </div>
     <div class="events-list">
       <h3>Current Volunteer Slots</h3>
+      <div id="volSummaryDashboard" style="margin-bottom:24px;"></div>
       <div id="volSlotList"></div>
     </div>
     <div class="events-list" style="margin-top:32px;">
@@ -910,8 +928,63 @@ window.deleteInfoNight = async (id) => {
 // ── VOLUNTEER SLOTS ───────────────────────────────────────────
 async function loadVolSlots() {
   const { data } = await sb.from('volunteer_slots').select('*').order('id');
+  const { data: signups } = await sb.from('volunteer_signups').select('parent_name, parent_email, slot_id');
   const list = document.getElementById('volSlotList');
-  if (!data || data.length === 0) { list.innerHTML = '<p class="empty-state">No slots yet.</p>'; return; }
+  const summary = document.getElementById('volSummaryDashboard');
+
+  if (!data || data.length === 0) {
+    list.innerHTML = '<p class="empty-state">No slots yet.</p>';
+    summary.innerHTML = '';
+    return;
+  }
+
+  // Calculate stats
+  const totalSpots = data.reduce((sum, s) => sum + s.spots_total, 0);
+  const filledSpots = data.reduce((sum, s) => sum + s.spots_filled, 0);
+  const openSpots = totalSpots - filledSpots;
+  const pct = totalSpots > 0 ? Math.round((filledSpots / totalSpots) * 100) : 0;
+
+  // Find slots with open spots and who signed up
+  const signedUpEmails = new Set((signups || []).map(s => s.parent_email));
+  const { data: families } = await sb.from('family_emails').select('name, email');
+  const unsignedFamilies = (families || []).filter(f => !signedUpEmails.has(f.email));
+
+  summary.innerHTML = `
+    <div class="vol-summary">
+      <div class="vol-summary-stats">
+        <div class="vol-stat">
+          <div class="vol-stat-num green">${filledSpots}</div>
+          <div class="vol-stat-label">Slots Filled</div>
+        </div>
+        <div class="vol-stat">
+          <div class="vol-stat-num red">${openSpots}</div>
+          <div class="vol-stat-label">Still Needed</div>
+        </div>
+        <div class="vol-stat">
+          <div class="vol-stat-num bronze">${totalSpots}</div>
+          <div class="vol-stat-label">Total Slots</div>
+        </div>
+        <div class="vol-stat">
+          <div class="vol-stat-num blue">${pct}%</div>
+          <div class="vol-stat-label">Filled</div>
+        </div>
+      </div>
+      <div class="vol-progress-bar">
+        <div class="vol-progress-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="vol-progress-label">${filledSpots} of ${totalSpots} spots filled</div>
+      ${unsignedFamilies.length > 0 ? `
+        <div class="vol-unsigned">
+          <h4>Families Not Yet Signed Up (${unsignedFamilies.length})</h4>
+          <div class="vol-unsigned-list">
+            ${unsignedFamilies.map(f => `<span class="vol-unsigned-tag">${f.name}</span>`).join('')}
+          </div>
+        </div>` : `
+        <div class="vol-unsigned">
+          <h4 style="color:#22c55e;">✅ All enrolled families have signed up!</h4>
+        </div>`}
+    </div>`;
+
   list.innerHTML = data.map(s => `
     <div class="event-row">
       <div class="event-row-info">
