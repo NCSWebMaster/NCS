@@ -123,12 +123,7 @@
   .vol-form-row-btn{ grid-template-columns:1fr 1fr 1fr; }
   @media(max-width:700px){ .vol-form-row-3{ grid-template-columns:1fr 1fr; } .vol-form-row-btn{ grid-template-columns:1fr 1fr; } }
   @media(max-width:480px){ .vol-form-row-3{ grid-template-columns:1fr; } .vol-form-row-btn{ grid-template-columns:1fr; } }
-  .break-row{ margin-bottom:10px; padding:10px 12px; background:#f9f5f2; border:1px solid var(--grey-line); border-radius:8px; display:flex; align-items:center; gap:10px; }
-  .break-label{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.82rem; color:var(--ink); white-space:nowrap; width:52px; flex-shrink:0; }
-  .break-date-group{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
-  .break-date-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.68rem; font-weight:600; color:#9a8b84; text-transform:uppercase; letter-spacing:0.5px; }
-  .break-input{ width:100%; padding:7px 8px; border:1px solid var(--grey-line); border-radius:6px; font-size:0.82rem; color:var(--ink); background:#fff; box-sizing:border-box; }
-  .break-divider{ width:1px; height:36px; background:var(--grey-line); flex-shrink:0; }
+
   .vol-req-row label{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; color:var(--ink); white-space:nowrap; }
   .vol-req-row input{ width:60px; padding:6px 10px; border:1px solid var(--grey-line); border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; text-align:center; }
   .vol-req-row button{ padding:6px 14px; background:var(--red); color:#fff; border:none; border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; }
@@ -489,42 +484,15 @@
     <!-- STEP 2: School Year Dates -->
     <div id="resetStep2" style="display:none;">
       <h3>New School Year Dates</h3>
-      <p style="color:#5a4d47;font-size:0.9rem;margin-bottom:20px;">Enter the new school year dates. Volunteer slots will be mapped to the same days of the week.</p>
-      <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
-        <div class="form-group">
+      <p style="color:#5a4d47;font-size:0.9rem;margin-bottom:20px;">Enter the first and last day of the new school year. Volunteer slots will be mapped to the same days of the week.</p>
+      <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
+        <div class="form-group" style="text-align:left;">
           <label>First Day of School</label>
-          <input type="date" id="resetStartDate" style="width:100%;padding:10px 8px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.9rem;color:var(--ink);background:#fff;box-sizing:border-box;display:block;">
+          <input type="date" id="resetStartDate" style="width:100%;padding:10px 12px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.95rem;color:var(--ink);background:#fff;box-sizing:border-box;display:block;">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="text-align:left;">
           <label>Last Day of School</label>
-          <input type="date" id="resetEndDate" style="width:100%;padding:10px 8px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.9rem;color:var(--ink);background:#fff;box-sizing:border-box;display:block;">
-        </div>
-        <div class="form-group">
-          <label>Holiday / Break Dates to Skip</label>
-
-          <!-- Break Ranges -->
-          <div style="margin-bottom:14px;">
-            <div style="font-family:'Trebuchet MS',sans-serif;font-size:0.8rem;font-weight:700;color:var(--bronze);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Break Ranges</div>
-            <div class="break-row">
-              <span class="break-label">Fall</span>
-              <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-fall-start" class="break-input"></div>
-              <div class="break-divider"></div>
-              <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-fall-end" class="break-input"></div>
-            </div>
-            <div class="break-row">
-              <span class="break-label">Winter</span>
-              <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-winter-start" class="break-input"></div>
-              <div class="break-divider"></div>
-              <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-winter-end" class="break-input"></div>
-            </div>
-            <div class="break-row">
-              <span class="break-label">Spring</span>
-              <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-spring-start" class="break-input"></div>
-              <div class="break-divider"></div>
-              <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-spring-end" class="break-input"></div>
-            </div>
-          </div>
-
+          <input type="date" id="resetEndDate" style="width:100%;padding:10px 12px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.95rem;color:var(--ink);background:#fff;box-sizing:border-box;display:block;">
         </div>
       </div>
       <div class="reset-modal-btns">
@@ -1311,12 +1279,6 @@ document.getElementById('resetYearBtn').addEventListener('click', () => {
   flaggedSlots = [];
   document.getElementById('resetConfirmInput').value = '';
   document.getElementById('resetConfirmBtn').disabled = true;
-  ['fall','winter','spring'].forEach(b => {
-    const s = document.getElementById(`break-${b}-start`);
-    const e = document.getElementById(`break-${b}-end`);
-    if (s) s.value = '';
-    if (e) e.value = '';
-  });
   document.getElementById('resetStep1').style.display = 'block';
   document.getElementById('resetStep2').style.display = 'none';
   document.getElementById('resetStep3').style.display = 'none';
@@ -1340,27 +1302,7 @@ window.quickAddHoliday = () => {};
 window.addHoliday = () => {};
 window.removeHoliday = () => {};
 
-function getBreakRanges() {
-  const breaks = [];
-  ['fall','winter','spring'].forEach(b => {
-    const start = document.getElementById(`break-${b}-start`)?.value;
-    const end = document.getElementById(`break-${b}-end`)?.value;
-    if (start && end) breaks.push({ name: b.charAt(0).toUpperCase() + b.slice(1) + ' Break', start, end });
-  });
-  return breaks;
-}
-
-function isInBreak(dateStr, breakRanges) {
-  for (const br of breakRanges) {
-    if (dateStr >= br.start && dateStr <= br.end) return br.name;
-  }
-  return null;
-}
-
-function isHoliday(dateStr) {
-  const h = holidayDates.find(h => h.date === dateStr);
-  return h ? h.name : null;
-}
+function isHoliday(dateStr) { return null; }
 
 document.getElementById('previewBtn').addEventListener('click', async () => {
   const startDate = document.getElementById('resetStartDate').value;
@@ -1378,8 +1320,6 @@ document.getElementById('previewBtn').addEventListener('click', async () => {
   const start = new Date(startDate + 'T00:00:00');
   const end = new Date(endDate + 'T00:00:00');
 
-  const breakRanges = getBreakRanges();
-
   (oldSlots || []).forEach(slot => {
     const oldDate = new Date(slot.date);
     const dayOfWeek = oldDate.getDay();
@@ -1395,16 +1335,7 @@ document.getElementById('previewBtn').addEventListener('click', async () => {
     }
 
     const newDateStr = newDate.toISOString().split('T')[0];
-    const inBreak = isInBreak(newDateStr, breakRanges);
-    const onHoliday = isHoliday(newDateStr);
-
-    if (inBreak) {
-      flaggedSlots.push({ slot, reason: `Falls during ${inBreak}`, suggestedDate: newDateStr });
-    } else if (onHoliday) {
-      flaggedSlots.push({ slot, reason: `Falls on ${onHoliday} (${formatDateNice(newDateStr)})`, suggestedDate: newDateStr });
-    } else {
-      mappedSlots.push({ ...slot, newDate: newDateStr, newDateFormatted: formatDateNice(newDateStr) });
-    }
+    mappedSlots.push({ ...slot, newDate: newDateStr, newDateFormatted: formatDateNice(newDateStr) });
   });
 
   // Build preview
