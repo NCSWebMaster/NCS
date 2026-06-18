@@ -370,6 +370,18 @@
   </div>
   <!-- VOLUNTEER SLOTS PANEL -->
   <div class="admin-panel" id="panel-volunteer">
+    <div class="admin-form" style="margin-bottom:16px;">
+      <h3>Volunteer Requirement</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Required Slots Per Family</label>
+          <input type="number" id="vol-required" min="1" max="20" placeholder="e.g. 2" style="max-width:120px;">
+        </div>
+        <div class="form-group" style="justify-content:flex-end;">
+          <button class="save-btn" style="margin-top:24px;" onclick="saveVolRequired()">Save Requirement</button>
+        </div>
+      </div>
+    </div>
     <div class="admin-form">
       <h3>Add Volunteer Slot</h3>
       <div class="form-row">
@@ -925,12 +937,25 @@ window.deleteInfoNight = async (id) => {
   loadInfoNights();
 };
 
+function saveVolRequired() {
+  const val = document.getElementById('vol-required').value;
+  if (!val || parseInt(val) < 1) { showToast('Please enter a valid number'); return; }
+  localStorage.setItem('ncs_vol_required', val);
+  showToast(`✅ Requirement set to ${val} slot${val > 1 ? 's' : ''} per family`);
+  loadVolSlots();
+}
+
 // ── VOLUNTEER SLOTS ───────────────────────────────────────────
 async function loadVolSlots() {
   const { data } = await sb.from('volunteer_slots').select('*').order('id');
   const { data: signups } = await sb.from('volunteer_signups').select('parent_name, parent_email, slot_id');
   const list = document.getElementById('volSlotList');
   const summary = document.getElementById('volSummaryDashboard');
+
+  // Load required slots setting
+  const savedRequired = localStorage.getItem('ncs_vol_required') || '1';
+  document.getElementById('vol-required').value = savedRequired;
+  const requiredSlots = parseInt(savedRequired);
 
   if (!data || data.length === 0) {
     list.innerHTML = '<p class="empty-state">No slots yet.</p>';
@@ -944,10 +969,17 @@ async function loadVolSlots() {
   const openSpots = totalSpots - filledSpots;
   const pct = totalSpots > 0 ? Math.round((filledSpots / totalSpots) * 100) : 0;
 
-  // Find families who haven't signed up
-  const signedUpEmails = new Set((signups || []).map(s => s.parent_email));
+  // Count signups per family
+  const signupsByEmail = {};
+  (signups || []).forEach(s => {
+    signupsByEmail[s.parent_email] = (signupsByEmail[s.parent_email] || 0) + 1;
+  });
+
+  // Get all families and check against requirement
   const { data: families, error: famError } = await sb.from('family_emails').select('name, email');
-  const unsignedFamilies = famError ? [] : (families || []).filter(f => !signedUpEmails.has(f.email));
+  const allFamilies = famError ? [] : (families || []);
+  const metRequirement = allFamilies.filter(f => (signupsByEmail[f.email] || 0) >= requiredSlots);
+  const notMet = allFamilies.filter(f => (signupsByEmail[f.email] || 0) < requiredSlots);
 
   summary.innerHTML = `
     <div class="vol-summary">
@@ -973,16 +1005,16 @@ async function loadVolSlots() {
         <div class="vol-progress-fill" style="width:${pct}%"></div>
       </div>
       <div class="vol-progress-label">${filledSpots} of ${totalSpots} spots filled</div>
-      ${unsignedFamilies.length > 0 ? `
-        <div class="vol-unsigned">
-          <h4>Families Not Yet Signed Up (${unsignedFamilies.length})</h4>
-          <div class="vol-unsigned-list">
-            ${unsignedFamilies.map(f => `<span class="vol-unsigned-tag">${f.name}</span>`).join('')}
-          </div>
-        </div>` : `
-        <div class="vol-unsigned">
-          <h4 style="color:#22c55e;">✅ All enrolled families have signed up!</h4>
-        </div>`}
+      <div class="vol-unsigned" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--grey-line);">
+        <h4 style="color:#22c55e;margin-bottom:10px;">✅ Volunteer Commitment Met (${metRequirement.length})</h4>
+        <div class="vol-unsigned-list" style="margin-bottom:16px;">
+          ${metRequirement.length > 0 ? metRequirement.map(f => `<span class="vol-unsigned-tag" style="border-color:#22c55e;color:#22c55e;">${f.name} (${signupsByEmail[f.email] || 0}/${requiredSlots})</span>`).join('') : '<span style="color:#aaa;font-size:0.85rem;font-style:italic;">None yet</span>'}
+        </div>
+        <h4 style="color:var(--red);margin-bottom:10px;">Outstanding Volunteer Commitments (${notMet.length})</h4>
+        <div class="vol-unsigned-list">
+          ${notMet.length > 0 ? notMet.map(f => `<span class="vol-unsigned-tag">${f.name} (${signupsByEmail[f.email] || 0}/${requiredSlots})</span>`).join('') : '<span style="color:#22c55e;font-size:0.85rem;font-weight:700;">All families have met their commitment!</span>'}
+        </div>
+      </div>
     </div>`;
 
   list.innerHTML = data.map(s => `
