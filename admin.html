@@ -123,13 +123,12 @@
   .vol-form-row-btn{ grid-template-columns:1fr 1fr 1fr; }
   @media(max-width:700px){ .vol-form-row-3{ grid-template-columns:1fr 1fr; } .vol-form-row-btn{ grid-template-columns:1fr 1fr; } }
   @media(max-width:480px){ .vol-form-row-3{ grid-template-columns:1fr; } .vol-form-row-btn{ grid-template-columns:1fr; } }
-  .break-row{ margin-bottom:12px; padding:14px 12px 12px; background:#f9f5f2; border:1px solid var(--grey-line); border-radius:8px; width:100%; box-sizing:border-box; overflow:hidden; }
-  .break-label{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.88rem; color:var(--ink); display:block; margin-bottom:10px; text-align:center; }
-  .break-dates{ display:grid; grid-template-columns:1fr 4px 1fr; gap:0; width:100%; box-sizing:border-box; align-items:start; }
-  .break-divider{ background:var(--grey-line); border-radius:2px; height:100%; min-height:44px; }
-  .break-date-group{ display:flex; flex-direction:column; gap:4px; min-width:0; }
-  .break-date-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.72rem; font-weight:600; color:#9a8b84; text-transform:uppercase; letter-spacing:0.5px; text-align:center; }
-  .break-input{ width:100%; height:44px; padding:8px 6px; border:1px solid var(--grey-line); border-radius:6px; font-size:0.78rem; color:var(--ink); background:#fff; box-sizing:border-box; min-width:0; display:block; }
+  .break-row{ margin-bottom:10px; padding:10px 12px; background:#f9f5f2; border:1px solid var(--grey-line); border-radius:8px; display:flex; align-items:center; gap:10px; }
+  .break-label{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.82rem; color:var(--ink); white-space:nowrap; width:52px; flex-shrink:0; }
+  .break-date-group{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .break-date-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.68rem; font-weight:600; color:#9a8b84; text-transform:uppercase; letter-spacing:0.5px; }
+  .break-input{ width:100%; padding:7px 8px; border:1px solid var(--grey-line); border-radius:6px; font-size:0.82rem; color:var(--ink); background:#fff; box-sizing:border-box; }
+  .break-divider{ width:1px; height:36px; background:var(--grey-line); flex-shrink:0; }
   .vol-req-row label{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; color:var(--ink); white-space:nowrap; }
   .vol-req-row input{ width:60px; padding:6px 10px; border:1px solid var(--grey-line); border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; text-align:center; }
   .vol-req-row button{ padding:6px 14px; background:var(--red); color:#fff; border:none; border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; }
@@ -507,28 +506,22 @@
           <div style="margin-bottom:14px;">
             <div style="font-family:'Trebuchet MS',sans-serif;font-size:0.8rem;font-weight:700;color:var(--bronze);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Break Ranges</div>
             <div class="break-row">
-              <span class="break-label">Fall Break</span>
-              <div class="break-dates">
-                <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-fall-start" class="break-input"></div>
-                <div class="break-divider"></div>
-                <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-fall-end" class="break-input"></div>
-              </div>
+              <span class="break-label">Fall</span>
+              <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-fall-start" class="break-input"></div>
+              <div class="break-divider"></div>
+              <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-fall-end" class="break-input"></div>
             </div>
             <div class="break-row">
-              <span class="break-label">Winter Break</span>
-              <div class="break-dates">
-                <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-winter-start" class="break-input"></div>
-                <div class="break-divider"></div>
-                <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-winter-end" class="break-input"></div>
-              </div>
+              <span class="break-label">Winter</span>
+              <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-winter-start" class="break-input"></div>
+              <div class="break-divider"></div>
+              <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-winter-end" class="break-input"></div>
             </div>
             <div class="break-row">
-              <span class="break-label">Spring Break</span>
-              <div class="break-dates">
-                <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-spring-start" class="break-input"></div>
-                <div class="break-divider"></div>
-                <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-spring-end" class="break-input"></div>
-              </div>
+              <span class="break-label">Spring</span>
+              <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-spring-start" class="break-input"></div>
+              <div class="break-divider"></div>
+              <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-spring-end" class="break-input"></div>
             </div>
           </div>
 
