@@ -100,23 +100,28 @@
   .view-btn:hover{ background:var(--bronze); color:#fff; }
   .resend-btn{ background:none; border:1px solid var(--red); color:var(--red); border-radius:6px; padding:6px 14px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; cursor:pointer; transition:all 0.2s; }
   .resend-btn:hover{ background:var(--red); color:#fff; }
-  .vol-summary{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:10px; padding:20px 24px; margin-bottom:8px; }
-  .vol-summary-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:16px; }
-  .vol-stat{ text-align:center; }
-  .vol-stat-num{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1.8rem; line-height:1; margin-bottom:4px; }
-  .vol-stat-num.green{ color:#22c55e; }
-  .vol-stat-num.red{ color:var(--red); }
-  .vol-stat-num.bronze{ color:var(--bronze); }
-  .vol-stat-num.blue{ color:#3b82f6; }
-  .vol-stat-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.75rem; font-weight:600; color:#9a8b84; text-transform:uppercase; letter-spacing:0.5px; }
-  .vol-progress-bar{ height:10px; background:#e6e1dc; border-radius:5px; overflow:hidden; margin-bottom:8px; }
-  .vol-progress-fill{ height:100%; border-radius:5px; background:linear-gradient(90deg,#22c55e,#16a34a); transition:width 0.8s ease; }
-  .vol-progress-label{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; color:#6b5e58; text-align:center; }
-  .vol-unsigned{ margin-top:16px; padding-top:16px; border-top:1px solid var(--grey-line); }
-  .vol-unsigned h4{ font-family:'Trebuchet MS',sans-serif; font-size:0.88rem; color:var(--red); margin-bottom:10px; font-weight:700; }
-  .vol-unsigned-list{ display:flex; flex-wrap:wrap; gap:8px; }
-  .vol-unsigned-tag{ background:#fff; border:1px solid var(--grey-line); border-radius:20px; padding:4px 12px; font-size:0.82rem; font-family:'Trebuchet MS',sans-serif; color:#5a4d47; }
-  @media(max-width:600px){ .vol-summary-stats{ grid-template-columns:repeat(2,1fr); } }
+  .vol-summary{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:10px; padding:14px 18px; margin-bottom:16px; }
+  .vol-summary-pills{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:10px; font-family:'Trebuchet MS',sans-serif; font-size:0.85rem; }
+  .vol-pill{ color:#6b5e58; }
+  .vol-pill strong{ color:var(--ink); }
+  .vol-pill.green strong{ color:#22c55e; }
+  .vol-pill.red strong{ color:var(--red); }
+  .vol-pill.blue strong{ color:#3b82f6; }
+  .vol-pill-sep{ color:#ddd; }
+  .vol-progress-bar{ height:6px; background:#e6e1dc; border-radius:3px; overflow:hidden; margin-bottom:10px; }
+  .vol-progress-fill{ height:100%; border-radius:3px; background:linear-gradient(90deg,#22c55e,#16a34a); transition:width 0.8s ease; }
+  .vol-collapsible{ border-top:1px solid var(--grey-line); padding-top:10px; margin-top:4px; }
+  .vol-collapsible-header{ display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; padding:4px 0; user-select:none; }
+  .vol-collapsible-header.red{ color:var(--red); }
+  .vol-collapsible-header.green{ color:#22c55e; }
+  .vol-collapsible-arrow{ font-size:0.7rem; transition:transform 0.2s; }
+  .vol-collapsible-body{ display:none; padding-top:8px; }
+  .vol-collapsible-body.open{ display:flex; flex-wrap:wrap; gap:6px; }
+  .vol-unsigned-tag{ background:#fff; border:1px solid var(--grey-line); border-radius:20px; padding:3px 10px; font-size:0.78rem; font-family:'Trebuchet MS',sans-serif; color:#5a4d47; }
+  .vol-req-row{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .vol-req-row label{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; color:var(--ink); white-space:nowrap; }
+  .vol-req-row input{ width:60px; padding:6px 10px; border:1px solid var(--grey-line); border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; text-align:center; }
+  .vol-req-row button{ padding:6px 14px; background:var(--red); color:#fff; border:none; border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; }
   .print-btn{ display:inline-flex; align-items:center; gap:8px; background:none; border:2px solid var(--bronze); color:var(--bronze); border-radius:6px; padding:9px 18px; font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; transition:all 0.2s; margin-bottom:16px; }
   .print-btn:hover{ background:var(--bronze); color:#fff; }
   .toast{ position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; max-width:320px; }
@@ -370,18 +375,6 @@
   </div>
   <!-- VOLUNTEER SLOTS PANEL -->
   <div class="admin-panel" id="panel-volunteer">
-    <div class="admin-form" style="margin-bottom:16px;">
-      <h3>Volunteer Requirement</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Required Slots Per Family</label>
-          <input type="number" id="vol-required" min="1" max="20" placeholder="e.g. 2" style="max-width:120px;">
-        </div>
-        <div class="form-group" style="justify-content:flex-end;">
-          <button class="save-btn" style="margin-top:24px;" onclick="saveVolRequired()">Save Requirement</button>
-        </div>
-      </div>
-    </div>
     <div class="admin-form">
       <h3>Add Volunteer Slot</h3>
       <div class="form-row">
@@ -440,7 +433,13 @@
     </div>
     <div class="events-list">
       <h3>Current Volunteer Slots</h3>
-      <div id="volSummaryDashboard" style="margin-bottom:24px;"></div>
+      <div id="volSummaryDashboard" style="margin-bottom:16px;">
+        <div class="vol-req-row">
+          <label>Required slots per family:</label>
+          <input type="number" id="vol-required" min="1" max="20" placeholder="2">
+          <button onclick="saveVolRequired()">Save</button>
+        </div>
+      </div>
       <div id="volSlotList"></div>
     </div>
     <div class="events-list" style="margin-top:32px;">
@@ -945,6 +944,18 @@ function saveVolRequired() {
   loadVolSlots();
 }
 
+function toggleVolSection(id) {
+  const body = document.getElementById(id);
+  const arrow = document.getElementById('arrow-' + id);
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    arrow.textContent = '▶';
+  } else {
+    body.classList.add('open');
+    arrow.textContent = '▼';
+  }
+}
+
 // ── VOLUNTEER SLOTS ───────────────────────────────────────────
 async function loadVolSlots() {
   const { data } = await sb.from('volunteer_slots').select('*').order('id');
@@ -982,37 +993,36 @@ async function loadVolSlots() {
   const notMet = allFamilies.filter(f => (signupsByEmail[f.email] || 0) < requiredSlots);
 
   summary.innerHTML = `
+    <div class="vol-req-row">
+      <label>Required slots per family:</label>
+      <input type="number" id="vol-required" min="1" max="20" value="${requiredSlots}">
+      <button onclick="saveVolRequired()">Save</button>
+    </div>
     <div class="vol-summary">
-      <div class="vol-summary-stats">
-        <div class="vol-stat">
-          <div class="vol-stat-num green">${filledSpots}</div>
-          <div class="vol-stat-label">Slots Filled</div>
+      <div class="vol-summary-pills">
+        <span class="vol-pill green"><strong>${filledSpots}</strong> Filled</span>
+        <span class="vol-pill-sep">|</span>
+        <span class="vol-pill red"><strong>${openSpots}</strong> Open</span>
+        <span class="vol-pill-sep">|</span>
+        <span class="vol-pill"><strong>${totalSpots}</strong> Total</span>
+        <span class="vol-pill-sep">|</span>
+        <span class="vol-pill blue"><strong>${pct}%</strong> Complete</span>
+      </div>
+      <div class="vol-progress-bar"><div class="vol-progress-fill" style="width:${pct}%"></div></div>
+      <div class="vol-collapsible">
+        <div class="vol-collapsible-header red" onclick="toggleVolSection('outstanding')">
+          Outstanding Commitments (${notMet.length}) <span class="vol-collapsible-arrow" id="arrow-outstanding">▼</span>
         </div>
-        <div class="vol-stat">
-          <div class="vol-stat-num red">${openSpots}</div>
-          <div class="vol-stat-label">Still Needed</div>
-        </div>
-        <div class="vol-stat">
-          <div class="vol-stat-num bronze">${totalSpots}</div>
-          <div class="vol-stat-label">Total Slots</div>
-        </div>
-        <div class="vol-stat">
-          <div class="vol-stat-num blue">${pct}%</div>
-          <div class="vol-stat-label">Filled</div>
+        <div class="vol-collapsible-body open" id="outstanding">
+          ${notMet.length > 0 ? notMet.map(f => `<span class="vol-unsigned-tag">${f.name} (${signupsByEmail[f.email] || 0}/${requiredSlots})</span>`).join('') : '<span style="color:#22c55e;font-size:0.82rem;font-weight:700;font-family:Trebuchet MS,sans-serif;">All families have met their commitment!</span>'}
         </div>
       </div>
-      <div class="vol-progress-bar">
-        <div class="vol-progress-fill" style="width:${pct}%"></div>
-      </div>
-      <div class="vol-progress-label">${filledSpots} of ${totalSpots} spots filled</div>
-      <div class="vol-unsigned" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--grey-line);">
-        <h4 style="color:#22c55e;margin-bottom:10px;">✅ Volunteer Commitment Met (${metRequirement.length})</h4>
-        <div class="vol-unsigned-list" style="margin-bottom:16px;">
-          ${metRequirement.length > 0 ? metRequirement.map(f => `<span class="vol-unsigned-tag" style="border-color:#22c55e;color:#22c55e;">${f.name} (${signupsByEmail[f.email] || 0}/${requiredSlots})</span>`).join('') : '<span style="color:#aaa;font-size:0.85rem;font-style:italic;">None yet</span>'}
+      <div class="vol-collapsible">
+        <div class="vol-collapsible-header green" onclick="toggleVolSection('met')">
+          Commitment Met (${metRequirement.length}) <span class="vol-collapsible-arrow" id="arrow-met">▶</span>
         </div>
-        <h4 style="color:var(--red);margin-bottom:10px;">Outstanding Volunteer Commitments (${notMet.length})</h4>
-        <div class="vol-unsigned-list">
-          ${notMet.length > 0 ? notMet.map(f => `<span class="vol-unsigned-tag">${f.name} (${signupsByEmail[f.email] || 0}/${requiredSlots})</span>`).join('') : '<span style="color:#22c55e;font-size:0.85rem;font-weight:700;">All families have met their commitment!</span>'}
+        <div class="vol-collapsible-body" id="met">
+          ${metRequirement.length > 0 ? metRequirement.map(f => `<span class="vol-unsigned-tag" style="border-color:#22c55e;color:#22c55e;">${f.name} (${signupsByEmail[f.email] || 0}/${requiredSlots})</span>`).join('') : '<span style="color:#aaa;font-size:0.82rem;font-style:italic;">None yet</span>'}
         </div>
       </div>
     </div>`;
