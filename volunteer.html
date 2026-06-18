@@ -296,11 +296,11 @@ async function loadSlots() {
     return `
       <div class="slot-card ${isFull ? 'full' : ''}">
         <div class="slot-info">
-          <div class="slot-date">📅 ${slot.date} at ${slot.time}</div>
-          <div class="slot-details">📍 ${slot.classroom}${slot.teacher ? ' · ' + slot.teacher : ''}</div>
-          <div class="slot-role">🙋 ${slot.role || 'Volunteer'}</div>
+          <div class="slot-date">${slot.date} · ${slot.time}</div>
+          <div class="slot-details">${slot.classroom}${slot.teacher ? ' · ' + slot.teacher : ''}</div>
+          <div class="slot-role">${slot.role || 'Volunteer'}</div>
           <div class="slot-spots ${isFull ? 'full' : 'open'}">
-            ${isFull ? '🔴 Full' : `🟢 ${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining`}
+            ${isFull ? 'Full' : `${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining`}
           </div>
         </div>
         <button class="signup-btn ${isFull ? 'full' : ''}"
@@ -322,9 +322,9 @@ async function loadMySignups() {
   }
   list.innerHTML = data.map(s => `
     <div class="my-signup-card">
-      <div class="my-signup-row"><span class="my-signup-label">📅 Date & Time</span><span>${s.volunteer_slots.date} at ${s.volunteer_slots.time}</span></div>
-      <div class="my-signup-row"><span class="my-signup-label">📍 Location</span><span>${s.volunteer_slots.classroom}${s.volunteer_slots.teacher ? ' · ' + s.volunteer_slots.teacher : ''}</span></div>
-      <div class="my-signup-row"><span class="my-signup-label">🙋 Role</span><span>${s.volunteer_slots.role || s.role || '—'}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Date & Time</span><span>${s.volunteer_slots.date} at ${s.volunteer_slots.time}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Location</span><span>${s.volunteer_slots.classroom}${s.volunteer_slots.teacher ? ' · ' + s.volunteer_slots.teacher : ''}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Role</span><span>${s.volunteer_slots.role || s.role || '—'}</span></div>
       <span class="cancel-note">Need to cancel? Contact us at office@northridgecommunityschool.com</span>
     </div>`).join('');
 }
