@@ -23,9 +23,9 @@
   .google-btn img{ width:24px; }
   .admin-greeting{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:12px; }
   .greeting-text h2{ color:var(--red); font-size:1.5rem; margin-bottom:4px; }
-  .verse-card{ background:linear-gradient(135deg, #C8102E, #a00d25); border-radius:10px; padding:18px 24px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-  .verse-text{ color:#fff; font-family:Georgia,serif; font-style:italic; font-size:0.95rem; flex:1; line-height:1.6; }
-  .verse-ref{ color:rgba(255,255,255,0.75); font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.82rem; white-space:nowrap; }
+  .verse-card{ background:linear-gradient(135deg, #C8102E, #a00d25); border-radius:10px; padding:20px 24px; margin-bottom:24px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
+  .verse-text{ color:#fff; font-family:Georgia,serif; font-style:italic; font-size:0.95rem; line-height:1.6; }
+  .verse-ref{ color:rgba(255,255,255,0.75); font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:0.82rem; text-align:center; }
   .stats-dashboard{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
   .stat-box{ background:#fff; border:1px solid var(--grey-line); border-radius:10px; padding:20px 16px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); }
   .stat-box.highlight{ border-color:var(--bronze); background:#fdf6f2; }
@@ -40,10 +40,10 @@
   .signout-btn:hover{ background:var(--red); color:#fff; border-color:var(--red); }
   .reset-btn{ background:none; border:1px solid #e0b0b0; border-radius:6px; padding:8px 16px; font-family:'Trebuchet MS',sans-serif; font-size:0.85rem; cursor:pointer; color:#c0392b; transition:all 0.2s; }
   .reset-btn:hover{ background:#c0392b; color:#fff; border-color:#c0392b; }
-  .reset-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; display:flex; align-items:center; justify-content:center; padding:16px; box-sizing:border-box; }
-  .reset-modal{ background:#fff; border-radius:14px; padding:24px 20px; max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); text-align:center; max-height:90vh; overflow-y:auto; overflow-x:hidden; box-sizing:border-box; }
-  .reset-modal .form-group{ width:100%; box-sizing:border-box; }
-  .reset-modal input[type="date"]{ width:100%; min-width:0; box-sizing:border-box; }
+  .reset-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
+  .reset-modal{ background:#fff; border-radius:14px; padding:28px 24px; max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); text-align:center; max-height:90vh; overflow-y:auto; overflow-x:hidden; box-sizing:border-box; }
+  .reset-modal .form-group{ width:100%; box-sizing:border-box; overflow:hidden; }
+  .reset-modal input[type="date"]{ width:100% !important; min-width:0 !important; max-width:100% !important; box-sizing:border-box !important; }
   .reset-modal h3{ color:var(--red); font-size:1.3rem; margin-bottom:12px; }
   .reset-modal p{ color:#5a4d47; font-size:0.95rem; margin-bottom:20px; line-height:1.6; }
   .reset-modal input{ width:100%; padding:12px 16px; border:2px solid var(--grey-line); border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:1.1rem; font-weight:700; text-align:center; letter-spacing:4px; margin-bottom:16px; box-sizing:border-box; }
@@ -487,14 +487,14 @@
     <div id="resetStep2" style="display:none;">
       <h3>New School Year Dates</h3>
       <p style="color:#5a4d47;font-size:0.9rem;margin-bottom:20px;">Enter the first and last day of the new school year. Volunteer slots will be mapped to the same days of the week.</p>
-      <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;width:100%;box-sizing:border-box;">
-        <div class="form-group" style="text-align:left;width:100%;box-sizing:border-box;">
+      <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;width:100%;box-sizing:border-box;overflow:hidden;">
+        <div class="form-group" style="text-align:left;width:100%;box-sizing:border-box;overflow:hidden;">
           <label>First Day of School</label>
-          <input type="date" id="resetStartDate" style="width:100%;min-width:0;padding:10px 12px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.95rem;color:var(--ink);background:#fff;box-sizing:border-box;display:block;">
+          <input type="date" id="resetStartDate" style="display:block;width:100%;min-width:0;max-width:100%;padding:12px 14px;border:2px solid var(--grey-line);border-radius:8px;font-size:1rem;color:var(--ink);background:#fff;box-sizing:border-box;font-family:'Trebuchet MS',sans-serif;">
         </div>
-        <div class="form-group" style="text-align:left;width:100%;box-sizing:border-box;">
+        <div class="form-group" style="text-align:left;width:100%;box-sizing:border-box;overflow:hidden;">
           <label>Last Day of School</label>
-          <input type="date" id="resetEndDate" style="width:100%;min-width:0;padding:10px 12px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.95rem;color:var(--ink);background:#fff;box-sizing:border-box;display:block;">
+          <input type="date" id="resetEndDate" style="display:block;width:100%;min-width:0;max-width:100%;padding:12px 14px;border:2px solid var(--grey-line);border-radius:8px;font-size:1rem;color:var(--ink);background:#fff;box-sizing:border-box;font-family:'Trebuchet MS',sans-serif;">
         </div>
       </div>
       <div class="reset-modal-btns">
