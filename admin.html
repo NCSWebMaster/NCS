@@ -41,7 +41,7 @@
   .reset-btn{ background:none; border:1px solid #e0b0b0; border-radius:6px; padding:8px 16px; font-family:'Trebuchet MS',sans-serif; font-size:0.85rem; cursor:pointer; color:#c0392b; transition:all 0.2s; }
   .reset-btn:hover{ background:#c0392b; color:#fff; border-color:#c0392b; }
   .reset-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px; }
-  .reset-modal{ background:#fff; border-radius:14px; padding:36px 32px; max-width:440px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); text-align:center; }
+  .reset-modal{ background:#fff; border-radius:14px; padding:28px 24px; max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.2); text-align:center; max-height:90vh; overflow-y:auto; }
   .reset-modal h3{ color:var(--red); font-size:1.3rem; margin-bottom:12px; }
   .reset-modal p{ color:#5a4d47; font-size:0.95rem; margin-bottom:20px; line-height:1.6; }
   .reset-modal input{ width:100%; padding:12px 16px; border:2px solid var(--grey-line); border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:1.1rem; font-weight:700; text-align:center; letter-spacing:4px; margin-bottom:16px; box-sizing:border-box; }
@@ -505,25 +505,26 @@
           <!-- Break Ranges -->
           <div style="margin-bottom:14px;">
             <div style="font-family:'Trebuchet MS',sans-serif;font-size:0.8rem;font-weight:700;color:var(--bronze);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Break Ranges</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px;">
-              <div></div>
-              <div style="font-family:'Trebuchet MS',sans-serif;font-size:0.75rem;color:#9a8b84;text-align:center;">Start</div>
-              <div style="font-family:'Trebuchet MS',sans-serif;font-size:0.75rem;color:#9a8b84;text-align:center;">End</div>
+            <div class="break-row">
+              <span class="break-label">Fall Break</span>
+              <div class="break-dates">
+                <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-fall-start" class="break-input"></div>
+                <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-fall-end" class="break-input"></div>
+              </div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:10px;">
-              <span style="font-family:'Trebuchet MS',sans-serif;font-size:0.85rem;font-weight:700;color:var(--ink);">Fall</span>
-              <input type="date" id="break-fall-start" style="padding:8px 6px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.78rem;color:var(--ink);background:#fff;width:100%;box-sizing:border-box;">
-              <input type="date" id="break-fall-end" style="padding:8px 6px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.78rem;color:var(--ink);background:#fff;width:100%;box-sizing:border-box;">
+            <div class="break-row">
+              <span class="break-label">Winter Break</span>
+              <div class="break-dates">
+                <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-winter-start" class="break-input"></div>
+                <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-winter-end" class="break-input"></div>
+              </div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:10px;">
-              <span style="font-family:'Trebuchet MS',sans-serif;font-size:0.85rem;font-weight:700;color:var(--ink);">Winter</span>
-              <input type="date" id="break-winter-start" style="padding:8px 6px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.78rem;color:var(--ink);background:#fff;width:100%;box-sizing:border-box;">
-              <input type="date" id="break-winter-end" style="padding:8px 6px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.78rem;color:var(--ink);background:#fff;width:100%;box-sizing:border-box;">
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:10px;">
-              <span style="font-family:'Trebuchet MS',sans-serif;font-size:0.85rem;font-weight:700;color:var(--ink);">Spring</span>
-              <input type="date" id="break-spring-start" style="padding:8px 6px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.78rem;color:var(--ink);background:#fff;width:100%;box-sizing:border-box;">
-              <input type="date" id="break-spring-end" style="padding:8px 6px;border:1px solid var(--grey-line);border-radius:6px;font-size:0.78rem;color:var(--ink);background:#fff;width:100%;box-sizing:border-box;">
+            <div class="break-row">
+              <span class="break-label">Spring Break</span>
+              <div class="break-dates">
+                <div class="break-date-group"><span class="break-date-label">Start</span><input type="date" id="break-spring-start" class="break-input"></div>
+                <div class="break-date-group"><span class="break-date-label">End</span><input type="date" id="break-spring-end" class="break-input"></div>
+              </div>
             </div>
           </div>
 
