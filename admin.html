@@ -487,14 +487,18 @@
     <div id="resetStep2" style="display:none;">
       <h3>New School Year Dates</h3>
       <p style="color:#5a4d47;font-size:0.9rem;margin-bottom:20px;">Enter the first and last day of the new school year. Volunteer slots will be mapped to the same days of the week.</p>
-      <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;width:100%;box-sizing:border-box;overflow:hidden;">
-        <div class="form-group" style="text-align:left;width:100%;box-sizing:border-box;overflow:hidden;">
-          <label>First Day of School</label>
-          <input type="date" id="resetStartDate" style="display:block;width:100%;min-width:0;max-width:100%;padding:12px 14px;border:2px solid var(--grey-line);border-radius:8px;font-size:1rem;color:var(--ink);background:#fff;box-sizing:border-box;font-family:'Trebuchet MS',sans-serif;">
+      <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
+        <div style="text-align:left;">
+          <label style="display:block;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.85rem;color:var(--ink);margin-bottom:6px;">First Day of School</label>
+          <div style="position:relative;height:48px;overflow:hidden;border:2px solid var(--grey-line);border-radius:8px;background:#fff;">
+            <input type="date" id="resetStartDate" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;padding:0 14px;border:none;outline:none;font-size:1rem;color:var(--ink);background:transparent;font-family:'Trebuchet MS',sans-serif;-webkit-appearance:none;box-sizing:border-box;">
+          </div>
         </div>
-        <div class="form-group" style="text-align:left;width:100%;box-sizing:border-box;overflow:hidden;">
-          <label>Last Day of School</label>
-          <input type="date" id="resetEndDate" style="display:block;width:100%;min-width:0;max-width:100%;padding:12px 14px;border:2px solid var(--grey-line);border-radius:8px;font-size:1rem;color:var(--ink);background:#fff;box-sizing:border-box;font-family:'Trebuchet MS',sans-serif;">
+        <div style="text-align:left;">
+          <label style="display:block;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.85rem;color:var(--ink);margin-bottom:6px;">Last Day of School</label>
+          <div style="position:relative;height:48px;overflow:hidden;border:2px solid var(--grey-line);border-radius:8px;background:#fff;">
+            <input type="date" id="resetEndDate" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;padding:0 14px;border:none;outline:none;font-size:1rem;color:var(--ink);background:transparent;font-family:'Trebuchet MS',sans-serif;-webkit-appearance:none;box-sizing:border-box;">
+          </div>
         </div>
       </div>
       <div class="reset-modal-btns">
