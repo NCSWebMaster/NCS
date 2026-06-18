@@ -119,6 +119,10 @@
   .vol-collapsible-body.open{ display:flex; flex-wrap:wrap; gap:6px; }
   .vol-unsigned-tag{ background:#fff; border:1px solid var(--grey-line); border-radius:20px; padding:3px 10px; font-size:0.78rem; font-family:'Trebuchet MS',sans-serif; color:#5a4d47; }
   .vol-req-row{ display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .vol-form-row-3{ grid-template-columns:1fr 1fr 1fr; }
+  .vol-form-row-btn{ grid-template-columns:1fr 1fr 1fr; }
+  @media(max-width:700px){ .vol-form-row-3{ grid-template-columns:1fr 1fr; } .vol-form-row-btn{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:480px){ .vol-form-row-3{ grid-template-columns:1fr; } .vol-form-row-btn{ grid-template-columns:1fr; } }
   .vol-req-row label{ font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; color:var(--ink); white-space:nowrap; }
   .vol-req-row input{ width:60px; padding:6px 10px; border:1px solid var(--grey-line); border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; text-align:center; }
   .vol-req-row button{ padding:6px 14px; background:var(--red); color:#fff; border:none; border-radius:6px; font-family:'Trebuchet MS',sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; }
@@ -377,7 +381,7 @@
   <div class="admin-panel" id="panel-volunteer">
     <div class="admin-form">
       <h3>Add Volunteer Slot</h3>
-      <div class="form-row" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="form-row vol-form-row-3">
         <div class="form-group">
           <label>Date</label>
           <input type="date" id="vol-date">
@@ -391,7 +395,7 @@
           <input type="time" id="vol-time-end">
         </div>
       </div>
-      <div class="form-row" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="form-row vol-form-row-3">
         <div class="form-group">
           <label>Classroom / Location</label>
           <input type="text" id="vol-classroom" placeholder="e.g. Room 4">
@@ -417,7 +421,7 @@
           <input type="text" id="vol-role-other" placeholder="e.g. Field Trip Chaperone">
         </div>
       </div>
-      <div class="form-row" style="grid-template-columns:1fr 1fr auto;align-items:flex-end;">
+      <div class="form-row vol-form-row-btn">
         <div class="form-group">
           <label>Spots Available</label>
           <input type="number" id="vol-spots" value="1" min="1" max="20">
@@ -432,7 +436,10 @@
             <option value="0">No reminder</option>
           </select>
         </div>
-        <button class="save-btn" id="saveVolSlot" style="margin-bottom:1px;">Add Slot</button>
+        <div class="form-group" style="justify-content:flex-end;">
+          <label style="visibility:hidden;">.</label>
+          <button class="save-btn" id="saveVolSlot">Add Slot</button>
+        </div>
       </div>
     </div>
     <div class="events-list">
