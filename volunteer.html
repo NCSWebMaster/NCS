@@ -246,6 +246,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   currentUserEmail = email;
   sessionStorage.setItem('ncs_vol_email', email);
   sessionStorage.setItem('ncs_vol_name', result[0].family_name);
+  sessionStorage.setItem('ncs_vol_code', code);
   showDashboard(email, result[0].family_name);
 });
 
@@ -261,6 +262,7 @@ function showDashboard(email, name) {
 document.getElementById('volunteerSignOut').addEventListener('click', () => {
   sessionStorage.removeItem('ncs_vol_email');
   sessionStorage.removeItem('ncs_vol_name');
+  sessionStorage.removeItem('ncs_vol_code');
   currentUserEmail = null;
   document.getElementById('loginSection').style.display = 'block';
   document.getElementById('volunteerDashboard').style.display = 'none';
@@ -322,8 +324,18 @@ async function loadSlots() {
 
 // ── MY SIGNUPS ────────────────────────────────────────────────
 async function loadMySignups() {
-  const data = await fetchData('volunteer_signups',
-    `?parent_email=eq.${encodeURIComponent(currentUserEmail)}&select=*,volunteer_slots(date,time,classroom,teacher,role)&order=id.desc`);
+  const savedCode = sessionStorage.getItem('ncs_vol_code');
+  let data = [];
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_my_signups`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_email: currentUserEmail, p_code: savedCode })
+    });
+    data = await res.json();
+  } catch (e) {
+    console.warn('get_my_signups error', e);
+  }
   const list = document.getElementById('mySignupsList');
   if (!data || data.length === 0) {
     list.innerHTML = '<p style="color:#aaa;font-style:italic;font-size:0.9rem;">You have no upcoming signups.</p>';
@@ -331,9 +343,9 @@ async function loadMySignups() {
   }
   list.innerHTML = data.map(s => `
     <div class="my-signup-card">
-      <div class="my-signup-row"><span class="my-signup-label">Date & Time</span><span>${s.volunteer_slots.date} at ${s.volunteer_slots.time}</span></div>
-      <div class="my-signup-row"><span class="my-signup-label">Location</span><span>${s.volunteer_slots.classroom}${s.volunteer_slots.teacher ? ' · ' + s.volunteer_slots.teacher : ''}</span></div>
-      <div class="my-signup-row"><span class="my-signup-label">Role</span><span>${s.volunteer_slots.role || s.role || '—'}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Date & Time</span><span>${s.slot_date} at ${s.slot_time}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Location</span><span>${s.slot_classroom}${s.slot_teacher ? ' · ' + s.slot_teacher : ''}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Role</span><span>${s.slot_role || s.role || '—'}</span></div>
       <span class="cancel-note">Need to cancel? Contact us at office@northridgecommunityschool.com</span>
     </div>`).join('');
 }
