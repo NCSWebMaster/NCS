@@ -218,21 +218,26 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = 'Checking...';
 
-  // Debug — show exactly what we're sending
-  console.log('Email sent:', email);
-  console.log('Code sent:', code);
-
-  // Check email + code against family_emails table
-  const url = `${SUPABASE_URL}/rest/v1/family_emails?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=*`;
-  console.log('Query URL:', url);
-  const data = await fetchData('family_emails', `?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=*`);
-  console.log('Result:', JSON.stringify(data));
+  // Verification happens server-side: the RPC checks the hashed code
+  // and returns only the minimal family_id/family_name, never the
+  // full family row (no DOBs, phone, address, or the code itself).
+  let result = [];
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/verify_family_access`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_email: email, p_code: code })
+    });
+    result = await res.json();
+  } catch (e) {
+    console.warn('verify_family_access error', e);
+  }
 
   btn.disabled = false;
   btn.textContent = 'Sign In';
 
-  if (!data || data.length === 0) {
-    errorDiv.innerHTML = `❌ No match found.<br><small>Email tried: <strong>${email}</strong></small><br><small>Code tried: <strong>${code}</strong></small>`;
+  if (!Array.isArray(result) || result.length === 0) {
+    errorDiv.textContent = '❌ No match found. Check your email and access code and try again.';
     errorDiv.style.display = 'block';
     return;
   }
@@ -240,8 +245,8 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   // Valid! Store in session
   currentUserEmail = email;
   sessionStorage.setItem('ncs_vol_email', email);
-  sessionStorage.setItem('ncs_vol_name', data[0].name);
-  showDashboard(email, data[0].name);
+  sessionStorage.setItem('ncs_vol_name', result[0].family_name);
+  showDashboard(email, result[0].family_name);
 });
 
 function showDashboard(email, name) {
@@ -268,9 +273,13 @@ document.getElementById('volunteerSignOut').addEventListener('click', () => {
 const savedEmail = sessionStorage.getItem('ncs_vol_email');
 const savedName = sessionStorage.getItem('ncs_vol_name');
 if (savedEmail && savedName) {
-  // Re-verify email still exists in family_emails
-  fetchData('family_emails', `?email=eq.${encodeURIComponent(savedEmail)}&select=id`).then(data => {
-    if (data && data.length > 0) {
+  // Re-verify email still exists in family_emails (boolean only, no row data)
+  fetch(`${SUPABASE_URL}/rest/v1/rpc/family_email_active`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_email: savedEmail })
+  }).then(res => res.json()).then(isActive => {
+    if (isActive === true) {
       showDashboard(savedEmail, savedName);
     } else {
       // Family was removed — clear session and show login
