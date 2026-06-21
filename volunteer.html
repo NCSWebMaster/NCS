@@ -187,6 +187,16 @@ let currentUserEmail = null;
 let currentSlotId = null;
 let currentSlotRole = null;
 
+function esc(value) {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function showToast(msg, duration = 3500) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -307,15 +317,17 @@ async function loadSlots() {
     return `
       <div class="slot-card ${isFull ? 'full' : ''}">
         <div class="slot-info">
-          <div class="slot-date">${slot.date} · ${slot.time}</div>
-          <div class="slot-details">${slot.classroom}${slot.teacher ? ' · ' + slot.teacher : ''}</div>
-          <div class="slot-role">${slot.role || 'Volunteer'}</div>
+          <div class="slot-date">${esc(slot.date)} · ${esc(slot.time)}</div>
+          <div class="slot-details">${esc(slot.classroom)}${slot.teacher ? ' · ' + esc(slot.teacher) : ''}</div>
+          <div class="slot-role">${esc(slot.role || 'Volunteer')}</div>
           <div class="slot-spots ${isFull ? 'full' : 'open'}">
             ${isFull ? 'Full' : `${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining`}
           </div>
         </div>
         <button class="signup-btn ${isFull ? 'full' : ''}"
-          ${isFull ? 'disabled' : `onclick="openSignupModal(${slot.id}, '${slot.date}', '${slot.time}', '${slot.classroom}', '${slot.teacher || ''}', '${slot.role || 'Volunteer'}')"`}>
+          data-id="${slot.id}" data-date="${esc(slot.date)}" data-time="${esc(slot.time)}"
+          data-classroom="${esc(slot.classroom)}" data-teacher="${esc(slot.teacher || '')}" data-role="${esc(slot.role || 'Volunteer')}"
+          ${isFull ? 'disabled' : `onclick="openSignupModal(this.dataset.id, this.dataset.date, this.dataset.time, this.dataset.classroom, this.dataset.teacher, this.dataset.role)"`}>
           ${isFull ? 'Full' : 'Sign Up'}
         </button>
       </div>`;
@@ -343,19 +355,19 @@ async function loadMySignups() {
   }
   list.innerHTML = data.map(s => `
     <div class="my-signup-card">
-      <div class="my-signup-row"><span class="my-signup-label">Date & Time</span><span>${s.slot_date} at ${s.slot_time}</span></div>
-      <div class="my-signup-row"><span class="my-signup-label">Location</span><span>${s.slot_classroom}${s.slot_teacher ? ' · ' + s.slot_teacher : ''}</span></div>
-      <div class="my-signup-row"><span class="my-signup-label">Role</span><span>${s.slot_role || s.role || '—'}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Date & Time</span><span>${esc(s.slot_date)} at ${esc(s.slot_time)}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Location</span><span>${esc(s.slot_classroom)}${s.slot_teacher ? ' · ' + esc(s.slot_teacher) : ''}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Role</span><span>${esc(s.slot_role || s.role || '—')}</span></div>
       <span class="cancel-note">Need to cancel? Contact us at office@northridgecommunityschool.com</span>
     </div>`).join('');
 }
 
 // ── MODAL ─────────────────────────────────────────────────────
 window.openSignupModal = (id, date, time, classroom, teacher, role) => {
-  currentSlotId = id;
+  currentSlotId = Number(id);
   currentSlotRole = role;
   document.getElementById('modalSlotSummary').innerHTML =
-    `<strong>${date} at ${time}</strong><br>${classroom}${teacher ? ' · ' + teacher : ''}<br><span style="color:var(--bronze);font-weight:600;">Role: ${role}</span>`;
+    `<strong>${esc(date)} at ${esc(time)}</strong><br>${esc(classroom)}${teacher ? ' · ' + esc(teacher) : ''}<br><span style="color:var(--bronze);font-weight:600;">Role: ${esc(role)}</span>`;
   document.getElementById('signupModal').style.display = 'flex';
 };
 

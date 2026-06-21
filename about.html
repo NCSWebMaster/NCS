@@ -68,7 +68,7 @@
     <h2>Who We Are</h2>
     <div class="divider"></div>
   </div>
-  <p class="about-intro">Northridge Community School provides academic and spiritual training and foundation for our children. We join parents in equipping children to become more like Christ and to be prepared to face an ever-changing world. We provide a Christ-centered environment, the best way to encourage a love of learning and academic excellence.</p>
+  <p class="about-intro">Northridge Community School is a place where students grow in faith, character, and academic excellence together. We believe every student deserves a nurturing environment that challenges their mind, shapes their heart, and prepares them for a life of purpose.</p>
   <div class="about-grid">
     <div class="flip-card" onclick="this.classList.toggle('flipped')" title="Click to see photo">
       <div class="flip-card-inner">
@@ -246,6 +246,16 @@
 const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
 
+function esc(value) {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 async function fetchTable(table, token) {
   const headers = {
     'apikey': SUPABASE_ANON,
@@ -285,15 +295,15 @@ async function loadYearly() {
       Object.entries(byMonth).map(([month, entries]) => `
         <div class="accordion-item has-event">
           <button class="accordion-trigger" aria-expanded="false">
-            <span class="accordion-day-label">${month}</span>
+            <span class="accordion-day-label">${esc(month)}</span>
             <span class="accordion-meta">${entries.length} Date${entries.length > 1 ? 's' : ''}</span>
             <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 4L7 9L12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <div class="accordion-body">
             ${entries.map(e => `
               <div class="event-item">
-                <span class="event-badge">${e.emoji || '📌'}</span>
-                <div><strong>${e.title}</strong><p>${e.date}</p></div>
+                <span class="event-badge">${esc(e.emoji || '📌')}</span>
+                <div><strong>${esc(e.title)}</strong><p>${esc(e.date)}</p></div>
               </div>`).join('')}
           </div>
         </div>`).join('') + '</div>';
@@ -325,8 +335,10 @@ function buildNewsletterGate() {
     const errorDiv = document.getElementById('nlError');
     errorDiv.style.display = 'none';
     if (!email || !code) { errorDiv.textContent = 'Please enter your email and access code'; errorDiv.style.display = 'block'; return; }
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/family_emails?email=eq.${encodeURIComponent(email)}&access_code=eq.${encodeURIComponent(code)}&select=id`, {
-      headers: { 'apikey': SUPABASE_ANON }
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/verify_family_access`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_email: email, p_code: code })
     });
     const data = await res.json();
     if (!data || data.length === 0) {
@@ -354,10 +366,10 @@ async function buildNewsletterLoggedIn() {
       ${data.map(n => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #E6E1DC;gap:12px;">
           <div>
-            <strong style="font-family:'Trebuchet MS',sans-serif;font-size:0.9rem;color:#3A2E2A;display:block;">${n.date}</strong>
+            <strong style="font-family:'Trebuchet MS',sans-serif;font-size:0.9rem;color:#3A2E2A;display:block;">${esc(n.date)}</strong>
             <span style="font-size:0.78rem;color:#aaa;">${new Date(n.sent_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
           </div>
-          <a href="${n.file_url}" target="_blank" style="background:#B07D4F;color:#fff;padding:7px 16px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">View PDF</a>
+          <a href="${esc(n.file_url)}" target="_blank" style="background:#B07D4F;color:#fff;padding:7px 16px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">View PDF</a>
         </div>`).join('')}
       <button onclick="sessionStorage.removeItem('ncs_nl_verified');buildNewsletterGate();" style="background:none;border:none;color:#aaa;font-size:0.78rem;font-family:'Trebuchet MS',sans-serif;cursor:pointer;padding:12px 16px;">Sign Out</button>
     </div>`;
@@ -373,7 +385,7 @@ async function buildWeeklyLoggedIn(token, email) {
 
     wrap.innerHTML = `
       <div class="events-user-bar">
-        <span>Signed in as ${email}</span>
+        <span>Signed in as ${esc(email)}</span>
         <button class="signout-small" id="eventsSignOut">Sign Out</button>
       </div>
       <div class="accordion-list">
@@ -382,7 +394,7 @@ async function buildWeeklyLoggedIn(token, email) {
           const hasEvent = events.length > 0;
           const meta = hasEvent ? `${events.length} Event${events.length > 1 ? 's' : ''}` : 'No Events';
           const body = hasEvent
-            ? events.map(e => `<div class="event-item"><span class="event-time">${e.time}</span><div><strong>${e.title}</strong><p>${e.description || ''}</p></div></div>`).join('')
+            ? events.map(e => `<div class="event-item"><span class="event-time">${esc(e.time)}</span><div><strong>${esc(e.title)}</strong><p>${esc(e.description || '')}</p></div></div>`).join('')
             : `<p class="accordion-empty">Nothing scheduled.</p>`;
           return `
             <div class="accordion-item ${hasEvent ? 'has-event' : ''}">
