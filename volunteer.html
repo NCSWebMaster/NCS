@@ -252,11 +252,12 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
     return;
   }
 
-  // Valid! Store in session
+  // Valid! Store only the session token — never the email-as-lookup-key
+  // or the access code itself, so there's nothing guessable or reusable
+  // sitting in sessionStorage.
   currentUserEmail = email;
-  sessionStorage.setItem('ncs_vol_email', email);
+  sessionStorage.setItem('ncs_vol_token', result[0].session_token);
   sessionStorage.setItem('ncs_vol_name', result[0].family_name);
-  sessionStorage.setItem('ncs_vol_code', code);
   showDashboard(email, result[0].family_name);
 });
 
@@ -270,9 +271,8 @@ function showDashboard(email, name) {
 }
 
 document.getElementById('volunteerSignOut').addEventListener('click', () => {
-  sessionStorage.removeItem('ncs_vol_email');
+  sessionStorage.removeItem('ncs_vol_token');
   sessionStorage.removeItem('ncs_vol_name');
-  sessionStorage.removeItem('ncs_vol_code');
   currentUserEmail = null;
   document.getElementById('loginSection').style.display = 'block';
   document.getElementById('volunteerDashboard').style.display = 'none';
@@ -281,23 +281,24 @@ document.getElementById('volunteerSignOut').addEventListener('click', () => {
   showToast('Signed out');
 });
 
-// Check session on load — verify against database
-const savedEmail = sessionStorage.getItem('ncs_vol_email');
-const savedName = sessionStorage.getItem('ncs_vol_name');
-if (savedEmail && savedName) {
-  // Re-verify email still exists in family_emails (boolean only, no row data)
-  fetch(`${SUPABASE_URL}/rest/v1/rpc/family_email_active`, {
+// Check session on load — verify the token against the database.
+// Identity (email/name) comes back FROM the server response, not from
+// sessionStorage, so there's no client-supplied value that could be
+// used to probe whether an arbitrary email is enrolled.
+const savedToken = sessionStorage.getItem('ncs_vol_token');
+if (savedToken) {
+  fetch(`${SUPABASE_URL}/rest/v1/rpc/family_session_active`, {
     method: 'POST',
     headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ p_email: savedEmail })
-  }).then(res => res.json()).then(isActive => {
-    if (isActive === true) {
-      showDashboard(savedEmail, savedName);
+    body: JSON.stringify({ p_token: savedToken })
+  }).then(res => res.json()).then(result => {
+    if (Array.isArray(result) && result.length > 0) {
+      showDashboard(result[0].family_email, result[0].family_name);
     } else {
-      // Family was removed — clear session and show login
-      sessionStorage.removeItem('ncs_vol_email');
+      // Token expired or invalid — clear session and show login
+      sessionStorage.removeItem('ncs_vol_token');
       sessionStorage.removeItem('ncs_vol_name');
-      document.getElementById('loginError').textContent = '⚠️ Your account is no longer active. Please contact the office.';
+      document.getElementById('loginError').textContent = '⚠️ Your session has expired. Please sign in again.';
       document.getElementById('loginError').style.display = 'block';
     }
   });
@@ -336,13 +337,13 @@ async function loadSlots() {
 
 // ── MY SIGNUPS ────────────────────────────────────────────────
 async function loadMySignups() {
-  const savedCode = sessionStorage.getItem('ncs_vol_code');
+  const savedToken = sessionStorage.getItem('ncs_vol_token');
   let data = [];
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_my_signups`, {
       method: 'POST',
       headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p_email: currentUserEmail, p_code: savedCode })
+      body: JSON.stringify({ p_token: savedToken })
     });
     data = await res.json();
   } catch (e) {
