@@ -65,24 +65,30 @@
   }
 
   /* PHOTO STRIP */
-  .photo-strip{background:#fff;border-bottom:1px solid var(--grey-line);}
+  .photo-strip{background:#fdf6f2;border-bottom:1px solid var(--grey-line);}
   .photo-strip-label{text-align:center;padding:52px 6% 32px;}
   .photo-strip-label .eyebrow{display:inline-block;color:var(--bronze);font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
   .photo-strip-label h2{font-size:2.2rem;color:var(--red);font-family:'Trebuchet MS',sans-serif;}
   .photo-strip-label .divider{width:60px;height:4px;background:var(--bronze);margin:14px auto 0;border-radius:2px;}
-  .photo-row{display:flex;gap:12px;width:100%;padding:0 6%;box-sizing:border-box;}
-  .photo-row+.photo-row{margin-top:12px;}
-  .photo-tile{flex:1;position:relative;background:#1a1412;border-radius:10px;overflow:visible;user-select:none;-webkit-user-select:none;box-shadow:0 2px 8px rgba(0,0,0,0.12);transition:transform 0.3s ease,box-shadow 0.3s ease;cursor:default;}
-  .photo-tile:hover{transform:scale(1.04);box-shadow:0 0 0 3px var(--red),0 8px 28px rgba(200,16,46,0.35);}
-  .photo-tile img{display:block;width:100%;height:220px;object-fit:contain;object-position:center;border-radius:10px;pointer-events:none;-webkit-user-drag:none;background:#1a1412;}
-  .photo-tile .photo-caption{position:absolute;bottom:-34px;left:0;right:0;text-align:center;color:var(--bronze);font-family:'Trebuchet MS',sans-serif;font-size:0.75rem;font-weight:600;padding:8px 8px 0;opacity:0;transition:opacity 0.3s ease;}
-  .photo-tile:hover .photo-caption{opacity:1;}
-  .photo-tile::after{content:'';position:absolute;inset:0;z-index:3;border-radius:10px;}
-  .photo-strip-inner{padding-bottom:48px;}
-  @media(max-width:700px){
-    .photo-row{gap:8px;padding:0 4%;}
-    .photo-tile img{height:130px;}
-    .photo-strip-label{padding:36px 6% 22px;}
+  .collage{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:240px 240px;gap:6px;padding:0 6% 48px;box-sizing:border-box;}
+  .collage-tile{position:relative;overflow:hidden;border-radius:10px;user-select:none;-webkit-user-select:none;}
+  .collage-tile.tall{grid-row:1/3;}
+  .collage-tile img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;pointer-events:none;-webkit-user-drag:none;transition:transform 0.45s ease;}
+  .collage-tile:hover img{transform:scale(1.07);}
+  .collage-tile .collage-caption{position:absolute;inset:0;display:flex;align-items:flex-end;padding:16px;background:linear-gradient(to top,rgba(58,46,42,0.72) 0%,rgba(0,0,0,0) 55%);opacity:0;transition:opacity 0.3s ease;}
+  .collage-tile:hover .collage-caption{opacity:1;}
+  .collage-caption span{color:#fff;font-family:'Trebuchet MS',sans-serif;font-size:0.8rem;font-weight:700;line-height:1.3;}
+  .collage-tile::after{content:'';position:absolute;inset:0;z-index:3;border-radius:10px;}
+  /* Red glow on hover */
+  .collage-tile{box-shadow:0 2px 10px rgba(0,0,0,0.1);transition:box-shadow 0.3s ease,transform 0.3s ease;}
+  .collage-tile:hover{box-shadow:0 0 0 3px var(--red),0 10px 30px rgba(200,16,46,0.3);transform:scale(1.02);z-index:2;}
+  @media(max-width:900px){
+    .collage{grid-template-columns:1fr 1fr;grid-template-rows:180px 180px 180px;gap:5px;}
+    .collage-tile.tall{grid-row:auto;}
+  }
+  @media(max-width:600px){
+    .collage{grid-template-columns:1fr 1fr;grid-template-rows:140px 140px 140px;gap:4px;padding:0 4% 36px;}
+    .photo-strip-label{padding:36px 6% 20px;}
     .photo-strip-label h2{font-size:1.7rem;}
   }
 </style>
@@ -127,36 +133,32 @@
     <h2>Our Community in Action</h2>
     <div class="divider"></div>
   </div>
-  <div class="photo-strip-inner">
-  <div class="photo-row" id="photoMosaic">
-    <div class="photo-tile">
+  <div class="collage" id="photoMosaic">
+    <div class="collage-tile tall">
       <img src="IMG20260324102601_Original.jpg" alt="NCS students on a field trip at Vasquez Rocks" draggable="false">
-      <div class="photo-caption">Exploring Vasquez Rocks — science in the field</div>
+      <div class="collage-caption"><span>Exploring Vasquez Rocks — science in the field</span></div>
     </div>
-    <div class="photo-tile">
-      <img src="IMG_0869_Original.jpg" alt="Young NCS students on a tractor at a fall field trip" draggable="false">
-      <div class="photo-caption">Fall field trip adventures</div>
+    <div class="collage-tile">
+      <img src="IMG_0869_Original.jpg" alt="Young NCS students on a tractor" draggable="false">
+      <div class="collage-caption"><span>Fall field trip adventures</span></div>
     </div>
-    <div class="photo-tile">
+    <div class="collage-tile">
       <img src="IMG_3255_Original.jpg" alt="NCS teacher and students classroom selfie" draggable="false">
-      <div class="photo-caption">Small classes, big relationships</div>
+      <div class="collage-caption"><span>Small classes, big relationships</span></div>
     </div>
-  </div>
-  <div class="photo-row">
-    <div class="photo-tile">
-      <img src="community.jpeg" alt="NCS students and parents together on campus" draggable="false">
-      <div class="photo-caption">A tight-knit school community</div>
+    <div class="collage-tile">
+      <img src="community.jpeg" alt="NCS students and parents together" draggable="false">
+      <div class="collage-caption"><span>A tight-knit school community</span></div>
     </div>
-    <div class="photo-tile">
+    <div class="collage-tile">
       <img src="godly.jpeg" alt="NCS students volunteering at Wentz" draggable="false">
-      <div class="photo-caption">Serving others — Wentz Volunteer Center</div>
+      <div class="collage-caption"><span>Serving others — Wentz Volunteer Center</span></div>
     </div>
-    <div class="photo-tile">
+    <div class="collage-tile">
       <img src="IMG_2857_Original.jpg" alt="NCS staff at a school community event" draggable="false">
-      <div class="photo-caption">Dedicated staff who love what they do</div>
+      <div class="collage-caption"><span>Dedicated staff who love what they do</span></div>
     </div>
   </div>
-  </div><!-- end photo-strip-inner -->
 </div>
 
 <section class="preview-section">
