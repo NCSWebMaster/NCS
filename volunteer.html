@@ -471,35 +471,7 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
       return;
     }
 
-    // Send confirmation email
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/rpc/send_email_via_resend`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_ANON,
-          'Authorization': `Bearer ${SUPABASE_ANON}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          to_email: currentUserEmail,
-          subject: 'Volunteer Signup Confirmed — NCS',
-          html_body: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
-            <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:100px;width:auto;display:block;margin:0 auto 24px;">
-            <h2 style="color:#C8102E;text-align:center;">Volunteer Signup Confirmed!</h2>
-            <p style="color:#3A2E2A;font-size:16px;">Dear ${name},</p>
-            <p style="color:#3A2E2A;font-size:16px;">Thank you for signing up to volunteer at NCS!</p>
-            <div style="background:#fdf6f2;border-radius:8px;padding:16px 20px;margin:20px 0;">
-              <p style="margin:0;font-size:15px;color:#3A2E2A;"><strong>Date & Time:</strong> ${document.getElementById('modalSlotSummary').querySelector('strong').textContent}</p>
-              <p style="margin:8px 0 0;font-size:15px;color:#3A2E2A;"><strong>Role:</strong> ${currentSlotRole}</p>
-            </div>
-            <p style="color:#3A2E2A;font-size:15px;">To cancel, contact us at <a href="mailto:office@northridgecommunityschool.com" style="color:#B07D4F;">office@northridgecommunityschool.com</a>.</p>
-            <p style="color:#9a8b84;font-size:13px;border-top:1px solid #E6E1DC;padding-top:16px;margin-top:24px;">
-              Northridge Community School · Where Godly Character meets Great Academics
-            </p>
-          </div>`
-        })
-      });
-    } catch(e) { console.warn('email error', e); }
+    // Confirmation email is sent server-side inside submit_volunteer_signup RPC
 
     btn.disabled = false;
     btn.textContent = 'Confirm Signup';
