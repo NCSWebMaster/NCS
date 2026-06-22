@@ -70,18 +70,18 @@
   .photo-strip-label .eyebrow{display:inline-block;color:var(--bronze);font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
   .photo-strip-label h2{font-size:2.2rem;color:var(--red);font-family:'Trebuchet MS',sans-serif;}
   .photo-strip-label .divider{width:60px;height:4px;background:var(--bronze);margin:14px auto 0;border-radius:2px;}
-  .photo-row{display:flex;gap:4px;width:100%;}
-  .photo-row+.photo-row{margin-top:4px;}
-  .photo-tile{flex:1;height:260px;position:relative;overflow:hidden;user-select:none;-webkit-user-select:none;}
-  .photo-tile img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none;transition:transform 0.5s ease;}
-  .photo-tile:hover img{transform:scale(1.05);}
-  .photo-tile .photo-caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.65),rgba(0,0,0,0));color:#fff;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;font-weight:600;padding:28px 14px 12px;transform:translateY(100%);transition:transform 0.3s ease;z-index:2;}
-  .photo-tile:hover .photo-caption{transform:translateY(0);}
-  .photo-tile::after{content:'';position:absolute;inset:0;z-index:3;}
-  @media(max-width:600px){
-    .photo-row{gap:2px;}
-    .photo-row+.photo-row{margin-top:2px;}
-    .photo-tile{height:160px;}
+  .photo-row{display:flex;gap:12px;width:100%;padding:0 6%;box-sizing:border-box;}
+  .photo-row+.photo-row{margin-top:12px;}
+  .photo-tile{flex:1;position:relative;background:#1a1412;border-radius:10px;overflow:visible;user-select:none;-webkit-user-select:none;box-shadow:0 2px 8px rgba(0,0,0,0.12);transition:transform 0.3s ease,box-shadow 0.3s ease;cursor:default;}
+  .photo-tile:hover{transform:scale(1.04);box-shadow:0 0 0 3px var(--red),0 8px 28px rgba(200,16,46,0.35);}
+  .photo-tile img{display:block;width:100%;height:220px;object-fit:contain;object-position:center;border-radius:10px;pointer-events:none;-webkit-user-drag:none;background:#1a1412;}
+  .photo-tile .photo-caption{position:absolute;bottom:-34px;left:0;right:0;text-align:center;color:var(--bronze);font-family:'Trebuchet MS',sans-serif;font-size:0.75rem;font-weight:600;padding:8px 8px 0;opacity:0;transition:opacity 0.3s ease;}
+  .photo-tile:hover .photo-caption{opacity:1;}
+  .photo-tile::after{content:'';position:absolute;inset:0;z-index:3;border-radius:10px;}
+  .photo-strip-inner{padding-bottom:48px;}
+  @media(max-width:700px){
+    .photo-row{gap:8px;padding:0 4%;}
+    .photo-tile img{height:130px;}
     .photo-strip-label{padding:36px 6% 22px;}
     .photo-strip-label h2{font-size:1.7rem;}
   }
@@ -124,9 +124,10 @@
 <div class="photo-strip">
   <div class="photo-strip-label">
     <span class="eyebrow">Life at NCS</span>
-    <h2>Our Community</h2>
+    <h2>Our Community in Action</h2>
     <div class="divider"></div>
   </div>
+  <div class="photo-strip-inner">
   <div class="photo-row" id="photoMosaic">
     <div class="photo-tile">
       <img src="IMG20260324102601_Original.jpg" alt="NCS students on a field trip at Vasquez Rocks" draggable="false">
@@ -155,6 +156,7 @@
       <div class="photo-caption">Dedicated staff who love what they do</div>
     </div>
   </div>
+  </div><!-- end photo-strip-inner -->
 </div>
 
 <section class="preview-section">
