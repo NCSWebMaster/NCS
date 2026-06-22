@@ -437,53 +437,39 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
   const name = document.getElementById('sig-name').value.trim();
   if (!name) { showToast('Please enter your name'); return; }
 
+  const token = sessionStorage.getItem('ncs_vol_token');
+  if (!token) { showToast('Session expired. Please sign in again.'); return; }
+
   const btn = document.getElementById('modalConfirm');
   btn.disabled = true;
   btn.textContent = 'Signing up...';
 
   try {
-    // Check not already signed up
-    const existing = await fetchData('volunteer_signups',
-      `?slot_id=eq.${currentSlotId}&parent_email=eq.${encodeURIComponent(currentUserEmail)}&select=id`);
-    if (existing && existing.length > 0) {
-      showToast('You are already signed up for this slot!');
-      btn.disabled = false;
-      btn.textContent = 'Confirm Signup';
-      return;
-    }
-
-    // Insert signup
-    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/volunteer_signups`, {
+    // Call secure RPC — validates token, checks capacity, prevents duplicates
+    const rpcRes = await fetch(`${SUPABASE_URL}/rest/v1/rpc/submit_volunteer_signup`, {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_ANON,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        slot_id: currentSlotId,
-        parent_name: name,
-        parent_email: currentUserEmail,
-        role: currentSlotRole
+        p_token:        token,
+        p_slot_id:      currentSlotId,
+        p_parent_name:  name,
+        p_parent_email: currentUserEmail,
+        p_child_name:   '',
+        p_child_grade:  ''
       })
     });
 
-    if (!insertRes.ok) {
-      const err = await insertRes.json();
-      showToast('Error: ' + (err.message || 'Could not save signup'));
+    const result = await rpcRes.json();
+
+    if (result.error) {
+      showToast(result.error);
       btn.disabled = false;
       btn.textContent = 'Confirm Signup';
       return;
     }
-
-    // Increment spots
-    try {
-      await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_spots_filled`, {
-        method: 'POST',
-        headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slot_id_input: currentSlotId })
-      });
-    } catch(e) { console.warn('increment error', e); }
 
     // Send confirmation email
     try {
