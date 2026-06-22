@@ -63,6 +63,42 @@
     .intro-strip{padding:40px 6%;}
     .intro-strip p{font-size:1rem;}
   }
+
+  /* PHOTO STRIP */
+  .photo-strip{background:#fff;border-bottom:1px solid var(--grey-line);overflow:hidden;}
+  .photo-strip-label{text-align:center;padding:52px 6% 32px;}
+  .photo-strip-label .eyebrow{display:inline-block;color:var(--bronze);font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+  .photo-strip-label h2{font-size:2.2rem;color:var(--red);font-family:'Trebuchet MS',sans-serif;}
+  .photo-strip-label .divider{width:60px;height:4px;background:var(--bronze);margin:14px auto 0;border-radius:2px;}
+  .photo-mosaic{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;grid-template-rows:260px 260px;gap:4px;}
+  .photo-tile{position:relative;overflow:hidden;user-select:none;-webkit-user-select:none;}
+  .photo-tile img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;-webkit-user-drag:none;transition:transform 0.55s ease;}
+  .photo-tile:hover img{transform:scale(1.06);}
+  .photo-tile .photo-caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);color:#fff;font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;font-weight:600;padding:28px 14px 12px;transform:translateY(100%);transition:transform 0.3s ease;z-index:2;}
+  .photo-tile:hover .photo-caption{transform:translateY(0);}
+  /* invisible shield — blocks right-click context menu and drag */
+  .photo-tile::after{content:'';position:absolute;inset:0;z-index:3;}
+  /* mosaic grid placement */
+  .photo-tile:nth-child(1){grid-column:1/3;grid-row:1/2;}
+  .photo-tile:nth-child(2){grid-column:3/4;grid-row:1/2;}
+  .photo-tile:nth-child(3){grid-column:4/5;grid-row:1/3;}
+  .photo-tile:nth-child(4){grid-column:1/2;grid-row:2/3;}
+  .photo-tile:nth-child(5){grid-column:2/3;grid-row:2/3;}
+  .photo-tile:nth-child(6){grid-column:3/4;grid-row:2/3;}
+  @media(max-width:900px){
+    .photo-mosaic{grid-template-columns:1fr 1fr;grid-template-rows:200px 200px 200px;gap:3px;}
+    .photo-tile:nth-child(1){grid-column:1/3;grid-row:1/2;}
+    .photo-tile:nth-child(2){grid-column:1/2;grid-row:2/3;}
+    .photo-tile:nth-child(3){grid-column:2/3;grid-row:2/3;}
+    .photo-tile:nth-child(4){grid-column:1/2;grid-row:3/4;}
+    .photo-tile:nth-child(5){grid-column:2/3;grid-row:3/4;}
+    .photo-tile:nth-child(6){display:none;}
+  }
+  @media(max-width:600px){
+    .photo-mosaic{grid-template-rows:160px 160px 160px;gap:2px;}
+    .photo-strip-label{padding:36px 6% 22px;}
+    .photo-strip-label h2{font-size:1.7rem;}
+  }
 </style>
 </head>
 <body>
@@ -96,6 +132,41 @@
 
 <div class="intro-strip">
   <p>At Northridge Community School, we believe every student deserves a place where faith and learning go hand in hand. Our small, close-knit campus gives each child the individual attention they need to grow in character, confidence, and academics.</p>
+</div>
+
+<!-- PHOTO STRIP -->
+<div class="photo-strip">
+  <div class="photo-strip-label">
+    <span class="eyebrow">Life at NCS</span>
+    <h2>Our Community in Action</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="photo-mosaic" id="photoMosaic">
+    <div class="photo-tile">
+      <img src="IMG20260324102601_Original.jpeg" alt="NCS students on a field trip at Vasquez Rocks" draggable="false">
+      <div class="photo-caption">Exploring Vasquez Rocks — science in the field</div>
+    </div>
+    <div class="photo-tile">
+      <img src="IMG_0869_Original.jpeg" alt="Young NCS students on a tractor at a fall field trip" draggable="false">
+      <div class="photo-caption">Fall field trip adventures</div>
+    </div>
+    <div class="photo-tile">
+      <img src="IMG_3255_Original.jpeg" alt="NCS teacher and students classroom selfie" draggable="false">
+      <div class="photo-caption">Small classes, big relationships</div>
+    </div>
+    <div class="photo-tile">
+      <img src="community.jpeg" alt="NCS students and parents together on campus" draggable="false">
+      <div class="photo-caption">A tight-knit school community</div>
+    </div>
+    <div class="photo-tile">
+      <img src="godly.jpeg" alt="NCS students volunteering at Wentz" draggable="false">
+      <div class="photo-caption">Serving others — Wentz Volunteer Center</div>
+    </div>
+    <div class="photo-tile">
+      <img src="IMG_2857_Original.jpeg" alt="NCS staff at a school community event" draggable="false">
+      <div class="photo-caption">Dedicated staff who love what they do</div>
+    </div>
+  </div>
 </div>
 
 <section class="preview-section">
@@ -172,6 +243,14 @@
 
 <script src="shared.js"></script>
 <script>
+// Photo protection — block right-click and drag on mosaic
+(function() {
+  const mosaic = document.getElementById('photoMosaic');
+  if (!mosaic) return;
+  mosaic.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
+  mosaic.addEventListener('dragstart', function(e) { e.preventDefault(); return false; });
+})();
+
 const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
 
