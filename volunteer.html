@@ -71,8 +71,8 @@
   .modal-cancel:hover{ background:#e6ddd6; }
 
   /* MY SIGNUPS */
-  .my-signups{ margin-top:40px; padding-top:32px; border-top:1px solid var(--grey-line); }
-  .my-signups h3{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1.1rem; color:var(--ink); margin-bottom:18px; }
+  .my-school-service{ margin-top:40px; padding-top:32px; border-top:1px solid var(--grey-line); }
+  .my-school-service h3{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1.1rem; color:var(--ink); margin-bottom:18px; }
   .my-signup-card{ background:#fdf6f2; border:1px solid var(--grey-line); border-radius:8px; padding:16px 20px; margin-bottom:12px; }
   .my-signup-row{ display:flex; justify-content:space-between; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--grey-line); font-size:0.9rem; color:var(--ink); gap:16px; }
   .my-signup-row:last-of-type{ border-bottom:none; }
@@ -81,6 +81,21 @@
 
   .toast{ position:fixed; bottom:24px; right:24px; background:var(--ink); color:#fff; padding:14px 24px; border-radius:8px; font-family:'Trebuchet MS',sans-serif; font-size:0.9rem; opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:999; max-width:320px; }
   .toast.show{ opacity:1; }
+
+  /* CATEGORY ACCORDIONS */
+  .cat-accordion{ margin-bottom:20px; border:1px solid var(--grey-line); border-radius:10px; overflow:hidden; }
+  .cat-accordion-header{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; background:#fdf6f2; cursor:pointer; user-select:none; }
+  .cat-accordion-title{ font-family:'Trebuchet MS',sans-serif; font-weight:700; font-size:1rem; color:var(--ink); }
+  .cat-accordion-meta{ display:flex; align-items:center; gap:12px; }
+  .cat-accordion-count{ font-family:'Trebuchet MS',sans-serif; font-size:0.8rem; color:#9a8b84; }
+  .cat-accordion-arrow{ color:var(--bronze); font-size:0.85rem; transition:transform 0.2s; }
+  .cat-accordion.collapsed .cat-accordion-arrow{ transform:rotate(-90deg); }
+  .cat-accordion-body{ padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .cat-accordion.collapsed .cat-accordion-body{ display:none; }
+  .cat-empty{ text-align:center; padding:20px; color:#aaa; font-style:italic; font-size:0.9rem; }
+
+  /* MY SIGNUPS category badge */
+  .signup-cat-badge{ display:inline-block; padding:2px 10px; border-radius:20px; font-family:'Trebuchet MS',sans-serif; font-size:0.75rem; font-weight:700; background:#fdf6f2; border:1px solid var(--bronze); color:var(--bronze); margin-bottom:8px; }
 
   @media(max-width:600px){
     .slot-card{ flex-direction:column; align-items:flex-start; }
@@ -126,7 +141,7 @@
       <button class="login-btn" id="loginBtn">Sign In</button>
       <p class="login-note">Don't have an access code? Contact the office at office@northridgecommunityschool.com</p>
     </div>
-    <div class="login-error" id="loginError">❌ Email or access code not recognized. Please check your details or contact the office.</div>
+    <div class="login-error" id="loginError">Email or access code not recognized. Please check your details or contact the office.</div>
   </div>
 </div>
 
@@ -135,7 +150,7 @@
   <div class="volunteer-wrap">
     <div class="volunteer-welcome">
       <div>
-        <h2>Volunteer Opportunities</h2>
+        <h2>Sign Up Opportunities</h2>
         <p id="volunteerUserEmail"></p>
       </div>
       <button class="signout-btn" id="volunteerSignOut">Sign Out</button>
@@ -144,9 +159,9 @@
     <div class="slots-header">Available Slots</div>
     <div id="slotsList"></div>
 
-    <div class="my-signups">
-      <h3>My Signups</h3>
-      <div id="mySignupsList"></div>
+    <div class="my-school-service">
+      <h3>My School Service</h3>
+      <div id="mySchoolServiceList"></div>
     </div>
   </div>
 </div>
@@ -247,7 +262,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
   btn.textContent = 'Sign In';
 
   if (!Array.isArray(result) || result.length === 0) {
-    errorDiv.textContent = '❌ No match found. Check your email and access code and try again.';
+    errorDiv.textContent = 'No match found. Check your email and access code and try again.';
     errorDiv.style.display = 'block';
     return;
   }
@@ -298,41 +313,77 @@ if (savedToken) {
       // Token expired or invalid — clear session and show login
       sessionStorage.removeItem('ncs_vol_token');
       sessionStorage.removeItem('ncs_vol_name');
-      document.getElementById('loginError').textContent = '⚠️ Your session has expired. Please sign in again.';
+      document.getElementById('loginError').textContent = 'Your session has expired. Please sign in again.';
       document.getElementById('loginError').style.display = 'block';
     }
   });
 }
 
 // ── SLOTS ─────────────────────────────────────────────────────
+const SLOT_CATEGORIES = ['Classroom Helper', 'Lunch Supervision', 'Special Events'];
+
 async function loadSlots() {
-  const data = await fetchData('volunteer_slots', '?select=*&order=id');
+  const data = await fetchData('volunteer_slots', '?select=*&order=date,time');
   const list = document.getElementById('slotsList');
   if (!data || data.length === 0) {
-    list.innerHTML = '<p class="empty-slots">No volunteer opportunities available right now. Check back soon!</p>';
+    list.innerHTML = '<p class="empty-slots">No sign up opportunities available right now. Check back soon!</p>';
     return;
   }
-  list.innerHTML = data.map(slot => {
-    const spotsLeft = slot.spots_total - slot.spots_filled;
-    const isFull = spotsLeft <= 0;
+
+  // Group by category
+  const byCat = {};
+  SLOT_CATEGORIES.forEach(c => { byCat[c] = []; });
+  data.forEach(slot => {
+    const cat = slot.category || 'Classroom Helper';
+    if (!byCat[cat]) byCat[cat] = [];
+    byCat[cat].push(slot);
+  });
+
+  list.innerHTML = SLOT_CATEGORIES.map(cat => {
+    const slots = byCat[cat];
+    const openCount = slots.filter(s => s.spots_total - s.spots_filled > 0).length;
     return `
-      <div class="slot-card ${isFull ? 'full' : ''}">
-        <div class="slot-info">
-          <div class="slot-date">${esc(slot.date)} · ${esc(slot.time)}</div>
-          <div class="slot-details">${esc(slot.classroom)}${slot.teacher ? ' · ' + esc(slot.teacher) : ''}</div>
-          <div class="slot-role">${esc(slot.role || 'Volunteer')}</div>
-          <div class="slot-spots ${isFull ? 'full' : 'open'}">
-            ${isFull ? 'Full' : `${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining`}
-          </div>
+      <div class="cat-accordion collapsed" id="cat-${cat.replace(/\s+/g,'-')}">
+        <div class="cat-accordion-header" onclick="toggleCatAccordion(this)">
+          <span class="cat-accordion-title">${esc(cat)}</span>
+          <span class="cat-accordion-meta">
+            <span class="cat-accordion-count">${openCount} open · ${slots.length} total</span>
+            <span class="cat-accordion-arrow">▾</span>
+          </span>
         </div>
-        <button class="signup-btn ${isFull ? 'full' : ''}"
-          data-id="${slot.id}" data-date="${esc(slot.date)}" data-time="${esc(slot.time)}"
-          data-classroom="${esc(slot.classroom)}" data-teacher="${esc(slot.teacher || '')}" data-role="${esc(slot.role || 'Volunteer')}"
-          ${isFull ? 'disabled' : `onclick="openSignupModal(this.dataset.id, this.dataset.date, this.dataset.time, this.dataset.classroom, this.dataset.teacher, this.dataset.role)"`}>
-          ${isFull ? 'Full' : 'Sign Up'}
-        </button>
+        <div class="cat-accordion-body">
+          ${slots.length === 0
+            ? '<p class="cat-empty">No slots available in this category.</p>'
+            : slots.map(slot => {
+                const spotsLeft = slot.spots_total - slot.spots_filled;
+                const isFull = spotsLeft <= 0;
+                const timeRange = slot.time + (slot.time_end ? ' – ' + slot.time_end : '');
+                return `
+                <div class="slot-card ${isFull ? 'full' : ''}">
+                  <div class="slot-info">
+                    <div class="slot-date">${esc(slot.date)}</div>
+                    <div class="slot-details">${esc(timeRange)} · ${esc(slot.classroom)}${slot.teacher ? ' · ' + esc(slot.teacher) : ''}</div>
+                    <div class="slot-spots ${isFull ? 'full' : 'open'}">
+                      ${isFull ? 'Full' : `${spotsLeft} spot${spotsLeft > 1 ? 's' : ''} remaining`}
+                    </div>
+                  </div>
+                  <button class="signup-btn ${isFull ? 'full' : ''}"
+                    data-id="${slot.id}" data-date="${esc(slot.date)}" data-time="${esc(timeRange)}"
+                    data-classroom="${esc(slot.classroom)}" data-teacher="${esc(slot.teacher || '')}"
+                    data-role="${esc(slot.role || 'Volunteer')}" data-category="${esc(cat)}"
+                    ${isFull ? 'disabled' : `onclick="openSignupModal(this.dataset.id, this.dataset.date, this.dataset.time, this.dataset.classroom, this.dataset.teacher, this.dataset.role, this.dataset.category)"`}>
+                    ${isFull ? 'Full' : 'Sign Up'}
+                  </button>
+                </div>`;
+              }).join('')}
+        </div>
       </div>`;
   }).join('');
+}
+
+function toggleCatAccordion(header) {
+  const acc = header.closest('.cat-accordion');
+  acc.classList.toggle('collapsed');
 }
 
 // ── MY SIGNUPS ────────────────────────────────────────────────
@@ -349,26 +400,30 @@ async function loadMySignups() {
   } catch (e) {
     console.warn('get_my_signups error', e);
   }
-  const list = document.getElementById('mySignupsList');
+  const list = document.getElementById('mySchoolServiceList');
   if (!data || data.length === 0) {
     list.innerHTML = '<p style="color:#aaa;font-style:italic;font-size:0.9rem;">You have no upcoming signups.</p>';
     return;
   }
-  list.innerHTML = data.map(s => `
+  list.innerHTML = data.map(s => {
+    const timeRange = s.slot_time + (s.slot_time_end ? ' – ' + esc(s.slot_time_end) : '');
+    return `
     <div class="my-signup-card">
-      <div class="my-signup-row"><span class="my-signup-label">Date & Time</span><span>${esc(s.slot_date)} at ${esc(s.slot_time)}</span></div>
+      <span class="signup-cat-badge">${esc(s.slot_category || 'Classroom Helper')}</span>
+      <div class="my-signup-row"><span class="my-signup-label">Date</span><span>${esc(s.slot_date)}</span></div>
+      <div class="my-signup-row"><span class="my-signup-label">Time</span><span>${esc(timeRange)}</span></div>
       <div class="my-signup-row"><span class="my-signup-label">Location</span><span>${esc(s.slot_classroom)}${s.slot_teacher ? ' · ' + esc(s.slot_teacher) : ''}</span></div>
-      <div class="my-signup-row"><span class="my-signup-label">Role</span><span>${esc(s.slot_role || s.role || '—')}</span></div>
       <span class="cancel-note">Need to cancel? Contact us at office@northridgecommunityschool.com</span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // ── MODAL ─────────────────────────────────────────────────────
-window.openSignupModal = (id, date, time, classroom, teacher, role) => {
+window.openSignupModal = (id, date, time, classroom, teacher, role, category) => {
   currentSlotId = Number(id);
   currentSlotRole = role;
   document.getElementById('modalSlotSummary').innerHTML =
-    `<strong>${esc(date)} at ${esc(time)}</strong><br>${esc(classroom)}${teacher ? ' · ' + esc(teacher) : ''}<br><span style="color:var(--bronze);font-weight:600;">Role: ${esc(role)}</span>`;
+    `<strong>${esc(date)}</strong><br>${esc(time)}<br>${esc(classroom)}${teacher ? ' · ' + esc(teacher) : ''}<br><span style="color:var(--bronze);font-weight:600;">${esc(category || 'Classroom Helper')}</span>`;
   document.getElementById('signupModal').style.display = 'flex';
 };
 
@@ -441,7 +496,7 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
         },
         body: JSON.stringify({
           to_email: currentUserEmail,
-          subject: '✅ Volunteer Signup Confirmed — NCS',
+          subject: 'Volunteer Signup Confirmed — NCS',
           html_body: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
             <img src="https://ncswebmaster.github.io/NCS/logo.png" alt="NCS Logo" style="height:100px;width:auto;display:block;margin:0 auto 24px;">
             <h2 style="color:#C8102E;text-align:center;">Volunteer Signup Confirmed!</h2>
@@ -466,7 +521,7 @@ document.getElementById('modalConfirm').addEventListener('click', async () => {
     document.getElementById('sig-name').value = '';
     currentSlotId = null;
     currentSlotRole = null;
-    showToast('✅ Signed up! Check your email for confirmation.', 4000);
+    showToast('Signed up! Check your email for confirmation.', 4000);
     loadSlots();
     loadMySignups();
 
