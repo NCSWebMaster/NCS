@@ -23,6 +23,7 @@
   @keyframes sparkle-pop{0%,48%{opacity:0;transform:translateY(-50%) scale(0.1) rotate(-30deg);}58%{opacity:1;transform:translateY(-50%) scale(2.1) rotate(20deg);}68%{opacity:1;transform:translateY(-50%) scale(1.3) rotate(0deg);}85%,100%{opacity:0;transform:translateY(-50%) scale(0.1) rotate(25deg);}}
   @keyframes sparkle-pop-small{0%,52%{opacity:0;transform:translateY(-50%) scale(0.1) rotate(15deg);}62%{opacity:1;transform:translateY(-50%) scale(1.9) rotate(-20deg);}72%{opacity:1;transform:translateY(-50%) scale(1.1) rotate(0deg);}88%,100%{opacity:0;transform:translateY(-50%) scale(0.1) rotate(-15deg);}}
   @media(prefers-reduced-motion:reduce){.hero p.tagline{animation:none;background-position:-100% 0;}.hero p.tagline::after,.hero p.tagline::before{animation:none;opacity:1;transform:translateY(-50%) scale(1) rotate(0deg);}}
+  .hero-hybrid{font-family:'Trebuchet MS',sans-serif;font-size:0.95rem;color:#6b5e58;letter-spacing:0.04em;margin-top:-18px;margin-bottom:28px;text-transform:uppercase;font-weight:600;}
   .hero-buttons a{display:inline-block;padding:14px 32px;margin:0 8px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;text-decoration:none;font-size:0.95rem;transition:transform 0.15s,box-shadow 0.15s;}
   .hero-buttons a:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,0.12);}
   .intro-strip{text-align:center;padding:56px 6%;background:#fff;border-bottom:1px solid var(--grey-line);}
@@ -109,6 +110,7 @@
   <img class="crest" src="logo.png" alt="Northridge Community School Crest">
   <h1>Northridge Community School</h1>
   <p class="tagline">Where Godly Character meets Great Academics</p>
+  <p class="hero-hybrid">Three days on campus. Two days at home. One shared mission.</p>
   <div class="hero-buttons">
     <a href="admissions.html" class="btn-primary">Apply for Admission</a>
     <a href="#donate" class="btn-secondary">Support Our School</a>
@@ -116,8 +118,53 @@
 </section>
 
 <div class="intro-strip">
-  <p>At Northridge Community School, we believe every student deserves a place where faith and learning go hand in hand. Our small, close-knit campus gives each child the individual attention they need to grow in character, confidence, and academics.</p>
+  <p>NCS is a Christ-centered hybrid school for Christian families who want the best of school, home, and community. We partner with parents — not to replace them — but to walk alongside them as they raise children in truth, wisdom, and faith. This is not a low-involvement model. It's a high-partnership one, for families who want to be deeply engaged.</p>
 </div>
+
+<!-- HOW IT WORKS STRIP -->
+<style>
+  .hybrid-strip{background:#fff;border-bottom:1px solid var(--grey-line);padding:56px 6%;}
+  .hybrid-strip .section-header{margin-bottom:40px;}
+  .hybrid-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:0;max-width:900px;margin:0 auto;border:1px solid var(--grey-line);border-radius:12px;overflow:hidden;}
+  .hybrid-pillar{padding:36px 32px;text-align:center;position:relative;}
+  .hybrid-pillar:not(:last-child){border-right:1px solid var(--grey-line);}
+  .hybrid-pillar-number{font-family:'Trebuchet MS',sans-serif;font-size:2.8rem;font-weight:700;line-height:1;margin-bottom:10px;}
+  .hybrid-pillar-number.campus{color:var(--red);}
+  .hybrid-pillar-number.home{color:var(--bronze);}
+  .hybrid-pillar-number.community{color:#5a4d47;}
+  .hybrid-pillar h3{font-family:'Trebuchet MS',sans-serif;font-size:1rem;font-weight:700;color:var(--ink);margin:0 0 10px;}
+  .hybrid-pillar p{font-size:0.88rem;color:#6b5e58;line-height:1.65;margin:0;}
+  .hybrid-note{text-align:center;max-width:680px;margin:32px auto 0;font-family:Georgia,serif;font-style:italic;font-size:1rem;color:#5a4d47;line-height:1.7;}
+  @media(max-width:700px){
+    .hybrid-pillars{grid-template-columns:1fr;border-radius:10px;}
+    .hybrid-pillar:not(:last-child){border-right:none;border-bottom:1px solid var(--grey-line);}
+  }
+</style>
+<section class="hybrid-strip">
+  <div class="section-header">
+    <span class="eyebrow">How NCS Works</span>
+    <h2>The Hybrid Advantage</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="hybrid-pillars">
+    <div class="hybrid-pillar">
+      <div class="hybrid-pillar-number campus">3</div>
+      <h3>Days on Campus</h3>
+      <p>Classroom instruction, enrichment, chapel, and the friendships that come from learning together in community.</p>
+    </div>
+    <div class="hybrid-pillar">
+      <div class="hybrid-pillar-number home">2</div>
+      <h3>Days at Home</h3>
+      <p>Structured home-learning days — not free days. Teachers provide lesson plans and remain available to guide families through the work.</p>
+    </div>
+    <div class="hybrid-pillar">
+      <div class="hybrid-pillar-number community">1</div>
+      <h3>Shared Mission</h3>
+      <p>School and family in true partnership — raising children in truth, wisdom, and faith. Parents here are not spectators. They are partners.</p>
+    </div>
+  </div>
+  <p class="hybrid-note">"For Christian families who want more than drop-off education — this model was built for you."</p>
+</section>
 
 <!-- PHOTO STRIP -->
 <div class="photo-strip">
@@ -195,8 +242,8 @@
 </section>
 
 <section class="enroll-cta">
-  <h2>Explore Your Path to NCS</h2>
-  <p>Join NCS and give your child a place to grow in faith, character, and academics.</p>
+  <h2>Is NCS Right for Your Family?</h2>
+  <p>We're looking for Christian families who want discipleship, strong academics, and a close-knit community — and who are ready to be true partners in their child's education.</p>
   <a href="admissions.html" class="btn-primary">Apply Now</a>
 </section>
 
