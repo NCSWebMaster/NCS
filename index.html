@@ -24,17 +24,7 @@
   @keyframes sparkle-pop-small{0%,52%{opacity:0;transform:translateY(-50%) scale(0.1) rotate(15deg);}62%{opacity:1;transform:translateY(-50%) scale(1.9) rotate(-20deg);}72%{opacity:1;transform:translateY(-50%) scale(1.1) rotate(0deg);}88%,100%{opacity:0;transform:translateY(-50%) scale(0.1) rotate(-15deg);}}
   @media(prefers-reduced-motion:reduce){.hero p.tagline{animation:none;background-position:-100% 0;}.hero p.tagline::after,.hero p.tagline::before{animation:none;opacity:1;transform:translateY(-50%) scale(1) rotate(0deg);}}
   .hero-hybrid{font-family:'Trebuchet MS',sans-serif;font-size:0.95rem;color:#6b5e58;letter-spacing:0.04em;margin-top:-18px;margin-bottom:28px;text-transform:uppercase;font-weight:600;}
-  .intro-hybrid-label{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 10px;margin-bottom:20px !important;}
-  .intro-hybrid-phrase{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;display:inline-block;background:linear-gradient(100deg,var(--bronze) 0%,var(--bronze) 35%,#ffe9b8 46%,#fff6e0 50%,#ffe9b8 54%,var(--bronze) 65%,var(--bronze) 100%);background-size:300% 100%;background-position:200% 0;-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;animation:phrase-shimmer-in 1.8s ease forwards;}
-  .intro-hybrid-phrase:nth-child(1){animation-delay:0.2s;}
-  .intro-hybrid-phrase:nth-child(2){animation-delay:0.9s;}
-  .intro-hybrid-phrase:nth-child(3){animation-delay:1.6s;}
-  .intro-hybrid-sep{color:var(--grey-line);font-size:0.9rem;opacity:0;animation:sep-fade-in 0.4s ease forwards;}
-  .intro-hybrid-sep:nth-of-type(1){animation-delay:0.85s;}
-  .intro-hybrid-sep:nth-of-type(2){animation-delay:1.55s;}
-  @keyframes phrase-shimmer-in{0%{opacity:0;background-position:200% 0;}30%{opacity:1;}80%{background-position:20% 0;}100%{opacity:1;background-position:-100% 0;}}
-  @keyframes sep-fade-in{from{opacity:0;}to{opacity:1;}}
-  @media(prefers-reduced-motion:reduce){.intro-hybrid-phrase{animation:none;opacity:1;background-position:-100% 0;}.intro-hybrid-sep{animation:none;opacity:1;}}
+  .intro-hybrid-label{font-family:'Trebuchet MS',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--bronze);margin-bottom:20px !important;}
   .hero-buttons a{display:inline-block;padding:14px 32px;margin:0 8px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;text-decoration:none;font-size:0.95rem;transition:transform 0.15s,box-shadow 0.15s;}
   .hero-buttons a:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,0.12);}
   .intro-strip{text-align:center;padding:56px 6%;background:#fff;border-bottom:1px solid var(--grey-line);}
@@ -128,13 +118,7 @@
 </section>
 
 <div class="intro-strip">
-  <p class="intro-hybrid-label">
-    <span class="intro-hybrid-phrase">Three days on campus</span>
-    <span class="intro-hybrid-sep">·</span>
-    <span class="intro-hybrid-phrase">Two days at home</span>
-    <span class="intro-hybrid-sep">·</span>
-    <span class="intro-hybrid-phrase">One shared mission</span>
-  </p>
+  <p class="intro-hybrid-label">Three days on campus. Two days at home. One shared mission.</p>
   <p>NCS is a Christ-centered hybrid school for Christian families who want the best of school, home, and community. We partner with parents — not to replace them — but to walk alongside them as they raise children in truth, wisdom, and faith. This is not a low-involvement model. It's a high-partnership one, for families who want to be deeply engaged.</p>
 </div>
 
