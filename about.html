@@ -29,6 +29,10 @@
   .flip-card-back:not(.belief-back) p{ position:relative; z-index:2; color:#fff; font-size:0.82rem; font-family:'Trebuchet MS',sans-serif; text-align:center; padding:10px 12px; background:rgba(0,0,0,0.55); width:100%; margin:0; }
   .flip-card-back.belief-back{ background:#fff; border:1px solid var(--grey-line); justify-content:center; align-items:stretch; }
   .flip-hint{ font-size:0.75rem; color:var(--bronze); font-family:'Trebuchet MS',sans-serif; font-weight:600; margin:16px 0 0 !important; align-self:center; }
+  .about-card-static{ background:#fff; border:1px solid var(--grey-line); border-radius:10px; padding:32px 24px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); display:flex; flex-direction:column; align-items:center; }
+  .about-card-static .icon{ width:56px; height:56px; margin:0 auto 16px; border-radius:50%; background:var(--red); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.2rem; font-family:'Trebuchet MS',sans-serif; font-weight:700; }
+  .about-card-static h3{ color:var(--ink); font-size:1.15rem; margin:0 0 10px; }
+  .about-card-static p{ font-size:0.92rem; color:#6b5e58; margin:0; line-height:1.6; }
   .moral-section{background:#fdf6f2;border-top:1px solid var(--grey-line);border-bottom:1px solid var(--grey-line);padding:64px 6%;}
   .beliefs-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:900px;margin:0 auto;align-items:stretch;}
   .beliefs-grid .flip-card{height:100%;}
@@ -74,61 +78,25 @@
   </div>
   <p class="about-intro">We partner with Christian families to educate children through a biblical worldview, strong academics, and intentional discipleship. Parents are not spectators here — they are partners. That's not a fine print requirement to tolerate; it's the model that makes NCS work, and it's exactly what families who choose us are looking for.</p>
   <div class="about-grid">
-    <div class="flip-card" onclick="this.classList.toggle('flipped')" title="Click to see photo">
-      <div class="flip-card-inner">
-        <div class="flip-card-front about-card">
-          <div class="icon">G</div>
-          <h3>Godly Character</h3>
-          <p>Daily devotions, biblical teaching, and intentional discipleship shape students who know what they believe — and why. Christian formation, not just values.</p>
-          <span class="flip-hint">Tap to see photo</span>
-        </div>
-        <div class="flip-card-back">
-          <img src="assets/pictures/godly.jpeg" alt="NCS students volunteering at Wentz">
-          <p>NCS students serving at Wentz Volunteer Center</p>
-        </div>
-      </div>
+    <div class="about-card-static">
+      <div class="icon">G</div>
+      <h3>Godly Character</h3>
+      <p>Daily devotions, biblical teaching, and intentional discipleship shape students who know what they believe — and why. Christian formation, not just values.</p>
     </div>
-    <div class="flip-card" onclick="this.classList.toggle('flipped')" title="Click to see photo">
-      <div class="flip-card-inner">
-        <div class="flip-card-front about-card">
-          <div class="icon">A</div>
-          <h3>Great Academics</h3>
-          <p>A rigorous, well-rounded curriculum from TK through Grade 8. On campus days deliver direct instruction; home days extend learning through teacher-provided lesson plans and guidance.</p>
-          <span class="flip-hint">Tap to see photo</span>
-        </div>
-        <div class="flip-card-back">
-          <img src="assets/pictures/academics.jpeg" alt="NCS students at awards ceremony">
-          <p>NCS students celebrating academic achievements</p>
-        </div>
-      </div>
+    <div class="about-card-static">
+      <div class="icon">A</div>
+      <h3>Great Academics</h3>
+      <p>A rigorous, well-rounded curriculum from TK through Grade 8. On campus days deliver direct instruction; home days extend learning through teacher-provided lesson plans and guidance.</p>
     </div>
-    <div class="flip-card" onclick="this.classList.toggle('flipped')" title="Click to see photo">
-      <div class="flip-card-inner">
-        <div class="flip-card-front about-card">
-          <div class="icon">C</div>
-          <h3>Strong Community</h3>
-          <p>The fellowship of a Christian school with the flexibility of homeschool. Intentional friendships, shared faith, and a community small enough that every family is known.</p>
-          <span class="flip-hint">Tap to see photo</span>
-        </div>
-        <div class="flip-card-back">
-          <img src="assets/pictures/community.jpeg" alt="NCS students and parents together">
-          <p>NCS students and parents — one strong community</p>
-        </div>
-      </div>
+    <div class="about-card-static">
+      <div class="icon">C</div>
+      <h3>Strong Community</h3>
+      <p>The fellowship of a Christian school with the flexibility of homeschool. Intentional friendships, shared faith, and a community small enough that every family is known.</p>
     </div>
-    <div class="flip-card" onclick="this.classList.toggle('flipped')" title="Click to see photo">
-      <div class="flip-card-inner">
-        <div class="flip-card-front about-card">
-          <div class="icon">P</div>
-          <h3>Parent Partnership</h3>
-          <p>This model works best for families who want to be actively involved. Parents volunteer, teach home days, and stay close to their child's learning. That's not a burden — it's the point.</p>
-          <span class="flip-hint">Tap to see photo</span>
-        </div>
-        <div class="flip-card-back">
-          <img src="assets/pictures/partnership.jpeg" alt="NCS teacher and parent in classroom" style="object-position:left center;">
-          <p>Open communication between teachers and parents</p>
-        </div>
-      </div>
+    <div class="about-card-static">
+      <div class="icon">P</div>
+      <h3>Parent Partnership</h3>
+      <p>This model works best for families who want to be actively involved. Parents volunteer, teach home days, and stay close to their child's learning. That's not a burden — it's the point.</p>
     </div>
   </div>
 
