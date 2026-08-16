@@ -139,6 +139,10 @@ section{padding:70px 6%;}
 .admissions-card ul li span:last-child{color:var(--bronze);font-weight:700;}
 .admissions-card a{display:block;text-align:center;background:var(--red);color:#fff;padding:14px;border-radius:6px;text-decoration:none;font-family:'Trebuchet MS',sans-serif;font-weight:700;}
 
+/* INTERESTED? LEAD CAPTURE BUTTON */
+.admissions-card .interest-cta-btn{display:block;width:100%;text-align:center;background:var(--bronze);color:#fff;padding:14px;border:none;border-radius:6px;text-decoration:none;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-bottom:14px;box-shadow:0 4px 14px rgba(176,125,79,0.45);transition:transform 0.15s ease,box-shadow 0.15s ease;}
+.admissions-card .interest-cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(176,125,79,0.55);}
+
 /* TUITION */
 .tuition-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;max-width:800px;margin:0 auto 32px;}
 .tuition-card{background:#fdf6f2;border:1px solid var(--grey-line);border-radius:10px;padding:32px 28px;text-align:center;}
