@@ -11,10 +11,13 @@
   .brand-name::after{content:"NCS";}
   .brand-name-text{display:none;}
 }
-.thankyou-hero{text-align:center;padding:100px 6%;background:linear-gradient(180deg,#fff 0%,#fdf6f2 100%);}
-.thankyou-icon{width:80px;height:80px;border-radius:50%;background:var(--bronze);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:2.2rem;font-family:'Trebuchet MS',sans-serif;font-weight:700;}
-.thankyou-hero h1{font-size:2.4rem;color:var(--red);margin-bottom:16px;}
-.thankyou-hero p{max-width:560px;margin:0 auto 32px;font-size:1.05rem;color:#5a4d47;line-height:1.75;}
+.thankyou-hero{text-align:center;padding:80px 6% 90px;background:linear-gradient(180deg,#fff 0%,#fdf6f2 100%);}
+.thankyou-hero img.crest{height:150px;margin-bottom:28px;}
+.thankyou-hero h1{font-size:2.4rem;color:var(--red);margin-bottom:28px;}
+.thankyou-note{max-width:620px;margin:0 auto 36px;text-align:left;font-size:1.05rem;color:#5a4d47;line-height:1.85;}
+.thankyou-note p{margin-bottom:18px;}
+.thankyou-signoff{font-family:Georgia,serif;font-style:italic;}
+.thankyou-signoff strong{display:block;font-style:normal;font-family:'Trebuchet MS',sans-serif;color:var(--red);margin-top:4px;}
 .thankyou-hero .btn-primary{display:inline-block;padding:14px 32px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;text-decoration:none;font-size:0.95rem;}
 </style>
 </head>
@@ -37,10 +40,13 @@
 </nav>
 
 <section class="thankyou-hero">
-  <div class="thankyou-icon">✓</div>
-  <h1>Thank You for Your Gift</h1>
-  <p>Your generosity directly supports NCS students — funding scholarships, classroom resources, and campus improvements. We're deeply grateful for your partnership in our mission.</p>
-  <p>A confirmation of your donation will be sent to the email you provided at checkout.</p>
+  <img class="crest" src="assets/pictures/logo.png" alt="Northridge Community School Crest">
+  <h1>Thank You for Supporting NCS!</h1>
+  <div class="thankyou-note">
+    <p>Thank you for your generous support of Northridge Community School! Your donation helps us continue providing a Christ-centered education and creates opportunities for students and families in our community. We are deeply grateful for your partnership and your investment in the future of Christian education.</p>
+    <p>Thank you for believing in NCS and helping us move forward with purpose.</p>
+    <p class="thankyou-signoff">With gratitude and appreciation and always in Christ,<strong>Northridge Community School</strong></p>
+  </div>
   <a href="index.html" class="btn-primary">Return to Home</a>
 </section>
 
