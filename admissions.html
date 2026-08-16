@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admissions & Tuition | Northridge Community School</title>
-<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/styles.css?v=2">
 <style>
 .brand-name{font-size:1.25rem;color:#C8102E;font-weight:700;}
 @media(max-width:900px){
@@ -12,42 +12,7 @@
   .brand-name-text{display:none;}
 }
 
-/* ---- Interested? lead-capture CTA + modal ---- */
-.interest-cta-bar{
-  max-width:560px;
-  margin:2.5rem auto;
-  padding:0.85rem 1.1rem;
-  background:#C8102E;
-  border-radius:8px;
-  color:#fff;
-  text-align:center;
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  justify-content:center;
-  gap:0.6rem;
-}
-.interest-cta-bar p{
-  margin:0;
-  font-size:0.92rem;
-  font-weight:600;
-}
-.interest-cta-btn{
-  background:#fff;
-  color:#C8102E;
-  border:none;
-  padding:0.5rem 1rem;
-  border-radius:5px;
-  font-weight:700;
-  font-size:0.88rem;
-  cursor:pointer;
-  transition:transform 0.15s ease, box-shadow 0.15s ease;
-}
-.interest-cta-btn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 4px 12px rgba(0,0,0,0.2);
-}
-
+/* ---- Interested? lead-capture modal (button styling now lives in styles.css) ---- */
 .lead-modal-overlay{
   display:none;
   position:fixed;
@@ -235,16 +200,11 @@
         <li><span>Kindergarten – Grade 5</span><span>Open</span></li>
         <li><span>Grade 6 – Grade 8</span><span>Open</span></li>
       </ul>
+      <button type="button" class="interest-cta-btn" id="openLeadModalBtn">Interested? Get More Info Now!</button>
       <a href="#">Start Your Application</a>
     </div>
   </div>
 </section>
-
-<!-- INTERESTED? LEAD CAPTURE CTA -->
-<div class="interest-cta-bar">
-  <p>Interested in NCS for your family?</p>
-  <button type="button" class="interest-cta-btn" id="openLeadModalBtn">Interested? Get More Info Now!</button>
-</div>
 
 <!-- TUITION -->
 <section id="tuition" class="section-tuition">
