@@ -86,6 +86,13 @@
     .photo-strip-label{padding:36px 6% 20px;}
     .photo-strip-label h2{font-size:1.7rem;}
   }
+
+  /* DONATE — checkout wiring states */
+  .donate-card{position:relative;}
+  .donate-card.is-loading{opacity:0.6;pointer-events:none;}
+  .donate-custom.is-loading{opacity:0.6;pointer-events:none;}
+  .donate-status{min-height:1.4em;margin-top:18px;font-family:'Trebuchet MS',sans-serif;font-size:0.9rem;color:var(--bronze);font-weight:600;}
+  .donate-status.is-error{color:var(--red);}
 </style>
 </head>
 <body>
@@ -255,12 +262,13 @@
   </div>
   <p class="lead">Your generosity helps fund scholarships, classroom resources, and campus improvements so every student can experience the Northridge difference.</p>
   <div class="donate-grid">
-    <div class="donate-card"><div class="amount">$50</div><div class="label">Classroom Supplies</div></div>
-    <div class="donate-card"><div class="amount">$100</div><div class="label">Library Resources</div></div>
-    <div class="donate-card"><div class="amount">$500</div><div class="label">Student Scholarship</div></div>
-    <div class="donate-card"><div class="amount">$1,000</div><div class="label">Program Sponsor</div></div>
+    <div class="donate-card" data-amount-cents="5000" role="button" tabindex="0"><div class="amount">$50</div><div class="label">Classroom Supplies</div></div>
+    <div class="donate-card" data-amount-cents="10000" role="button" tabindex="0"><div class="amount">$100</div><div class="label">Library Resources</div></div>
+    <div class="donate-card" data-amount-cents="50000" role="button" tabindex="0"><div class="amount">$500</div><div class="label">Student Scholarship</div></div>
+    <div class="donate-card" data-amount-cents="100000" role="button" tabindex="0"><div class="amount">$1,000</div><div class="label">Program Sponsor</div></div>
   </div>
-  <button class="donate-custom">Choose Another Amount</button>
+  <button class="donate-custom" type="button">Choose Another Amount</button>
+  <p id="donateStatus" class="donate-status" aria-live="polite"></p>
 </section>
 
 <footer>
@@ -323,6 +331,74 @@ async function loadInfoNights() {
 }
 
 loadInfoNights();
+
+// ---- Donation checkout ----
+const DONATE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/create-donation-checkout`;
+
+function setDonateStatus(message, isError) {
+  const statusEl = document.getElementById('donateStatus');
+  if (!statusEl) return;
+  statusEl.textContent = message || '';
+  statusEl.classList.toggle('is-error', !!isError);
+}
+
+function setDonateLoading(isLoading) {
+  document.querySelectorAll('.donate-card, .donate-custom').forEach(function(el) {
+    el.classList.toggle('is-loading', isLoading);
+  });
+}
+
+async function startDonationCheckout(amountCents) {
+  setDonateLoading(true);
+  setDonateStatus('Redirecting to secure checkout…', false);
+  try {
+    const res = await fetch(DONATE_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount_cents: amountCents })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.url) {
+      throw new Error(data && data.error ? data.error : 'Unable to start checkout');
+    }
+    window.location.href = data.url;
+  } catch (err) {
+    setDonateLoading(false);
+    setDonateStatus('Something went wrong — please try again or email office@northridgecommunityschool.com.', true);
+  }
+}
+
+document.querySelectorAll('.donate-card').forEach(function(card) {
+  function handleActivate() {
+    const cents = parseInt(card.getAttribute('data-amount-cents'), 10);
+    if (cents) startDonationCheckout(cents);
+  }
+  card.addEventListener('click', handleActivate);
+  card.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleActivate();
+    }
+  });
+});
+
+const donateCustomBtn = document.querySelector('.donate-custom');
+if (donateCustomBtn) {
+  donateCustomBtn.addEventListener('click', function() {
+    const input = window.prompt('Enter a donation amount (USD):', '');
+    if (input === null) return;
+    const dollars = parseFloat(String(input).replace(/[^0-9.]/g, ''));
+    if (!dollars || dollars <= 0) {
+      setDonateStatus('Please enter a valid donation amount.', true);
+      return;
+    }
+    if (dollars > 10000) {
+      setDonateStatus('For gifts over $10,000, please email office@northridgecommunityschool.com directly.', true);
+      return;
+    }
+    startDonationCheckout(Math.round(dollars * 100));
+  });
+}
 </script>
 </body>
 </html>
