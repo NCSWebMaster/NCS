@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Northridge Community School</title>
-<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/styles.css?v=3">
 <style>
 .brand-name{font-size:1.25rem;color:#C8102E;font-weight:700;}
 @media(max-width:900px){
@@ -111,28 +111,6 @@
   .donate-modal-submit-btn{width:100%;background:var(--red);color:#fff;border:none;padding:14px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-top:14px;transition:background 0.15s;}
   .donate-modal-submit-btn:hover{background:#a80d26;}
   .donate-modal-submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
-
-  /* GET MORE INFO — lead-capture modal (same pattern as admissions.html) */
-  .lead-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
-  .lead-modal-overlay.open{ display:flex; }
-  .lead-modal{background:#fff;width:100%;max-width:480px;border-radius:12px;padding:2rem;position:relative;max-height:90vh;overflow-y:auto;}
-  .lead-modal-close{position:absolute;top:0.75rem;right:0.9rem;background:none;border:none;font-size:1.5rem;line-height:1;cursor:pointer;color:#666;}
-  .lead-modal h3{color:#C8102E;margin-top:0;margin-bottom:0.25rem;}
-  .lead-modal-sub{color:#555;font-size:0.95rem;margin-top:0;margin-bottom:1.25rem;}
-  .lead-field{margin-bottom:1rem;}
-  .lead-field label{display:block;font-weight:600;font-size:0.9rem;margin-bottom:0.3rem;color:#333;}
-  .lead-field input,
-  .lead-field select{width:100%;padding:0.65rem 0.75rem;border:1px solid #ccc;border-radius:6px;font-size:1rem;box-sizing:border-box;}
-  .lead-field input:focus,
-  .lead-field select:focus{outline:none;border-color:#C8102E;}
-  .lead-optional{font-weight:400;color:#888;font-size:0.8rem;}
-  .lead-submit-btn{width:100%;background:#C8102E;color:#fff;border:none;padding:0.85rem;border-radius:6px;font-weight:700;font-size:1rem;cursor:pointer;margin-top:0.5rem;}
-  .lead-submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
-  .lead-error-msg{color:#C8102E;font-size:0.9rem;margin-top:0.75rem;display:none;}
-  .lead-success-view{display:none;text-align:center;}
-  .lead-success-view h3{color:#B07D4F;}
-  .lead-success-icon{font-size:2.5rem;margin-bottom:0.5rem;}
-  .lead-modal-close-btn{background:#B07D4F;color:#fff;border:none;padding:0.7rem 1.5rem;border-radius:6px;font-weight:700;cursor:pointer;margin-top:1rem;}
 </style>
 </head>
 <body>
@@ -158,7 +136,7 @@
   <h1>Northridge Community School</h1>
   <p class="tagline">Where Godly Character meets Great Academics</p>
   <div class="hero-buttons">
-    <button type="button" class="btn-primary" id="heroGetInfoBtn" style="border:none;cursor:pointer;">Get More Info Now</button>
+    <button type="button" class="btn-primary" id="heroGetInfoBtn">Get More Info Now</button>
     <a href="#donate" class="btn-secondary">Support Our School</a>
   </div>
 </section>
@@ -291,7 +269,7 @@
 <section class="enroll-cta">
   <h2>Is NCS Right for Your Family?</h2>
   <p>We're looking for Christian families who want discipleship, strong academics, and a close-knit community — and who are ready to be true partners in their child's education.</p>
-  <button type="button" class="btn-primary" id="enrollGetInfoBtn" style="border:none;cursor:pointer;">Get More Info Now</button>
+  <button type="button" class="btn-primary" id="enrollGetInfoBtn">Get More Info Now</button>
 </section>
 
 <section id="donate" class="donate-section">
