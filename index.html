@@ -30,19 +30,39 @@
   .hero-buttons a:hover, .hero-buttons button:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,0.12);}
   .intro-strip{text-align:center;padding:56px 6%;background:#fff;border-bottom:1px solid var(--grey-line);}
   .intro-strip p{max-width:700px;margin:0 auto;font-size:1.1rem;color:#5a4d47;line-height:1.8;}
-  .info-nights-section{background:#fff;border-bottom:1px solid var(--grey-line);text-align:center;}
-  .info-nights-table{width:100%;max-width:700px;margin:0 auto 24px;border-collapse:collapse;}
-  .info-nights-table th{font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.85rem;color:var(--bronze);text-transform:uppercase;letter-spacing:1px;padding:12px 16px;border-bottom:2px solid var(--grey-line);text-align:left;}
+
+  /* INFO NIGHTS */
+  .info-nights-section{background:#fff;border-bottom:1px solid var(--grey-line);text-align:center;padding-bottom:48px;}
+  .info-nights-table-scroll{width:100%;max-width:760px;margin:0 auto 24px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .info-nights-table{width:100%;min-width:520px;border-collapse:collapse;}
+  .info-nights-table th{font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.85rem;color:var(--bronze);text-transform:uppercase;letter-spacing:1px;padding:12px 16px;border-bottom:2px solid var(--grey-line);text-align:left;white-space:nowrap;}
   .info-nights-table td{padding:16px;border-bottom:1px solid var(--grey-line);font-size:0.95rem;color:var(--ink);text-align:left;}
   .info-nights-table tr:last-child td{border-bottom:none;}
   .info-nights-table tr:hover td{background:#fdf6f2;}
-  .info-nights-date{font-family:'Trebuchet MS',sans-serif;font-weight:700;color:var(--red);}
+  .info-nights-date{font-family:'Trebuchet MS',sans-serif;font-weight:700;color:var(--red);white-space:nowrap;}
+  .info-nights-loc{text-align:center !important;}
+  .info-nights-loc-header{text-align:center !important;}
+  .info-nights-rsvp-cell{text-align:right !important;}
+  .btn-rsvp{background:var(--red);color:#fff;border:none;padding:9px 16px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:background .15s,transform .15s;-webkit-appearance:none;appearance:none;}
+  .btn-rsvp:hover{background:#a80d26;transform:translateY(-1px);}
+  .btn-rsvp[disabled]{background:#ccc;cursor:default;transform:none;}
   .info-nights-loading{color:#aaa;font-style:italic;padding:32px;}
   .info-nights-empty{color:#aaa;font-style:italic;padding:32px;text-align:center;}
   .info-nights-contact{font-size:0.9rem;color:#6b5e58;margin-top:8px;}
   .info-nights-contact a{color:var(--bronze);text-decoration:none;font-weight:600;}
-  .info-nights-contact a:hover{text-decoration:underline;}
-  @media(max-width:600px){.info-nights-table th,.info-nights-table td{padding:10px 8px;font-size:0.88rem;}}
+  @media(max-width:1024px){
+    .info-nights-table-scroll{max-width:100%;padding:0 4%;}
+    .info-nights-table th,.info-nights-table td{padding:14px 12px;font-size:0.92rem;}
+  }
+  @media(max-width:600px){
+    .info-nights-table-scroll{padding:0 4%;margin-bottom:14px;}
+    .info-nights-table{min-width:460px;font-size:0.88rem;}
+    .info-nights-table th:nth-child(4),.info-nights-table td:nth-child(4){display:none;} /* hide Notes col on phones */
+    .info-nights-table th,.info-nights-table td{padding:10px 8px;}
+    .btn-rsvp{padding:8px 12px;font-size:0.8rem;}
+    .info-nights-contact{padding:0 6%;}
+  }
+
   .preview-section{background:#fdf6f2;border-bottom:1px solid var(--grey-line);}
   .preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1100px;margin:0 auto;}
   .preview-card{background:#fff;border:1px solid var(--grey-line);border-radius:12px;padding:36px 28px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.03);display:flex;flex-direction:column;align-items:center;}
@@ -111,6 +131,34 @@
   .donate-modal-submit-btn{width:100%;background:var(--red);color:#fff;border:none;padding:14px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-top:14px;transition:background 0.15s;}
   .donate-modal-submit-btn:hover{background:#a80d26;}
   .donate-modal-submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
+
+  /* RSVP modal — mirrors donate-modal / lead-modal pattern */
+  .rsvp-modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,46,42,0.6);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
+  .rsvp-modal-overlay.open{display:flex;}
+  .rsvp-modal{background:#fff;width:100%;max-width:440px;border-radius:12px;padding:2rem;position:relative;box-shadow:0 12px 40px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto;}
+  @media(max-width:480px){.rsvp-modal{padding:1.5rem 1.25rem;border-radius:10px;}}
+  .rsvp-modal-close{position:absolute;top:0.85rem;right:0.9rem;background:none;border:none;font-size:1.5rem;line-height:1;cursor:pointer;color:#9a8b84;}
+  .rsvp-modal-close:hover{color:var(--red);}
+  .rsvp-modal h3{color:var(--red);font-family:'Trebuchet MS',sans-serif;margin:0 0 4px;font-size:1.3rem;text-align:center;}
+  .rsvp-modal-sub{color:#6b5e58;font-size:0.9rem;margin:0 0 6px;text-align:center;}
+  .rsvp-modal-event{background:#fdf6f2;border:1px solid var(--grey-line);border-radius:8px;padding:12px 14px;margin:14px 0 20px;font-size:0.88rem;text-align:center;}
+  .rsvp-modal-event strong{color:var(--red);}
+  .rsvp-field{margin-bottom:14px;}
+  .rsvp-field label{display:block;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.8rem;color:var(--ink);margin-bottom:6px;}
+  .rsvp-field input,.rsvp-field select{width:100%;padding:11px 12px;border:2px solid var(--grey-line);border-radius:8px;font-size:0.95rem;font-family:inherit;color:var(--ink);outline:none;transition:border-color .15s;}
+  .rsvp-field input:focus,.rsvp-field select:focus{border-color:var(--bronze);}
+  .rsvp-optional{color:#aaa;font-weight:400;}
+  .rsvp-error{color:var(--red);font-size:0.85rem;margin:4px 0 0;min-height:1.2em;display:none;font-family:'Trebuchet MS',sans-serif;}
+  .rsvp-error.show{display:block;}
+  .rsvp-submit-btn{width:100%;background:var(--red);color:#fff;border:none;padding:14px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-top:6px;transition:background .15s;}
+  .rsvp-submit-btn:hover{background:#a80d26;}
+  .rsvp-submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
+  .rsvp-success{text-align:center;display:none;}
+  .rsvp-success-icon{width:56px;height:56px;border-radius:50%;background:#e8f5e9;color:#2e7d32;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+  .rsvp-success h3{color:var(--ink);font-family:'Trebuchet MS',sans-serif;}
+  .rsvp-success p{color:#6b5e58;font-size:0.95rem;line-height:1.6;}
+  .rsvp-close-btn{display:inline-block;margin-top:14px;padding:11px 26px;border-radius:6px;border:2px solid var(--red);color:var(--red);background:none;font-family:'Trebuchet MS',sans-serif;font-weight:700;cursor:pointer;}
+  .rsvp-close-btn:hover{background:var(--red);color:#fff;}
 </style>
 </head>
 <body>
@@ -262,8 +310,21 @@
     <h2>Upcoming Information Nights</h2>
     <div class="divider"></div>
   </div>
-  <div id="infoNightsList">
-    <p class="info-nights-loading">Loading upcoming dates...</p>
+  <div class="info-nights-table-scroll">
+    <table class="info-nights-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th class="info-nights-loc-header">Location</th>
+          <th>Notes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="infoNightsBody">
+        <tr><td colspan="5" class="info-nights-loading">Loading upcoming dates...</td></tr>
+      </tbody>
+    </table>
   </div>
   <p class="info-nights-contact">Questions? Contact us at <a href="mailto:office@northridgecommunityschool.com">office@northridgecommunityschool.com</a></p>
 </section>
@@ -306,6 +367,64 @@
     </div>
     <p class="donate-modal-error" id="donateModalError"></p>
     <button type="button" class="donate-modal-submit-btn" id="donateModalSubmitBtn">Continue to Checkout</button>
+  </div>
+</div>
+
+<!-- INFO NIGHT RSVP MODAL -->
+<div class="rsvp-modal-overlay" id="rsvpOverlay">
+  <div class="rsvp-modal">
+    <button type="button" class="rsvp-modal-close" id="rsvpCloseBtn" aria-label="Close">&times;</button>
+
+    <div id="rsvpFormView">
+      <h3>RSVP for Information Night</h3>
+      <p class="rsvp-modal-sub">Let us know you're coming — we'll save you a seat.</p>
+      <div class="rsvp-modal-event" id="rsvpEventLine"></div>
+
+      <form id="rsvpForm">
+        <div class="rsvp-field">
+          <label for="rsvpParentName">Parent/Guardian Name</label>
+          <input type="text" id="rsvpParentName" required autocomplete="name">
+        </div>
+        <div class="rsvp-field">
+          <label for="rsvpEmail">Email Address</label>
+          <input type="email" id="rsvpEmail" required autocomplete="email">
+        </div>
+        <div class="rsvp-field">
+          <label for="rsvpPhone">Phone Number</label>
+          <input type="tel" id="rsvpPhone" required autocomplete="tel">
+        </div>
+        <div class="rsvp-field">
+          <label for="rsvpStudentName">Student Name</label>
+          <input type="text" id="rsvpStudentName" required autocomplete="off">
+        </div>
+        <div class="rsvp-field">
+          <label for="rsvpGrade">Grade Interested In <span class="rsvp-optional">(optional)</span></label>
+          <select id="rsvpGrade">
+            <option value="">Select a grade (optional)</option>
+            <option value="TK">TK</option>
+            <option value="Kindergarten">Kindergarten</option>
+            <option value="Grade 1">Grade 1</option>
+            <option value="Grade 2">Grade 2</option>
+            <option value="Grade 3">Grade 3</option>
+            <option value="Grade 4">Grade 4</option>
+            <option value="Grade 5">Grade 5</option>
+            <option value="Grade 6">Grade 6</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Not sure yet">Not sure yet</option>
+          </select>
+        </div>
+        <p class="rsvp-error" id="rsvpError">Please fill in all required fields.</p>
+        <button type="submit" class="rsvp-submit-btn" id="rsvpSubmitBtn">Confirm RSVP</button>
+      </form>
+    </div>
+
+    <div class="rsvp-success" id="rsvpSuccessView">
+      <div class="rsvp-success-icon">✓</div>
+      <h3>You're On the List!</h3>
+      <p id="rsvpSuccessText"></p>
+      <button type="button" class="rsvp-close-btn" id="rsvpSuccessCloseBtn">Close</button>
+    </div>
   </div>
 </div>
 
@@ -392,43 +511,163 @@
 const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
 
-async function loadInfoNights() {
-  const wrap = document.getElementById('infoNightsList');
+// Shared Supabase client — used by Info Nights/RSVP and the Get More Info lead form below
+const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ---- Info Nights + RSVP ----
+const RSVP_STORAGE_KEY = 'ncs_rsvped_night_ids';
+let infoNights = [];
+
+function getRsvpedIds() {
+  try { return JSON.parse(localStorage.getItem(RSVP_STORAGE_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function markRsvped(id) {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/info_nights?select=*&order=id`, {
-      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' }
-    });
-    const data = await res.json();
-    if (!data || data.length === 0) {
-      wrap.innerHTML = '<p class="info-nights-empty">No upcoming information nights scheduled. Check back soon!</p>';
-      return;
-    }
-    wrap.innerHTML = `
-      <table class="info-nights-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Location</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${data.map(n => `
-            <tr>
-              <td class="info-nights-date">${n.date}</td>
-              <td>${n.time}</td>
-              <td>${n.location}</td>
-              <td>${n.notes || '—'}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
-  } catch(err) {
-    wrap.innerHTML = '<p class="info-nights-empty">No upcoming information nights scheduled. Check back soon!</p>';
+    const ids = getRsvpedIds();
+    if (!ids.includes(id)) ids.push(id);
+    localStorage.setItem(RSVP_STORAGE_KEY, JSON.stringify(ids));
+  } catch (e) { /* localStorage unavailable — non-critical */ }
+}
+
+function formatNightDate(isoDate) {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function renderInfoNights() {
+  const body = document.getElementById('infoNightsBody');
+  if (infoNights.length === 0) {
+    body.innerHTML = '<tr><td colspan="5" class="info-nights-empty">No upcoming information nights scheduled. Check back soon!</td></tr>';
+    return;
+  }
+  const rsvpedIds = getRsvpedIds();
+  body.innerHTML = infoNights.map(function(n) {
+    const alreadyIn = rsvpedIds.includes(n.id);
+    return '<tr>' +
+      '<td class="info-nights-date">' + formatNightDate(n.event_date) + '</td>' +
+      '<td>' + escapeHtml(n.event_time) + '</td>' +
+      '<td class="info-nights-loc">' + escapeHtml(n.location) + '</td>' +
+      '<td>' + (n.notes ? escapeHtml(n.notes) : '—') + '</td>' +
+      '<td class="info-nights-rsvp-cell">' +
+        (alreadyIn
+          ? '<button class="btn-rsvp" disabled>You\'re Going ✓</button>'
+          : '<button class="btn-rsvp" data-id="' + n.id + '">Interested?</button>') +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  body.querySelectorAll('.btn-rsvp:not([disabled])').forEach(function(btn) {
+    btn.addEventListener('click', function() { openRsvpModal(Number(btn.dataset.id)); });
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str == null ? '' : String(str);
+  return div.innerHTML;
+}
+
+async function loadInfoNights() {
+  try {
+    const { data, error } = await sbClient
+      .from('info_nights')
+      .select('id, event_date, event_time, location, notes')
+      .order('event_date', { ascending: true });
+    if (error) throw error;
+    infoNights = data || [];
+    renderInfoNights();
+  } catch (err) {
+    document.getElementById('infoNightsBody').innerHTML =
+      '<tr><td colspan="5" class="info-nights-empty">No upcoming information nights scheduled. Check back soon!</td></tr>';
   }
 }
 
 loadInfoNights();
+
+// RSVP modal wiring
+const rsvpOverlay = document.getElementById('rsvpOverlay');
+const rsvpCloseBtn = document.getElementById('rsvpCloseBtn');
+const rsvpSuccessCloseBtn = document.getElementById('rsvpSuccessCloseBtn');
+const rsvpFormView = document.getElementById('rsvpFormView');
+const rsvpSuccessView = document.getElementById('rsvpSuccessView');
+const rsvpForm = document.getElementById('rsvpForm');
+const rsvpSubmitBtn = document.getElementById('rsvpSubmitBtn');
+const rsvpErrorEl = document.getElementById('rsvpError');
+const rsvpEventLine = document.getElementById('rsvpEventLine');
+const rsvpSuccessText = document.getElementById('rsvpSuccessText');
+let activeNightId = null;
+
+function openRsvpModal(id) {
+  const night = infoNights.find(function(n) { return n.id === id; });
+  if (!night) return;
+  activeNightId = id;
+  rsvpEventLine.innerHTML =
+    '<div><strong>' + formatNightDate(night.event_date) + '</strong> &middot; ' + escapeHtml(night.event_time) + '</div>' +
+    '<div style="margin-top:8px;">' + escapeHtml(night.location) + '</div>';
+  rsvpForm.reset();
+  rsvpErrorEl.classList.remove('show');
+  rsvpFormView.style.display = 'block';
+  rsvpSuccessView.style.display = 'none';
+  rsvpSubmitBtn.disabled = false;
+  rsvpSubmitBtn.textContent = 'Confirm RSVP';
+  rsvpOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRsvpModal() {
+  rsvpOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+rsvpCloseBtn.addEventListener('click', closeRsvpModal);
+rsvpSuccessCloseBtn.addEventListener('click', closeRsvpModal);
+rsvpOverlay.addEventListener('click', function(e) { if (e.target === rsvpOverlay) closeRsvpModal(); });
+
+rsvpForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const parentName = document.getElementById('rsvpParentName').value.trim();
+  const email = document.getElementById('rsvpEmail').value.trim();
+  const phone = document.getElementById('rsvpPhone').value.trim();
+  const studentName = document.getElementById('rsvpStudentName').value.trim();
+  const grade = document.getElementById('rsvpGrade').value || null;
+
+  if (!parentName || !email || !phone || !studentName) {
+    rsvpErrorEl.textContent = 'Please fill in all required fields.';
+    rsvpErrorEl.classList.add('show');
+    return;
+  }
+
+  rsvpErrorEl.classList.remove('show');
+  rsvpSubmitBtn.disabled = true;
+  rsvpSubmitBtn.textContent = 'Submitting...';
+
+  try {
+    const { error } = await sbClient.rpc('submit_info_night_rsvp', {
+      p_info_night_id: activeNightId,
+      p_parent_name: parentName,
+      p_email: email,
+      p_phone: phone,
+      p_student_name: studentName,
+      p_grade_interested: grade
+    });
+    if (error) throw error;
+
+    markRsvped(activeNightId);
+    const night = infoNights.find(function(n) { return n.id === activeNightId; });
+    rsvpSuccessText.textContent = 'We\'ve saved your spot for ' + formatNightDate(night.event_date) +
+      ' at ' + night.event_time + '. A confirmation is on its way to ' + email + '.';
+    rsvpFormView.style.display = 'none';
+    rsvpSuccessView.style.display = 'block';
+    renderInfoNights();
+  } catch (err) {
+    rsvpErrorEl.textContent = 'Something went wrong submitting your RSVP. Please try again, or email us directly at office@northridgecommunityschool.com.';
+    rsvpErrorEl.classList.add('show');
+    rsvpSubmitBtn.disabled = false;
+    rsvpSubmitBtn.textContent = 'Confirm RSVP';
+  }
+});
 
 // ---- Donation checkout ----
 const DONATE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/create-donation-checkout`;
@@ -539,9 +778,6 @@ if (donateCustomInput) {
 
 // ---- Get More Info lead-capture modal ----
 (function(){
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
-  const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
   const overlay = document.getElementById('leadModalOverlay');
   const closeBtn = document.getElementById('closeLeadModalBtn');
   const successCloseBtn = document.getElementById('leadSuccessCloseBtn');
