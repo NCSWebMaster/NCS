@@ -45,6 +45,28 @@
   .belief-back-inner blockquote cite{display:block;margin-top:6px;font-style:normal;font-family:'Trebuchet MS',sans-serif;font-size:0.75rem;color:var(--bronze);font-weight:700;}
   @media(max-width:700px){.beliefs-grid{grid-template-columns:1fr;max-width:480px;}}
   @media(max-width:600px){.moral-section{padding:48px 6%;}}
+
+  /* GET MORE INFO — lead-capture modal (same pattern as admissions.html) */
+  .lead-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
+  .lead-modal-overlay.open{ display:flex; }
+  .lead-modal{background:#fff;width:100%;max-width:480px;border-radius:12px;padding:2rem;position:relative;max-height:90vh;overflow-y:auto;}
+  .lead-modal-close{position:absolute;top:0.75rem;right:0.9rem;background:none;border:none;font-size:1.5rem;line-height:1;cursor:pointer;color:#666;}
+  .lead-modal h3{color:#C8102E;margin-top:0;margin-bottom:0.25rem;}
+  .lead-modal-sub{color:#555;font-size:0.95rem;margin-top:0;margin-bottom:1.25rem;}
+  .lead-field{margin-bottom:1rem;}
+  .lead-field label{display:block;font-weight:600;font-size:0.9rem;margin-bottom:0.3rem;color:#333;}
+  .lead-field input,
+  .lead-field select{width:100%;padding:0.65rem 0.75rem;border:1px solid #ccc;border-radius:6px;font-size:1rem;box-sizing:border-box;}
+  .lead-field input:focus,
+  .lead-field select:focus{outline:none;border-color:#C8102E;}
+  .lead-optional{font-weight:400;color:#888;font-size:0.8rem;}
+  .lead-submit-btn{width:100%;background:#C8102E;color:#fff;border:none;padding:0.85rem;border-radius:6px;font-weight:700;font-size:1rem;cursor:pointer;margin-top:0.5rem;}
+  .lead-submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
+  .lead-error-msg{color:#C8102E;font-size:0.9rem;margin-top:0.75rem;display:none;}
+  .lead-success-view{display:none;text-align:center;}
+  .lead-success-view h3{color:#B07D4F;}
+  .lead-success-icon{font-size:2.5rem;margin-bottom:0.5rem;}
+  .lead-modal-close-btn{background:#B07D4F;color:#fff;border:none;padding:0.7rem 1.5rem;border-radius:6px;font-weight:700;cursor:pointer;margin-top:1rem;}
 </style>
 </head>
 <body>
@@ -286,7 +308,7 @@
 <section class="enroll-cta">
   <h2>Is NCS Right for Your Family?</h2>
   <p>We're looking for Christian families who want discipleship, strong academics, and a close-knit community — and who are ready to be true partners in their child's education.</p>
-  <a href="admissions.html" class="btn-primary">Get More Info Now</a>
+  <button type="button" class="btn-primary" id="enrollGetInfoBtn" style="border:none;cursor:pointer;">Get More Info Now</button>
 </section>
 
 <footer>
@@ -299,6 +321,161 @@
   </div>
 </footer>
 
+<!-- GET MORE INFO — LEAD CAPTURE MODAL -->
+<div class="lead-modal-overlay" id="leadModalOverlay">
+  <div class="lead-modal">
+    <button type="button" class="lead-modal-close" id="closeLeadModalBtn" aria-label="Close">&times;</button>
+
+    <div id="leadFormView">
+      <h3>Get More Info</h3>
+      <p class="lead-modal-sub">Tell us a bit about your family and we'll send you our informational packet right away.</p>
+
+      <form id="leadForm">
+        <div class="lead-field">
+          <label for="leadParentName">Parent/Guardian Name</label>
+          <input type="text" id="leadParentName" required autocomplete="name">
+        </div>
+        <div class="lead-field">
+          <label for="leadEmail">Email Address</label>
+          <input type="email" id="leadEmail" required autocomplete="email">
+        </div>
+        <div class="lead-field">
+          <label for="leadPhone">Phone Number</label>
+          <input type="tel" id="leadPhone" required autocomplete="tel">
+        </div>
+        <div class="lead-field">
+          <label for="leadStudentName">Student Name</label>
+          <input type="text" id="leadStudentName" required autocomplete="off">
+        </div>
+        <div class="lead-field">
+          <label for="leadGrade">Student Grade / Grade Applying For <span class="lead-optional">(optional)</span></label>
+          <select id="leadGrade">
+            <option value="">Select a grade (optional)</option>
+            <option value="TK">TK</option>
+            <option value="Kindergarten">Kindergarten</option>
+            <option value="Grade 1">Grade 1</option>
+            <option value="Grade 2">Grade 2</option>
+            <option value="Grade 3">Grade 3</option>
+            <option value="Grade 4">Grade 4</option>
+            <option value="Grade 5">Grade 5</option>
+            <option value="Grade 6">Grade 6</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Not sure yet">Not sure yet</option>
+          </select>
+        </div>
+
+        <button type="submit" class="lead-submit-btn" id="leadSubmitBtn">Send Me More Info</button>
+        <p class="lead-error-msg" id="leadErrorMsg"></p>
+      </form>
+    </div>
+
+    <div id="leadSuccessView" class="lead-success-view">
+      <div class="lead-success-icon">✓</div>
+      <h3>Thank You!</h3>
+      <p>We've received your information and sent our informational packet to the email address you provided. A member of our admissions team will be in touch with you soon.</p>
+      <button type="button" class="lead-modal-close-btn" id="leadSuccessCloseBtn">Close</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/js/shared.js"></script>
+<script>
+(function(){
+  const SUPABASE_URL = 'https://eqgzfrzokhowpedderrb.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxZ3pmcnpva2hvd3BlZGRlcnJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2MjU4ODIsImV4cCI6MjA5NzIwMTg4Mn0.r94X0ZGSdAO_vtd4dXQKmjdVFtPZ7wSpYeUVzPAkjJo';
+  const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const overlay = document.getElementById('leadModalOverlay');
+  const closeBtn = document.getElementById('closeLeadModalBtn');
+  const successCloseBtn = document.getElementById('leadSuccessCloseBtn');
+  const formView = document.getElementById('leadFormView');
+  const successView = document.getElementById('leadSuccessView');
+  const form = document.getElementById('leadForm');
+  const submitBtn = document.getElementById('leadSubmitBtn');
+  const errorMsg = document.getElementById('leadErrorMsg');
+
+  function openModal(){
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function resetModal(){
+    form.reset();
+    errorMsg.style.display = 'none';
+    errorMsg.textContent = '';
+    formView.style.display = 'block';
+    successView.style.display = 'none';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send Me More Info';
+  }
+
+  const enrollBtn = document.getElementById('enrollGetInfoBtn');
+  if (enrollBtn) {
+    enrollBtn.addEventListener('click', function(){
+      resetModal();
+      openModal();
+    });
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+  successCloseBtn.addEventListener('click', closeModal);
+
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay){ closeModal(); }
+  });
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    errorMsg.style.display = 'none';
+    errorMsg.textContent = '';
+
+    const parentName = document.getElementById('leadParentName').value.trim();
+    const email = document.getElementById('leadEmail').value.trim();
+    const phone = document.getElementById('leadPhone').value.trim();
+    const studentName = document.getElementById('leadStudentName').value.trim();
+    const grade = document.getElementById('leadGrade').value || null;
+
+    if(!parentName || !email || !phone || !studentName){
+      errorMsg.textContent = 'Please fill in all required fields.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    try {
+      const { error } = await sbClient.rpc('submit_admission_lead', {
+        p_parent_name: parentName,
+        p_email: email,
+        p_phone: phone,
+        p_student_name: studentName,
+        p_grade_applying_for: grade
+      });
+
+      if(error){
+        throw error;
+      }
+
+      formView.style.display = 'none';
+      successView.style.display = 'block';
+
+    } catch(err){
+      errorMsg.textContent = 'Something went wrong submitting your information. Please try again, or email us directly at office@northridgecommunityschool.com.';
+      errorMsg.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Me More Info';
+    }
+  });
+})();
+</script>
 </body>
 </html>

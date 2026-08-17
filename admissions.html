@@ -247,7 +247,7 @@
 <section class="enroll-cta">
   <h2>Explore Your Path to NCS</h2>
   <p>Join NCS and give your child a place to grow in faith, character, and academics.</p>
-  <a href="#admissions" class="btn-primary">Get More Info Now</a>
+  <button type="button" class="btn-primary" id="enrollGetInfoBtn" style="border:none;cursor:pointer;">Get More Info Now</button>
 </section>
 
 <footer>
@@ -364,6 +364,14 @@
     resetModal();
     openModal();
   });
+
+  const enrollBtn = document.getElementById('enrollGetInfoBtn');
+  if (enrollBtn) {
+    enrollBtn.addEventListener('click', function(){
+      resetModal();
+      openModal();
+    });
+  }
 
   closeBtn.addEventListener('click', closeModal);
   successCloseBtn.addEventListener('click', closeModal);
