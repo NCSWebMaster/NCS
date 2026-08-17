@@ -14,10 +14,9 @@
 </style>
 <style>
   .hero{text-align:center;padding:90px 6% 80px;background:linear-gradient(180deg,#fff 0%,#fdf6f2 100%);position:relative;overflow:hidden;}
-  .hero-video-bg{position:absolute;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);object-fit:cover;z-index:0;}
-  .hero-video-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:1;}
+  .hero-bg-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .hero-bg-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.6);z-index:1;}
   .hero-content{position:relative;z-index:2;}
-  @media(prefers-reduced-motion:reduce){.hero-video-bg{display:none;}}
   .hero img.crest{height:220px;margin-bottom:24px;}
   .hero h1{font-size:3rem;color:var(--red);margin-bottom:14px;}
   .hero p.tagline{font-family:Georgia,serif;font-style:italic;font-size:1.25rem;margin-bottom:34px;position:relative;display:inline-block;background:linear-gradient(100deg,var(--bronze) 0%,var(--bronze) 40%,#ffe9b8 48%,#fff6e0 50%,#ffe9b8 52%,var(--bronze) 60%,var(--bronze) 100%);background-size:300% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 9s ease-in-out infinite;}
@@ -136,10 +135,8 @@
 </nav>
 
 <section class="hero">
-  <video class="hero-video-bg" autoplay muted loop playsinline poster="assets/pictures/logo.png">
-    <source src="assets/video/hero-kids-playing.mp4" type="video/mp4">
-  </video>
-  <div class="hero-video-overlay"></div>
+  <img class="hero-bg-image" src="assets/pictures/hero-background.jpg" alt="">
+  <div class="hero-bg-overlay"></div>
   <div class="hero-content">
     <img class="crest" src="assets/pictures/logo.png" alt="Northridge Community School Crest">
     <h1>Northridge Community School</h1>
