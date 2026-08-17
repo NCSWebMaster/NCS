@@ -268,3 +268,30 @@ footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
   font-size:1.3rem;color:#fff;letter-spacing:1px;
 }
 .preview-icon-text.bronze{ background:var(--bronze); }
+
+/* GET MORE INFO — lead-capture modal (shared across index/about/admissions —
+   previously duplicated verbatim in each page's own <style> block) */
+.lead-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
+.lead-modal-overlay.open{ display:flex; }
+.lead-modal{background:#fff;width:100%;max-width:480px;border-radius:12px;padding:2rem;position:relative;max-height:90vh;overflow-y:auto;}
+.lead-modal-close{position:absolute;top:0.75rem;right:0.9rem;background:none;border:none;font-size:1.5rem;line-height:1;cursor:pointer;color:#666;}
+.lead-modal h3{color:#C8102E;margin-top:0;margin-bottom:0.25rem;}
+.lead-modal-sub{color:#555;font-size:0.95rem;margin-top:0;margin-bottom:1.25rem;}
+.lead-field{margin-bottom:1rem;}
+.lead-field label{display:block;font-weight:600;font-size:0.9rem;margin-bottom:0.3rem;color:#333;}
+.lead-field input,
+.lead-field select{width:100%;padding:0.65rem 0.75rem;border:1px solid #ccc;border-radius:6px;font-size:1rem;box-sizing:border-box;}
+.lead-field input:focus,
+.lead-field select:focus{outline:none;border-color:#C8102E;}
+.lead-optional{font-weight:400;color:#888;font-size:0.8rem;}
+.lead-submit-btn{width:100%;background:#C8102E;color:#fff;border:none;padding:0.85rem;border-radius:6px;font-weight:700;font-size:1rem;cursor:pointer;margin-top:0.5rem;}
+.lead-submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.lead-error-msg{color:#C8102E;font-size:0.9rem;margin-top:0.75rem;display:none;}
+.lead-success-view{display:none;text-align:center;}
+.lead-success-view h3{color:#B07D4F;}
+.lead-success-icon{font-size:2.5rem;margin-bottom:0.5rem;}
+.lead-modal-close-btn{background:#B07D4F;color:#fff;border:none;padding:0.7rem 1.5rem;border-radius:6px;font-weight:700;cursor:pointer;margin-top:1rem;}
+
+/* "Get More Info Now" buttons rendered as <button> — border/cursor reset
+   (previously inline style="" on each button, moved here) */
+#heroGetInfoBtn,#enrollGetInfoBtn{border:none;cursor:pointer;}
