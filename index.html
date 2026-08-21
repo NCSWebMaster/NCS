@@ -95,30 +95,9 @@
     .photo-strip-label h2{font-size:1.7rem;}
   }
 
-  /* DONATE — checkout wiring states */
-  .donate-card{position:relative;}
-  .donate-card.is-loading{opacity:0.6;pointer-events:none;}
-  .donate-custom.is-loading{opacity:0.6;pointer-events:none;}
-  .donate-status{min-height:1.4em;margin-top:18px;font-family:'Trebuchet MS',sans-serif;font-size:0.9rem;color:var(--bronze);font-weight:600;}
-  .donate-status.is-error{color:var(--red);}
-
-  /* DONATE — custom amount modal */
-  .donate-modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,46,42,0.6);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
-  .donate-modal-overlay.open{display:flex;}
-  .donate-modal{background:#fff;width:100%;max-width:420px;border-radius:12px;padding:2rem;position:relative;box-shadow:0 12px 40px rgba(0,0,0,0.2);}
-  .donate-modal-close{position:absolute;top:0.85rem;right:0.9rem;background:none;border:none;font-size:1.5rem;line-height:1;cursor:pointer;color:#9a8b84;}
-  .donate-modal-close:hover{color:var(--red);}
-  .donate-modal h3{color:var(--red);font-family:'Trebuchet MS',sans-serif;margin:0 0 6px;font-size:1.3rem;}
-  .donate-modal-sub{color:#6b5e58;font-size:0.92rem;margin:0 0 20px;}
-  .donate-modal-field label{display:block;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:0.82rem;color:var(--ink);margin-bottom:8px;}
-  .donate-modal-input-wrap{display:flex;align-items:center;border:2px solid var(--grey-line);border-radius:8px;padding:0 14px;transition:border-color 0.15s;}
-  .donate-modal-input-wrap:focus-within{border-color:var(--bronze);}
-  .donate-modal-dollar{font-family:'Trebuchet MS',sans-serif;font-weight:700;color:var(--bronze);font-size:1.1rem;margin-right:4px;}
-  .donate-modal-input-wrap input{border:none;outline:none;padding:12px 0;font-size:1.1rem;font-family:'Trebuchet MS',sans-serif;color:var(--ink);width:100%;background:transparent;}
-  .donate-modal-error{color:var(--red);font-size:0.85rem;margin:10px 0 0;min-height:1.2em;font-family:'Trebuchet MS',sans-serif;}
-  .donate-modal-submit-btn{width:100%;background:var(--red);color:#fff;border:none;padding:14px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-top:14px;transition:background 0.15s;}
-  .donate-modal-submit-btn:hover{background:#a80d26;}
-  .donate-modal-submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
+  /* DONATE — now just a link to the dedicated support site */
+  .donate-section a.btn-primary{display:inline-block;padding:14px 36px;border-radius:6px;font-family:'Trebuchet MS',sans-serif;font-weight:700;text-decoration:none;font-size:0.95rem;transition:transform 0.15s,box-shadow 0.15s;}
+  .donate-section a.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,0.12);}
 
   /* RSVP modal — mirrors donate-modal / lead-modal pattern */
   .rsvp-modal-overlay{display:none;position:fixed;inset:0;background:rgba(58,46,42,0.6);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
@@ -317,33 +296,8 @@
     <div class="divider"></div>
   </div>
   <p class="lead">Your generosity helps fund scholarships, classroom resources, and campus improvements so every student can experience the Northridge difference.</p>
-  <div class="donate-grid">
-    <div class="donate-card" data-amount-cents="2500" role="button" tabindex="0"><div class="amount">$25</div></div>
-    <div class="donate-card" data-amount-cents="5000" role="button" tabindex="0"><div class="amount">$50</div></div>
-    <div class="donate-card" data-amount-cents="7500" role="button" tabindex="0"><div class="amount">$75</div></div>
-    <div class="donate-card" data-amount-cents="10000" role="button" tabindex="0"><div class="amount">$100</div></div>
-    <button class="donate-custom" type="button">Choose Another Amount</button>
-  </div>
-  <p id="donateStatus" class="donate-status" aria-live="polite"></p>
+  <a href="https://support.northridgecommunityschool.com/" class="btn-primary">Give to NCS →</a>
 </section>
-
-<!-- CUSTOM DONATION AMOUNT MODAL -->
-<div class="donate-modal-overlay" id="donateModalOverlay">
-  <div class="donate-modal">
-    <button type="button" class="donate-modal-close" id="donateModalCloseBtn" aria-label="Close">&times;</button>
-    <h3>Choose an Amount</h3>
-    <p class="donate-modal-sub">Enter the amount you'd like to give to NCS.</p>
-    <div class="donate-modal-field">
-      <label for="donateCustomInput">Donation Amount (USD)</label>
-      <div class="donate-modal-input-wrap">
-        <span class="donate-modal-dollar">$</span>
-        <input type="number" id="donateCustomInput" inputmode="decimal" min="1" step="1" placeholder="0">
-      </div>
-    </div>
-    <p class="donate-modal-error" id="donateModalError"></p>
-    <button type="button" class="donate-modal-submit-btn" id="donateModalSubmitBtn">Continue to Checkout</button>
-  </div>
-</div>
 
 <!-- INFO NIGHT RSVP MODAL -->
 <div class="rsvp-modal-overlay" id="rsvpOverlay">
@@ -661,113 +615,6 @@ rsvpForm.addEventListener('submit', async function(e) {
     rsvpSubmitBtn.textContent = 'Confirm RSVP';
   }
 });
-
-// ---- Donation checkout ----
-const DONATE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/create-donation-checkout`;
-
-function setDonateStatus(message, isError) {
-  const statusEl = document.getElementById('donateStatus');
-  if (!statusEl) return;
-  statusEl.textContent = message || '';
-  statusEl.classList.toggle('is-error', !!isError);
-}
-
-function setDonateLoading(isLoading) {
-  document.querySelectorAll('.donate-card, .donate-custom').forEach(function(el) {
-    el.classList.toggle('is-loading', isLoading);
-  });
-}
-
-async function startDonationCheckout(amountCents) {
-  setDonateLoading(true);
-  setDonateStatus('Redirecting to secure checkout…', false);
-  try {
-    const res = await fetch(DONATE_FUNCTION_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount_cents: amountCents })
-    });
-    const data = await res.json();
-    if (!res.ok || !data.url) {
-      throw new Error(data && data.error ? data.error : 'Unable to start checkout');
-    }
-    window.location.href = data.url;
-  } catch (err) {
-    setDonateLoading(false);
-    setDonateStatus('Something went wrong — please try again or email office@northridgecommunityschool.com.', true);
-  }
-}
-
-document.querySelectorAll('.donate-card').forEach(function(card) {
-  function handleActivate() {
-    const cents = parseInt(card.getAttribute('data-amount-cents'), 10);
-    if (cents) startDonationCheckout(cents);
-  }
-  card.addEventListener('click', handleActivate);
-  card.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleActivate();
-    }
-  });
-});
-
-const donateCustomBtn = document.querySelector('.donate-custom');
-const donateModalOverlay = document.getElementById('donateModalOverlay');
-const donateModalCloseBtn = document.getElementById('donateModalCloseBtn');
-const donateModalSubmitBtn = document.getElementById('donateModalSubmitBtn');
-const donateCustomInput = document.getElementById('donateCustomInput');
-const donateModalError = document.getElementById('donateModalError');
-
-function openDonateModal() {
-  donateModalError.textContent = '';
-  donateCustomInput.value = '';
-  donateModalOverlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(function() { donateCustomInput.focus(); }, 50);
-}
-
-function closeDonateModal() {
-  donateModalOverlay.classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function submitDonateModal() {
-  const dollars = parseFloat(donateCustomInput.value);
-  if (!dollars || dollars <= 0) {
-    donateModalError.textContent = 'Please enter a valid donation amount.';
-    return;
-  }
-  if (dollars > 10000) {
-    donateModalError.textContent = 'For gifts over $10,000, please email office@northridgecommunityschool.com directly.';
-    return;
-  }
-  closeDonateModal();
-  startDonationCheckout(Math.round(dollars * 100));
-}
-
-if (donateCustomBtn) {
-  donateCustomBtn.addEventListener('click', openDonateModal);
-}
-if (donateModalCloseBtn) {
-  donateModalCloseBtn.addEventListener('click', closeDonateModal);
-}
-if (donateModalOverlay) {
-  donateModalOverlay.addEventListener('click', function(e) {
-    if (e.target === donateModalOverlay) closeDonateModal();
-  });
-}
-if (donateModalSubmitBtn) {
-  donateModalSubmitBtn.addEventListener('click', submitDonateModal);
-}
-if (donateCustomInput) {
-  donateCustomInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      submitDonateModal();
-    }
-  });
-}
 
 // ---- Get More Info lead-capture modal ----
 (function(){

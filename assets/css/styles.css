@@ -182,13 +182,6 @@ section{padding:70px 6%;}
 /* DONATE */
 .donate-section{background:linear-gradient(180deg,#fdf6f2 0%,#fff 100%);text-align:center;}
 .donate-section p.lead{max-width:640px;margin:0 auto 40px;font-size:1.05rem;color:#5a4d47;}
-.donate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:900px;margin:0 auto 36px;}
-.donate-card{background:#fff;border:2px solid var(--grey-line);border-radius:10px;padding:32px 16px;cursor:pointer;transition:border-color 0.2s,transform 0.2s,box-shadow 0.2s;}
-.donate-card:hover{border-color:var(--red);transform:translateY(-4px);box-shadow:0 8px 18px rgba(0,0,0,0.08);}
-.donate-card .amount{font-family:'Trebuchet MS',sans-serif;font-size:2rem;font-weight:700;color:var(--red);margin-bottom:6px;}
-.donate-card .label{font-size:0.85rem;color:var(--bronze);font-weight:600;font-family:'Trebuchet MS',sans-serif;text-transform:uppercase;letter-spacing:1px;}
-.donate-custom{font-family:'Trebuchet MS',sans-serif;font-weight:700;background:none;border:2px solid var(--bronze);color:var(--bronze);padding:32px 16px;border-radius:10px;font-size:0.95rem;cursor:pointer;transition:all 0.2s;width:100%;box-sizing:border-box;-webkit-appearance:none;appearance:none;grid-column:1/-1;}
-.donate-custom:hover{background:var(--bronze);color:#fff;}
 
 /* FOOTER */
 footer{background:#fdf6f2;border-top:1px solid var(--grey-line);padding:40px 6%;text-align:center;font-size:0.9rem;color:#9a8b84;font-family:'Trebuchet MS',sans-serif;}
@@ -205,7 +198,6 @@ footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
 @media(max-width:900px){
   .about-grid,.tuition-grid{grid-template-columns:repeat(2,1fr);}
   .admissions-wrap{grid-template-columns:1fr;}
-  .donate-grid{grid-template-columns:repeat(2,1fr);}
   .menu-toggle{display:flex;}
   .brand-name-full{display:none;}
   .brand-name-short{display:inline;}
@@ -229,7 +221,7 @@ footer .crest-small{height:50px;margin-bottom:12px;opacity:0.85;}
   section{padding:48px 6%;}
   .section-header{margin-bottom:32px;}
   .section-header h2{font-size:1.7rem;}
-  .about-grid,.tuition-grid,.donate-grid{grid-template-columns:1fr;gap:18px;}
+  .about-grid,.tuition-grid{grid-template-columns:1fr;gap:18px;}
   .about-card{padding:26px 20px;}
   .about-intro{font-size:0.98rem;margin-bottom:32px;}
   .video-placeholder{margin-top:32px;border-radius:8px;}
